@@ -1426,6 +1426,24 @@ updateUI();window.addEventListener('resize',()=>drawChart());setTimeout(()=>draw
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 let toastTO;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTO);toastTO=setTimeout(()=>t.classList.remove('show'),2800);}
+
+function importSpotify(){
+  const url=document.getElementById('wk-spotify').value.trim();
+  if(!url.includes('playlist/')){toast('Link Spotify non valido');return;}
+  const id=url.split('playlist/')[1].split('?')[0];
+  fetch('https://anthropic-proxy.g-primavera-co.workers.dev/spotify',{
+    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({playlist:id})
+  }).then(r=>r.json()).then(tr=>{
+    if(!Array.isArray(tr)){toast('Errore import Spotify');return;}
+    const txt=tr.map(t=>`\${t.title} — \${t.artist}
+${t.bpm || ""}
+${t.duration}`).join("
+");
+    document.getElementById('playlist-input').value=txt;
+    toast('✅ Playlist importata');
+  });
+}
+
 </script>
 </body>
 </html>
