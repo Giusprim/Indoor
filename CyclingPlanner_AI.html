@@ -670,7 +670,7 @@ REGOLE SEGMENTI:
 - Assicurati che l'ultimo segmento finisca esattamente alla durata del brano`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://anthropic-proxy.g-primavera-co.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
