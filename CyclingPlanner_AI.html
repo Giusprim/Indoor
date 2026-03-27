@@ -3,77 +3,360 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cycling Planner NEW</title>
+<title>Indoor Cycling Planner v0.6</title>
+
 <style>
- body { font-family: Arial; background:#111; color:#eee; padding:20px; }
- input, textarea, button { width:100%; padding:10px; margin:8px 0; }
- button { background:#00c896; color:#000; font-weight:bold; cursor:pointer; border:0; }
- #log { background:#222; padding:10px; height:120px; overflow:auto; font-size:12px; }
- .section { background:#1b1b1b; padding:15px; border-radius:8px; margin-bottom:15px; }
+body {
+    background:#0a0a0d; color:#fff;
+    font-family: "Barlow", sans-serif;
+    margin:0; padding:20px;
+}
+.section {
+    background:#13131a;
+    padding:20px; border-radius:12px;
+    margin-bottom:20px;
+    border:1px solid #ffffff22;
+}
+input, textarea, select {
+    width:100%; padding:10px;
+    border-radius:8px; border:1px solid #333;
+    background:#1b1b24; color:#fff;
+    margin-bottom:12px;
+}
+button {
+    padding:12px 16px;
+    background:#00d470; color:#000;
+    border:none; border-radius:8px;
+    font-weight:800; cursor:pointer;
+}
+.card {
+    border:1px solid #333; padding:12px;
+    border-radius:8px; background:#1a1a22;
+    margin-bottom:8px;
+}
+#ai-log {
+    font-size:13px; background:#1b1b24; padding:10px;
+    border-radius:6px; height:150px; overflow-y:auto;
+    display:none; white-space:pre-wrap;
+}
 </style>
 </head>
 <body>
-<h1>🚴 Cycling Planner — Versione SEMPLICE</h1>
+
+<h1>🚴 Indoor Cycling Planner v0.6</h1>
 
 <div class="section">
-<h3>1️⃣ Importa Playlist Spotify</h3>
-<input id="sp-url" placeholder="https://open.spotify.com/playlist/..." />
-<button onclick="importSpotify()">IMPORTA PLAYLIST</button>
-<pre id="playlist"></pre>
+<h2>1) Import</h2>
+<input id="in-spotify" placeholder="URL Playlist Spotify">
+<button id="btn-import-spotify">Importa via Spotify</button>
+
+<hr>
+
+<input id="in-file" type="file" accept=".csv">
+<button id="btn-import-csv">Importa CSV</button>
+
+<hr>
+
+<textarea id="in-man" rows="6" placeholder="Titolo — Artista
+BPM
+mm:ss"></textarea>
+<button id="btn-import-man">Importa Manuale</button>
 </div>
 
 <div class="section">
-<h3>2️⃣ Analisi AI</h3>
-<button onclick="startAI()">ANALIZZA CON AI</button>
-<pre id="ai"></pre>
+<h2>2) Setup Lezione</h2>
+<input id="wk-title" placeholder="Titolo Lezione">
+<input id="wk-instructor" placeholder="Istruttore">
+<select id="wk-level">
+<option value="principiante">Principiante</option>
+<option value="intermedio" selected>Intermedio</option>
+<option value="avanzato">Avanzato</option>
+<option value="misto">Misto</option>
+</select>
+<select id="wk-protocol">
+<option value="endurance">Endurance</option>
+<option value="interval_estensivo">Interval Estensivo</option>
+<option value="hiit">HIIT</option>
+<option value="montagna">Montagna</option>
+<option value="recovery">Recovery</option>
+</select>
 </div>
 
 <div class="section">
-<h3>Log</h3>
-<pre id="log"></pre>
+<h2>3) Analisi AI</h2>
+<select id="ai-model">
+<option value="copilot">Copilot</option>
+<option value="claude">Claude</option>
+<option value="gemini">Gemini</option>
+<option value="openai">OpenAI</option>
+</select>
+
+<button id="btn-ai">Analizza con AI</button>
+
+<div id="ai-log"></div>
+</div>
+
+<div class="section">
+<h2>4) Revisione</h2>
+<div id="cards"></div>
+</div>
+
+<div class="section">
+<h2>5) Generazione Player</h2>
+<input id="client-id" placeholder="CLIENT_ID Spotify">
+<input id="redirect" placeholder="Redirect URI">
+<input id="playlist-uri" placeholder="spotify:playlist:xxxx">
+
+<button id="btn-gen">Genera index.html</button>
+
+<a id="dl" style="display:none;color:#00d470;font-weight:800;margin-top:10px;">Scarica index.html</a>
 </div>
 
 <script>
-function log(t){ document.getElementById('log').textContent += t + "
-" }
+const WORKER_URL = "https://TUO-WORKER.workers.dev";
+let TRACKS = [];
 
-async function importSpotify(){
- let url = document.getElementById('sp-url').value.trim();
- if(!url.includes('playlist/')){ log('❌ URL non valido'); return; }
- let id = url.split('playlist/')[1].split('?')[0];
- log('➡️ Importo playlist: ' + id);
- let res = await fetch('https://anthropic-proxy.g-primavera-co.workers.dev/spotify',{
-   method:'POST', headers:{'Content-Type':'application/json'},
-   body: JSON.stringify({ playlist:id })
- });
- let data = await res.json();
- if(!Array.isArray(data)){ log('❌ Errore import'); return; }
- document.getElementById('playlist').textContent = data.map(t=>`${t.title} — ${t.artist}
-${t.bpm}
-${t.duration}`).join("
-
-");
- log('✅ Import completato');
+function log(msg){
+    const el = document.getElementById("ai-log");
+    el.style.display="block";
+    el.textContent += msg + "\n";
+    el.scrollTop = el.scrollHeight;
 }
 
-async function startAI(){
- log('➡️ Invio analisi AI...');
- let text = document.getElementById('playlist').textContent;
- let res = await fetch('https://anthropic-proxy.g-primavera-co.workers.dev/claude',{
-   method:'POST', headers:{'Content-Type':'application/json'},
-   body: JSON.stringify({
-     model:"claude-sonnet-4-20250514",
-     max_tokens:2000,
-     messages:[ { role:"user", content:"Analizza questa playlist:
-" + text } ]
-   })
- });
- let out = await res.json();
- let t = out.content?.find(x=>x.type==='text')?.text || '';
- document.getElementById('ai').textContent = t;
- log('✅ Analisi AI completata');
+/* --------------------
+   IMPORT SPOTIFY
+-------------------- */
+document.getElementById("btn-import-spotify").onclick = async ()=>{
+    const url = document.getElementById("in-spotify").value.trim();
+    if(!url) return alert("Inserisci URL playlist");
+
+    log("Import Spotify...");
+
+    const r = await fetch(`${WORKER_URL}/spotify`,{
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({playlist_url:url})
+    });
+    const data = await r.json();
+
+    TRACKS = data.map((t,i)=>({
+        i:i+1, title:t.title, artist:t.artist,
+        bpm:t.bpm, duration_sec:t.duration_sec,
+        zone:"—", rpm:"—", res:"—",
+        technique:"—", mani:"—", phase:"—",
+        focus:"—", segments:[]
+    }));
+
+    renderCards();
+};
+
+/* --------------------
+   IMPORT CSV
+-------------------- */
+document.getElementById("btn-import-csv").onclick = ()=>{
+    const f = document.getElementById("in-file").files[0];
+    if(!f) return alert("Seleziona CSV");
+
+    const r = new FileReader();
+    r.onload = ()=>parseCSV(r.result);
+    r.readAsText(f,"utf-8");
+};
+
+function parseCSV(text){
+    TRACKS = [];
+    const rows = text.split(/\r?\n/).filter(x=>x.trim());
+    let i=1;
+    rows.forEach(row=>{
+        const c = row.split(",");
+        if(c.length<3) return;
+        const titleArtist = c[0].trim();
+        const bpm = parseInt(c[1])||0;
+        const dur = parseTime(c[2]);
+        let title=titleArtist, artist="";
+        if(titleArtist.includes("—")){
+            const p=titleArtist.split("—");
+            title=p[0].trim();
+            artist=p[1].trim();
+        }
+        TRACKS.push({
+            i:i++, title, artist,
+            bpm, duration_sec:dur,
+            zone:"—", rpm:"—", res:"—",
+            technique:"—", mani:"—", phase:"—",
+            focus:"—", segments:[]
+        });
+    });
+
+    renderCards();
 }
+
+/* --------------------
+   IMPORT MANUALE
+-------------------- */
+document.getElementById("btn-import-man").onclick = ()=>{
+    const raw = document.getElementById("in-man").value.trim();
+    if(!raw) return;
+    TRACKS=[];
+    let i=1;
+    const blocks=raw.split(/\n\s*\n/);
+
+    blocks.forEach(b=>{
+        const L=b.split("\n").map(x=>x.trim()).filter(Boolean);
+        if(L.length<3) return;
+
+        let titleArtist=L[0], bpm=parseInt(L[1])||0, dur=parseTime(L[2]);
+        let title=titleArtist, artist="";
+        if(titleArtist.includes("—")){
+            const p=titleArtist.split("—");
+            title=p[0].trim(); artist=p[1].trim();
+        }
+
+        TRACKS.push({
+            i:i++, title, artist,
+            bpm, duration_sec:dur,
+            zone:"—", rpm:"—", res:"—",
+            technique:"—", mani:"—", phase:"—",
+            focus:"—", segments:[]
+        });
+    });
+
+    renderCards();
+};
+
+function parseTime(t){
+    const p=t.split(":").map(Number);
+    if(p.length===2) return p[0]*60+p[1];
+    if(p.length===3) return p[0]*3600+p[1]*60+p[2];
+    return 0;
+}
+
+/* --------------------
+   RENDER CARDS
+-------------------- */
+function renderCards(){
+    const wrap=document.getElementById("cards");
+    wrap.innerHTML="";
+    TRACKS.forEach(t=>{
+        wrap.innerHTML += `
+        <div class="card">
+            <b>${t.i}. ${t.title}</b><br>
+            <small>${t.artist}</small><br>
+            BPM ${t.bpm} · Durata ${format(t.duration_sec)}
+        </div>`;
+    });
+}
+
+function format(s){
+    const m=Math.floor(s/60), sc=s%60;
+    return `${m}:${String(sc).padStart(2,"0")}`;
+}
+
+/* --------------------
+   ANALISI AI
+-------------------- */
+document.getElementById("btn-ai").onclick = async ()=>{
+    if(TRACKS.length===0) return alert("Importa prima dei brani");
+
+    const title=document.getElementById("wk-title").value;
+    const level=document.getElementById("wk-level").value;
+    const protocol=document.getElementById("wk-protocol").value;
+    const model=document.getElementById("ai-model").value;
+
+    let list="";
+    TRACKS.forEach(t=>list+=`${t.i}. ${t.title} — ${t.artist} | BPM ${t.bpm} | DUR ${t.duration_sec}\n`);
+
+    const prompt = `
+Titolo: ${title}
+Livello: ${level}
+Protocollo: ${protocol}
+
+BRANI:
+${list}
+
+Genera JSON:
+[{
+"zona": "Z3",
+"rpm_label": "85–95",
+"res_label": "45%",
+"tecnica": "Seduto → In piedi",
+"mani": "P2",
+"fase": "Build",
+"focus": "Mantieni ritmo",
+"segmenti":[{"da_sec":0,"a_sec":30,"tecnica":"Seduto"}]
+}]
+    `;
+
+    log("Analisi AI...");
+
+    const r = await fetch(`${WORKER_URL}/ai`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            model,
+            prompt,
+            max_tokens:5000
+        })
+    });
+
+    const data=await r.json();
+    if(!data||!data.brani) return log("Errore AI");
+
+    TRACKS = TRACKS.map((t,i)=>{
+        const ai=data.brani[i];
+        return{
+            ...t,
+            zone: ai.zona,
+            rpm: ai.rpm_label,
+            res: ai.res_label,
+            technique: ai.tecnica,
+            mani: ai.mani,
+            phase: ai.fase,
+            focus: ai.focus,
+            segments: ai.segmenti||[]
+        };
+    });
+
+    log("Analisi completata.");
+    renderCards();
+};
+
+/* --------------------
+   GENERAZIONE PLAYER
+-------------------- */
+document.getElementById("btn-gen").onclick = async ()=>{
+    const client=document.getElementById("client-id").value.trim();
+    const redirect=document.getElementById("redirect").value.trim();
+    const uri=document.getElementById("playlist-uri").value.trim();
+
+    if(!client||!redirect||!uri) return alert("Completa i campi Spotify");
+
+    const tpl = await fetch("./index_template_placeholder.html").then(r=>r.text());
+
+    const title=document.getElementById("wk-title").value.trim();
+    const instr=document.getElementById("wk-instructor").value.trim();
+
+    const totSec = TRACKS.reduce((a,b)=>a+b.duration_sec,0);
+    const total=format(totSec);
+
+    const filled = tpl
+        .replace("{{TITLE}}", title||"Lezione Indoor")
+        .replace("{{INSTRUCTOR}}", instr||"Istruttore")
+        .replace("{{TRACK_COUNT}}", TRACKS.length)
+        .replace("{{TOTAL_TIME}}", total)
+        .replace("{{CLIENT_ID}}", client)
+        .replace("{{REDIRECT_URI}}", redirect)
+        .replace("{{PLAYLIST_URI}}", uri)
+        + `\n<script>const T = ${JSON.stringify(TRACKS,null,2)};</script>`;
+
+    const blob = new Blob([filled], {type:"text/html"});
+    const url = URL.createObjectURL(blob);
+
+    const a=document.getElementById("dl");
+    a.href=url;
+    a.download="index.html";
+    a.style.display="block";
+    a.textContent="Scarica index.html";
+};
+
 </script>
-
 </body>
 </html>
