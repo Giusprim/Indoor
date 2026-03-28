@@ -70,7 +70,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="apikey-indicator" title="Stato API Key Gemini"></span>
-    <span class="badge">v3.2.1</span>
+    <span class="badge">v3.2.2</span>
   </div>
 </header>
 
@@ -222,7 +222,6 @@ function importCSV(){
     TRACKS = [];
     const rows = r.result.split(/\r?\n/).filter(x=>x.trim());
     rows.forEach((row, i)=>{
-      // Supporto sia virgola che punto e virgola (Excel ITA)
       const c = row.includes(";") ? row.split(";") : row.split(",");
       if(c.length<2) return;
       TRACKS.push({i:i+1,title:c[0].trim(),ar:c[1]||"",bpm:c[2]||"0",d:parseTime(c[3]||"0"),z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
@@ -266,40 +265,48 @@ async function runAI(){
   
   const btn = document.getElementById("btn-ai");
   btn.disabled=true; btn.textContent="Analisi in corso...";
-  document.getElementById("ai-log").textContent="";
+  const logEl = document.getElementById("ai-log");
+  logEl.textContent="";
+  logEl.classList.add("visible");
 
-  const prompt=`Sei un Master Instructor Indoor Cycling. Genera un array JSON per questi brani:
+  const prompt = `Sei un Master Instructor Indoor Cycling. Genera un output JSON per questa playlist:
   ${TRACKS.map(t=>`${t.i}. ${t.title} | BPM ${t.bpm} | ${fmt(t.d)}`).join("\n")}
-  Usa questo formato: [{"zona":"Z2","rpm_label":"85","res_label":"35%","res_num":0.35,"tecnica":"Seduto","mani":"P2","fase":"Warm-up","focus":"Respira"}]
-  REGOLE: Z1 (Recovery), Z2 (Base), Z3 (Tempo), Z4 (Soglia), Z5 (Sprint). Primo brano Z2, ultimo Z1.`;
+  Restituisci ESCLUSIVAMENTE un array di oggetti JSON con questi campi: "zona", "rpm_label", "res_label", "res_num", "tecnica", "mani", "fase", "focus".
+  REGOLE TECNICHE: Primo brano Z2, ultimo Z1. Zone: Z1-Z5.`;
 
   try {
-    // CORREZIONE: Uso della v1 stabile e corretta gestione endpoint
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     const resp = await fetch(url, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         contents: [{parts: [{text: prompt}]}],
-        generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+        generationConfig: { 
+          temperature: 0.1, 
+          responseMimeType: "application/json" 
+        }
       })
     });
 
-    if(!resp.ok) throw new Error(`Status ${resp.status}`);
     const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error ? data.error.message : `Status ${resp.status}`);
+    
     const results = JSON.parse(data.candidates[0].content.parts[0].text);
 
-    TRACKS = TRACKS.map((t, i) => ({
-      ...t,
-      z: results[i].zona,
-      rpm: results[i].rpm_label,
-      res: results[i].res_label,
-      rn: results[i].res_num,
-      tec: results[i].tecnica,
-      mani: results[i].mani,
-      fase: results[i].fase,
-      focus: results[i].focus
-    }));
+    TRACKS = TRACKS.map((t, i) => {
+      const ai = results[i];
+      return ai ? {
+        ...t,
+        z: ai.zona,
+        rpm: ai.rpm_label,
+        res: ai.res_label,
+        rn: ai.res_num,
+        tec: ai.tecnica,
+        mani: ai.mani,
+        fase: ai.fase,
+        focus: ai.focus
+      } : t;
+    });
     renderCards();
     log("✓ Analisi completata con successo.");
   } catch(e) {
