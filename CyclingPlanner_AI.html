@@ -38,19 +38,14 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 .fase{display:inline-block;background:#1a1040;border:1px solid #3a2080;color:var(--purple);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-bottom:6px}
 .tec{font-size:12px;color:#aaa;margin-bottom:4px}
 .focus{font-size:12px;color:#e8e8f0;font-style:italic;border-left:3px solid var(--purple);padding-left:8px}
-.status-ok{color:var(--accent)}
-.status-err{color:var(--red)}
 .hint{font-size:11px;color:#6666aa;margin-top:-6px;margin-bottom:10px;line-height:1.6}
 hr{border:none;border-top:1px solid var(--border);margin:14px 0}
 #dl-link{display:none;margin-top:12px;padding:12px 20px;background:var(--s2);border:1px solid var(--accent);border-radius:8px;text-align:center;text-decoration:none;color:var(--accent);font-weight:700;font-size:14px}
 #dl-link.show{display:block}
 .step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
-.warning{background:#1a0a00;border:1px solid #ff8844;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--amber);margin-top:8px;display:none}
-.warning.show{display:block}
 #apikey-box{background:linear-gradient(135deg,#0a1a0a,#0d1a14);border:2px solid #1DB954;border-radius:12px;padding:20px}
 #apikey-box h2{color:#1DB954;font-size:15px;font-weight:700;margin-bottom:8px}
 #apikey-box p{font-size:12px;color:#8888aa;margin-bottom:14px;line-height:1.7}
-#apikey-box code{background:#1a2a1a;padding:2px 6px;border-radius:4px;color:#aaffaa;font-size:11px}
 .apikey-row{display:flex;gap:10px;align-items:flex-end}
 .apikey-row input{margin-bottom:0;font-family:monospace}
 .apikey-status{font-size:12px;font-family:monospace;margin-top:8px}
@@ -69,27 +64,21 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0}
     <p>Power Ride Coach · Giuseppe Primavera · AIF 2° Livello</p>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="apikey-indicator" title="Stato API Key Gemini"></span>
-    <span class="badge">v3.2.2</span>
+    <span id="apikey-indicator"></span>
+    <span class="badge">v3.2.3</span>
   </div>
 </header>
 
 <main>
-
   <div id="apikey-box">
-    <h2>🔑 Google Gemini API Key — Gratuita</h2>
-    <p>
-      Necessaria per l'analisi AI. <strong>Completamente gratuita</strong>.<br>
-      1. Vai su <strong>aistudio.google.com</strong> → accedi con Google<br>
-      2. Clicca <strong>Get API key</strong> → copia la chiave (inizia con <code>AIza...</code>).
-    </p>
+    <h2>🔑 Google Gemini API Key</h2>
+    <p>Inserisci la chiave da <code>aistudio.google.com</code> per attivare l'analisi automatica.</p>
     <div class="apikey-row">
       <div style="flex:1">
-        <label>Incolla qui la tua Gemini API Key</label>
-        <input type="password" id="apikey-input" placeholder="AIzaSy..." autocomplete="off" spellcheck="false"
-          onkeydown="if(event.key==='Enter')saveApiKey()"/>
+        <label>Gemini API Key</label>
+        <input type="password" id="apikey-input" placeholder="AIzaSy..."/>
       </div>
-      <button class="btn btn-primary" onclick="saveApiKey()" style="margin-bottom:10px;white-space:nowrap;background:#1DB954;color:#000">Salva</button>
+      <button class="btn btn-primary" onclick="saveApiKey()" style="margin-bottom:10px;background:#1DB954;color:#000">Salva</button>
       <button class="btn btn-secondary" onclick="clearApiKey()" style="margin-bottom:10px">✕</button>
     </div>
     <div id="apikey-status" class="apikey-status"></div>
@@ -97,13 +86,10 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0}
 
   <div class="card">
     <h2><span class="step-num">1</span>Importa Brani</h2>
-    <p class="hint">Formato: <code>Titolo — Artista | BPM | mm:ss</code>. Il CSV supporta virgola o punto e virgola.</p>
-    <textarea id="in-man" rows="10" placeholder="Nell'aria 2021 — Ben DJ | 116 | 2:25
-Primavera — Ben DJ | 114 | 3:22
-..."></textarea>
+    <textarea id="in-man" rows="8" placeholder="Titolo — Artista | BPM | mm:ss"></textarea>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="importManual()">Importa Lista</button>
-      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:#e8e8f0;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px">
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:#e8e8f0;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px">
         <span>Carica CSV</span>
         <input type="file" accept=".csv" id="in-file" style="display:none" onchange="importCSV()">
       </label>
@@ -114,7 +100,7 @@ Primavera — Ben DJ | 114 | 3:22
   <div class="card">
     <h2><span class="step-num">2</span>Setup Lezione</h2>
     <div class="row">
-      <div><label>Titolo Lezione</label><input id="wk-title" placeholder="Italian Power Ride"></div>
+      <div><label>Titolo Lezione</label><input id="wk-title" placeholder="ROCK ITALIAN FIRE"></div>
       <div><label>Istruttore</label><input id="wk-instructor" value="Giuseppe Primavera"></div>
     </div>
     <div class="row">
@@ -122,22 +108,17 @@ Primavera — Ben DJ | 114 | 3:22
         <label>Livello</label>
         <select id="wk-level">
           <option value="principiante">Principiante</option>
-          <option value="intermedio" selected>Intermedio</option>
-          <option value="avanzato">Avanzato</option>
-          <option value="misto">Misto</option>
+          <option value="intermedio">Intermedio</option>
+          <option value="avanzato" selected>Avanzato</option>
         </select>
       </div>
       <div>
         <label>Protocollo</label>
         <select id="wk-protocol">
           <option value="endurance">Endurance</option>
-          <option value="interval_estensivo">Interval Estensivo</option>
+          <option value="interval_estensivo" selected>Interval Estensivo</option>
           <option value="hiit">HIIT</option>
           <option value="montagna">Montagna</option>
-          <option value="recovery">Recovery</option>
-          <option value="forza">Forza/Strength</option>
-          <option value="piramidale">Piramidale</option>
-          <option value="tabata">Tabata Cycling</option>
         </select>
       </div>
     </div>
@@ -147,27 +128,24 @@ Primavera — Ben DJ | 114 | 3:22
     <h2><span class="step-num">3</span>Analisi AI</h2>
     <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con Gemini AI</button>
     <div id="ai-log"></div>
-    <div id="ai-warn" class="warning">⚠️ Importa prima i brani (Step 1).</div>
-    <div id="ai-nokey" class="warning">⚠️ Inserisci la API Key nel box verde.</div>
   </div>
 
   <div class="card">
     <h2><span class="step-num">4</span>Revisione Brani</h2>
-    <div id="cards"><p style="color:#6666aa;font-size:13px">I brani appariranno qui dopo l'analisi.</p></div>
+    <div id="cards"></div>
   </div>
 
   <div class="card">
     <h2><span class="step-num">5</span>Genera Player</h2>
     <div class="row">
-      <div><label>Client ID Spotify</label><input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c"></div>
+      <div><label>Spotify Client ID</label><input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c"></div>
       <div><label>Redirect URI</label><input id="sp-redirect" value="https://giusprim.github.io/Indoor/"></div>
     </div>
     <label>URL Playlist Spotify</label>
     <input id="sp-playlist" placeholder="https://open.spotify.com/playlist/...">
     <button class="btn btn-gen" onclick="generatePlayer()">⬇ Genera index.html</button>
-    <a id="dl-link" download="index.html">✅ Clicca qui per scaricare index.html</a>
+    <a id="dl-link" download="index.html">✅ Clicca qui per scaricare</a>
   </div>
-
 </main>
 
 <script>
@@ -177,21 +155,20 @@ let TRACKS = [];
 function loadApiKey(){ return localStorage.getItem(KEY_STORAGE)||''; }
 function saveApiKey(){
   const val = document.getElementById('apikey-input').value.trim();
-  if(!val.startsWith('AIza')){ setKeyStatus('Chiave non valida.','err'); return; }
+  if(!val.startsWith('AIza')){ alert('Chiave non valida.'); return; }
   localStorage.setItem(KEY_STORAGE, val);
-  setKeyStatus('✓ Salvata.','ok');
-  updateKeyIndicator(true);
+  location.reload();
 }
-function clearApiKey(){ localStorage.removeItem(KEY_STORAGE); updateKeyIndicator(false); setKeyStatus('Rimossa.','err'); }
-function setKeyStatus(msg,type){ const el = document.getElementById('apikey-status'); el.textContent = msg; el.className = 'apikey-status '+type; }
-function updateKeyIndicator(ok){ const ind = document.getElementById('apikey-indicator'); ind.className = ok ? 'ok' : 'err'; }
+function clearApiKey(){ localStorage.removeItem(KEY_STORAGE); location.reload(); }
 
 (function init(){
   const k = loadApiKey();
-  updateKeyIndicator(!!k);
+  const ind = document.getElementById('apikey-indicator');
+  if(k){ ind.className='ok'; document.getElementById('apikey-input').value=k; }
+  else { ind.className='err'; }
 })();
 
-function fmt(s){ s=Math.max(0,Math.floor(s)); const m=Math.floor(s/60),sc=s%60; return `${m}:${String(sc).padStart(2,"0")}`; }
+function fmt(s){ s=Math.max(0,Math.floor(s)); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; }
 function parseTime(t){
   if(!t) return 0;
   const p = String(t).trim().split(":").map(Number);
@@ -212,7 +189,6 @@ function importManual(){
     TRACKS.push({i:i+1,title,ar:artist,bpm,d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
   });
   calcStartTimes(); renderCards();
-  document.getElementById("import-status").textContent = `✓ ${TRACKS.length} brani pronti.`;
 }
 
 function importCSV(){
@@ -234,27 +210,23 @@ function importCSV(){
 function calcStartTimes(){ let cur=0; TRACKS.forEach(t=>{t.s=cur;cur+=t.d;}); }
 
 function renderCards(){
-  const wrap = document.getElementById("cards");
-  wrap.innerHTML="";
+  const wrap = document.getElementById("cards"); wrap.innerHTML="";
   const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
   TRACKS.forEach(t=>{
-    const hasAI = t.z!=="—";
     const zc = ZC[t.z]||"#aaa";
     wrap.innerHTML+=`
     <div class="track-card">
-      <h3 style="color:${zc}">${t.i}. ${t.title} <small>${t.ar}</small></h3>
+      <h3 style="color:${zc}">${t.i}. ${t.title}</h3>
       <div class="meta">BPM ${t.bpm} · ${fmt(t.d)} · Start ${fmt(t.s)}</div>
-      ${hasAI?`
+      ${t.z!=="—"?`
       <div class="params">
         <div class="param"><div class="v">${t.z}</div><div class="l">Zona</div></div>
         <div class="param"><div class="v">${t.rpm}</div><div class="l">RPM</div></div>
         <div class="param"><div class="v">${t.res}</div><div class="l">Res.</div></div>
         <div class="param"><div class="v">${t.mani}</div><div class="l">Mani</div></div>
       </div>
-      <div class="fase">${t.fase}</div>
-      <div class="tec">${t.tec}</div>
-      <div class="focus">${t.focus}</div>
-      `:'<div class="meta">In attesa di analisi AI...</div>'}
+      <div class="fase">${t.fase}</div><div class="tec">${t.tec}</div><div class="focus">${t.focus}</div>
+      `:'<div class="meta">Analisi mancante...</div>'}
     </div>`;
   });
 }
@@ -262,29 +234,23 @@ function renderCards(){
 async function runAI(){
   const apiKey = loadApiKey();
   if(!apiKey || TRACKS.length===0) return;
-  
   const btn = document.getElementById("btn-ai");
-  btn.disabled=true; btn.textContent="Analisi in corso...";
-  const logEl = document.getElementById("ai-log");
-  logEl.textContent="";
-  logEl.classList.add("visible");
+  btn.disabled=true; btn.textContent="Analisi...";
+  document.getElementById("ai-log").textContent="";
 
-  const prompt = `Sei un Master Instructor Indoor Cycling. Genera un output JSON per questa playlist:
-  ${TRACKS.map(t=>`${t.i}. ${t.title} | BPM ${t.bpm} | ${fmt(t.d)}`).join("\n")}
-  Restituisci ESCLUSIVAMENTE un array di oggetti JSON con questi campi: "zona", "rpm_label", "res_label", "res_num", "tecnica", "mani", "fase", "focus".
-  REGOLE TECNICHE: Primo brano Z2, ultimo Z1. Zone: Z1-Z5.`;
+  const prompt = `Sei un Master Instructor Indoor Cycling. Genera un array JSON per questi brani:
+  ${TRACKS.map(t=>`${t.i}. ${t.title} | BPM ${t.bpm}`).join("\n")}
+  Usa questo formato esatto: [{"zona":"Z2","rpm_label":"85","res_label":"35%","res_num":0.35,"tecnica":"Seduto","mani":"P2","fase":"Lavoro","focus":"Concentrati"}]`;
 
   try {
+    // Endpoint V1 stabile
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     const resp = await fetch(url, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         contents: [{parts: [{text: prompt}]}],
-        generationConfig: { 
-          temperature: 0.1, 
-          responseMimeType: "application/json" 
-        }
+        generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
       })
     });
 
@@ -292,58 +258,34 @@ async function runAI(){
     if(!resp.ok) throw new Error(data.error ? data.error.message : `Status ${resp.status}`);
     
     const results = JSON.parse(data.candidates[0].content.parts[0].text);
-
-    TRACKS = TRACKS.map((t, i) => {
-      const ai = results[i];
-      return ai ? {
-        ...t,
-        z: ai.zona,
-        rpm: ai.rpm_label,
-        res: ai.res_label,
-        rn: ai.res_num,
-        tec: ai.tecnica,
-        mani: ai.mani,
-        fase: ai.fase,
-        focus: ai.focus
-      } : t;
-    });
+    TRACKS = TRACKS.map((t, i) => results[i] ? {...t, z:results[i].zona, rpm:results[i].rpm_label, res:results[i].res_label, rn:results[i].res_num, tec:results[i].tecnica, mani:results[i].mani, fase:results[i].fase, focus:results[i].focus} : t);
     renderCards();
-    log("✓ Analisi completata con successo.");
-  } catch(e) {
-    log("✗ Errore: " + e.message);
-  }
+    log("✓ Successo.");
+  } catch(e) { log("✗ Errore: " + e.message); }
   btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
 }
 
 async function generatePlayer(){
-  const playlistInput = document.getElementById("sp-playlist").value.trim();
-  let playlistUri = playlistInput;
-  if(playlistInput.includes("/playlist/")){
-    playlistUri = "spotify:playlist:" + playlistInput.split("/playlist/")[1].split("?")[0];
-  }
-
+  const pl = document.getElementById("sp-playlist").value.trim();
+  const uri = pl.includes("/playlist/") ? "spotify:playlist:" + pl.split("/playlist/")[1].split("?")[0] : pl;
   const totSec = TRACKS.reduce((a,b)=>a+b.d,0);
   let tpl = "";
   try {
     const r = await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");
     if(r.ok) tpl = await r.text();
   } catch(e){}
-
-  if(!tpl) { alert("Template base non trovato sul server."); return; }
-
+  if(!tpl){ alert("Template non trovato."); return; }
   const final = tpl
-    .replace(/\{\{TITLE\}\}/g, document.getElementById("wk-title").value || "Indoor Ride")
+    .replace(/\{\{TITLE\}\}/g, document.getElementById("wk-title").value)
     .replace(/\{\{INSTRUCTOR\}\}/g, document.getElementById("wk-instructor").value)
     .replace(/\{\{CLIENT_ID\}\}/g, document.getElementById("sp-client-id").value)
     .replace(/\{\{REDIRECT_URI\}\}/g, document.getElementById("sp-redirect").value)
-    .replace(/\{\{PLAYLIST_URI\}\}/g, playlistUri)
+    .replace(/\{\{PLAYLIST_URI\}\}/g, uri)
     .replace("const T = [];// Injected dynamically", `const T = ${JSON.stringify(TRACKS)};`)
     .replace("const TOTAL=3495;", `const TOTAL=${totSec};`);
-
   const blob = new Blob([final], {type: "text/html"});
   const a = document.getElementById("dl-link");
-  a.href = URL.createObjectURL(blob);
-  a.classList.add("show");
+  a.href = URL.createObjectURL(blob); a.classList.add("show");
 }
 </script>
 </body>
