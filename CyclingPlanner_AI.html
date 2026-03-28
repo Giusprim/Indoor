@@ -7,529 +7,306 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#07070d;color:#e8e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;min-height:100vh}
-:root{--accent:#00d4aa;--red:#ff4466;--amber:#ffb347;--blue:#4d79ff;--purple:#cc88ff;--bg:#07070d;--s1:#0f0f1a;--s2:#16162a;--s3:#1e1e32;--border:#2a2a44}
+:root{--accent:#00d4aa;--red:#ff4466;--amber:#ffb347;--blue:#4d79ff;--purple:#cc88ff;--s1:#0f0f1a;--s2:#16162a;--s3:#1e1e32;--border:#2a2a44}
 header{background:var(--s1);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px}
-header h1{font-size:18px;font-weight:700}
-header p{font-size:12px;color:#6666aa}
+header h1{font-size:18px;font-weight:700}header p{font-size:12px;color:#6666aa}
 .badge{background:#1a1a40;border:1px solid var(--border);color:var(--accent);padding:3px 10px;border-radius:6px;font-size:11px;font-family:monospace}
-main{max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+main{max-width:960px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:16px}
 .card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:20px}
-.card h2{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--accent);text-transform:uppercase;letter-spacing:.6px}
+.card h2{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.6px}
 textarea,input,select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:#e8e8f0;padding:10px 12px;font-size:13px;margin-bottom:10px;outline:none;font-family:inherit}
 textarea:focus,input:focus,select:focus{border-color:var(--accent)}
-textarea{resize:vertical;line-height:1.5}
+textarea{resize:vertical;line-height:1.6}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
 .btn{padding:11px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;transition:opacity .15s}
 .btn:active{opacity:.8}
 .btn-primary{background:var(--accent);color:#000}
 .btn-secondary{background:var(--s3);border:1px solid var(--border);color:#e8e8f0}
-.btn-gen{background:var(--red);color:#fff;width:100%;padding:14px;font-size:15px}
+.btn-gen{background:var(--red);color:#fff;width:100%;padding:14px;font-size:15px;margin-top:4px}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-#ai-log{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;font-family:monospace;height:120px;overflow-y:auto;white-space:pre-wrap;display:none;color:#aaa;margin-top:10px}
+#ai-log{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;font-family:monospace;height:130px;overflow-y:auto;white-space:pre-wrap;display:none;color:#aaa;margin-top:10px}
 #ai-log.visible{display:block}
 .track-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px}
-.track-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
-.track-card .meta{font-size:11px;color:#6666aa;margin-bottom:10px}
+.track-card h3{font-size:14px;font-weight:700;margin-bottom:3px}
+.track-meta{font-size:11px;color:#6666aa;margin-bottom:10px}
 .params{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
 .param{background:var(--s3);border-radius:6px;padding:6px 4px;text-align:center}
 .param .v{font-size:14px;font-weight:700;font-family:monospace}
 .param .l{font-size:9px;color:#6666aa;text-transform:uppercase;margin-top:2px}
-.fase{display:inline-block;background:#1a1040;border:1px solid #3a2080;color:var(--purple);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-bottom:6px}
-.tec{font-size:12px;color:#aaa;margin-bottom:4px}
-.focus{font-size:12px;color:#e8e8f0;font-style:italic;border-left:3px solid var(--purple);padding-left:8px}
-.status-ok{color:var(--accent)}
-.status-err{color:var(--red)}
+.fase-tag{display:inline-block;background:#1a1040;border:1px solid #3a2080;color:var(--purple);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-bottom:6px}
+.tec-val{font-size:12px;color:#aaa;margin-bottom:4px;font-family:monospace}
+.focus-val{font-size:12px;color:#e8e8f0;font-style:italic;border-left:3px solid var(--purple);padding-left:8px}
+.segs-preview{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.seg-pill{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--s3);border:1px solid var(--border);color:#8888cc;font-family:monospace}
+.seg-pill.sprint{border-color:#ff4466;color:#ff4466}
+.seg-pill.jump{border-color:#ffb347;color:#ffb347}
+.seg-pill.standing{border-color:#00cc70;color:#00cc70}
+.status-ok{color:var(--accent)}.status-err{color:var(--red)}
 .hint{font-size:11px;color:#6666aa;margin-top:-6px;margin-bottom:10px;line-height:1.6}
-hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+.hint code{background:#1a1a30;padding:1px 5px;border-radius:3px;color:var(--accent);font-size:10px}
 #dl-link{display:none;margin-top:12px;padding:12px 20px;background:var(--s2);border:1px solid var(--accent);border-radius:8px;text-align:center;text-decoration:none;color:var(--accent);font-weight:700;font-size:14px}
 #dl-link.show{display:block}
 .step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
-.warning{background:#1a0a00;border:1px solid #ff8844;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--amber);margin-top:8px;display:none}
-.warning.show{display:block}
-/* API KEY BOX */
-#apikey-box{background:linear-gradient(135deg,#0a1a0a,#0d1a14);border:2px solid #1DB954;border-radius:12px;padding:20px}
-#apikey-box h2{color:#1DB954;font-size:15px;font-weight:700;margin-bottom:8px}
-#apikey-box p{font-size:12px;color:#8888aa;margin-bottom:14px;line-height:1.7}
-#apikey-box code{background:#1a2a1a;padding:2px 6px;border-radius:4px;color:#aaffaa;font-size:11px}
-.apikey-row{display:flex;gap:10px;align-items:flex-end}
-.apikey-row input{margin-bottom:0;font-family:monospace}
-.apikey-status{font-size:12px;font-family:monospace;margin-top:8px}
-.apikey-status.ok{color:#1DB954}
-.apikey-status.err{color:var(--red)}
-#apikey-indicator{width:10px;height:10px;border-radius:50%;background:#333355;display:inline-block;margin-right:6px;transition:all .3s}
-#apikey-indicator.ok{background:#1DB954;box-shadow:0 0 8px #1DB954}
-#apikey-indicator.err{background:var(--red)}
+.warn{background:#1a0a00;border:1px solid #ff8844;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--amber);margin-top:8px;display:none}
+.warn.show{display:block}
+.info-bar{background:#0a0f1a;border:1px solid var(--blue);border-left:4px solid var(--blue);border-radius:8px;padding:12px 16px;font-size:12px;color:#8888cc;line-height:1.7}
+.info-bar strong{color:#e8e8f0}
+.info-bar code{background:#141428;padding:2px 5px;border-radius:3px;color:var(--accent);font-size:10px}
+.schema-box{background:#080810;border:1px solid #333355;border-radius:8px;padding:12px 14px;font-size:12px;font-family:monospace;color:#8888cc;line-height:2;margin-bottom:10px}
 </style>
 </head>
 <body>
-
 <header>
-  <div>
-    <h1>🚴 Indoor Cycling Planner</h1>
-    <p>Power Ride Coach · Giuseppe Primavera · AIF 2° Livello</p>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <span id="apikey-indicator" title="Stato API Key Gemini"></span>
-    <span class="badge">v3.2</span>
-  </div>
+  <div><h1>🚴 Indoor Cycling Planner</h1><p>Power Ride Coach · Giuseppe Primavera · AIF 2° Livello</p></div>
+  <span class="badge">v3.4</span>
 </header>
-
 <main>
 
-  <!-- GEMINI API KEY -->
-  <div id="apikey-box">
-    <h2>🔑 Google Gemini API Key — Gratuita</h2>
-    <p>
-      Necessaria per l'analisi AI. <strong>Completamente gratuita</strong>, 1500 richieste/giorno, nessuna carta di credito.<br>
-      <strong>Come ottenerla (2 minuti):</strong><br>
-      1. Vai su <strong>aistudio.google.com</strong> → accedi con Google<br>
-      2. Clicca <strong>Get API key</strong> → <strong>Create API key</strong> → copia la chiave<br>
-      La chiave inizia con <code>AIza...</code> — viene salvata solo nel tuo browser.
-    </p>
-    <div class="apikey-row">
-      <div style="flex:1">
-        <label>Incolla qui la tua Gemini API Key</label>
-        <input type="password" id="apikey-input" placeholder="AIzaSy..." autocomplete="off" spellcheck="false"
-          onkeydown="if(event.key==='Enter')saveApiKey()"/>
-      </div>
-      <button class="btn btn-primary" onclick="saveApiKey()" style="margin-bottom:10px;white-space:nowrap;background:#1DB954;color:#000">Salva</button>
-      <button class="btn btn-secondary" onclick="clearApiKey()" style="margin-bottom:10px">✕</button>
-    </div>
-    <div id="apikey-status" class="apikey-status"></div>
-  </div>
+<div class="info-bar">
+  <strong>🤖 AI via Cloudflare Worker + Google Gemini</strong><br>
+  Worker: <code>anthropic-proxy.g-primavera-co.workers.dev/gemini</code> &nbsp;·&nbsp;
+  Chiave Gemini nel Worker (variabile <code>GEMINI_API_KEY</code>).<br>
+  Il Planner genera tecniche con segmenti a 32 battiti compatibili con il Player Coach (sprint tracker, jump tracker, countdown tecnica).
+</div>
 
-  <!-- STEP 1: IMPORT -->
-  <div class="card">
-    <h2><span class="step-num">1</span>Importa Brani</h2>
-    <p class="hint">Una riga per brano: <code>Titolo — Artista | BPM | mm:ss</code></p>
-    <textarea id="in-man" rows="10" placeholder="Nell'aria 2021 — Ben DJ | 116 | 2:25
+<div class="card">
+  <h2><span class="step-num">1</span>Importa Brani</h2>
+  <p class="hint">Schema fisso — una riga per brano, separatore <code>|</code> :</p>
+  <div class="schema-box">
+    <span style="color:var(--accent)">Titolo</span> — <span style="color:var(--accent)">Artista</span> | <span style="color:var(--accent)">BPM</span> | <span style="color:var(--accent)">mm:ss</span><br>
+    <span style="color:#555577">Nel blu dipinto di blu — Domenico Modugno | 123 | 2:56</span><br>
+    <span style="color:#555577">Happy Hour — DJ Matrix | 140 | 3:38</span><br>
+    <span style="color:#555577">La Cura — Franco Battiato | 90 | 3:55</span>
+  </div>
+  <textarea id="in-man" rows="12" placeholder="Nell'aria 2021 — Ben DJ | 116 | 2:25
 Primavera — Ben DJ | 114 | 3:22
 Nel blu dipinto di blu — Domenico Modugno | 123 | 2:56
 Ti Sento — Bob Sinclar, Matia Bazar | 123 | 2:52
 ITALIA STARTER PACK — J-Ax | 115 | 2:42
 Con un Deca — 883, Fargetta | 124 | 5:46
+Ninna Nanna — Loredana Berte, TWENTY SIX | 130 | 1:57
 Gloria — Umberto Tozzi | 134 | 2:48
 Happy Hour — DJ Matrix | 140 | 3:38
-Mambo Salentino — Boomdabash | 100 | 2:27
 Far l'Amore — Bob Sinclar | 128 | 2:54
-Rumore — Raffaella Carrà | 125 | 3:24
-Blue — Eiffel 65, Gabry Ponte | 198 | 3:32
+Rumore — Raffaella Carra | 125 | 3:24
+Fare l'Amore — Loredana Berte | 174 | 3:42
+Blue Da Ba Dee — Eiffel 65, Gabry Ponte | 198 | 3:32
 Ti Porto Via Con Me — Jovanotti | 132 | 4:12
 La Cura — Franco Battiato | 90 | 3:55"></textarea>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="importManual()">Importa</button>
-      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:#e8e8f0;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px">
-        <span>CSV</span>
-        <input type="file" accept=".csv" id="in-file" style="display:none" onchange="importCSV()">
-      </label>
-    </div>
-    <div id="import-status" style="margin-top:10px;font-size:13px"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="importManual()">▶ Importa</button>
+    <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:#e8e8f0;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px">
+      📄 CSV <input type="file" accept=".csv,.txt" id="in-file" style="display:none" onchange="importCSV()">
+    </label>
+    <button class="btn btn-secondary" onclick="clearTracks()">✕ Svuota</button>
   </div>
+  <div id="import-status" style="margin-top:10px;font-size:13px"></div>
+</div>
 
-  <!-- STEP 2: SETUP -->
-  <div class="card">
-    <h2><span class="step-num">2</span>Setup Lezione</h2>
-    <div class="row">
-      <div><label>Titolo Lezione</label><input id="wk-title" placeholder="Italian Power Ride"></div>
-      <div><label>Istruttore</label><input id="wk-instructor" value="Giuseppe Primavera"></div>
+<div class="card">
+  <h2><span class="step-num">2</span>Setup Lezione</h2>
+  <div class="row">
+    <div><label>Titolo Lezione</label><input id="wk-title" value="Italian Power Ride"></div>
+    <div><label>Istruttore</label><input id="wk-instructor" value="Giuseppe Primavera"></div>
+  </div>
+  <div class="row">
+    <div><label>Livello</label>
+      <select id="wk-level">
+        <option value="principiante">Principiante</option>
+        <option value="intermedio" selected>Intermedio</option>
+        <option value="avanzato">Avanzato</option>
+        <option value="misto">Misto</option>
+      </select>
     </div>
-    <div class="row">
-      <div>
-        <label>Livello Partecipanti</label>
-        <select id="wk-level">
-          <option value="principiante">Principiante</option>
-          <option value="intermedio" selected>Intermedio</option>
-          <option value="avanzato">Avanzato</option>
-          <option value="misto">Misto</option>
-        </select>
-      </div>
-      <div>
-        <label>Protocollo</label>
-        <select id="wk-protocol">
-          <option value="endurance">Endurance</option>
-          <option value="interval_estensivo">Interval Estensivo</option>
-          <option value="hiit">HIIT</option>
-          <option value="montagna">Montagna</option>
-          <option value="recovery">Recovery</option>
-          <option value="forza">Forza/Strength</option>
-          <option value="piramidale">Piramidale</option>
-          <option value="tabata">Tabata Cycling</option>
-        </select>
-      </div>
+    <div><label>Protocollo</label>
+      <select id="wk-protocol">
+        <option value="endurance">Endurance</option>
+        <option value="interval_estensivo">Interval Estensivo</option>
+        <option value="hiit">HIIT</option>
+        <option value="montagna">Montagna</option>
+        <option value="recovery">Recovery</option>
+        <option value="forza">Forza/Strength</option>
+        <option value="piramidale">Piramidale</option>
+        <option value="tabata">Tabata Cycling</option>
+      </select>
     </div>
   </div>
+</div>
 
-  <!-- STEP 3: AI -->
-  <div class="card">
-    <h2><span class="step-num">3</span>Analisi AI</h2>
-    <p class="hint">Gemini analizza la playlist e assegna zona FC, RPM, resistenza, manubrio, tecnica e focus coaching per ogni brano.</p>
-    <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con Gemini AI</button>
-    <div id="ai-log"></div>
-    <div id="ai-warn" class="warning">⚠️ Importa prima i brani (Step 1).</div>
-    <div id="ai-nokey" class="warning">⚠️ Inserisci la Gemini API Key nel box verde in cima alla pagina.</div>
-  </div>
+<div class="card">
+  <h2><span class="step-num">3</span>Analisi AI — segmenti a 32 battiti</h2>
+  <p class="hint">Gemini genera zona FC, RPM, resistenza, manubrio, fase, focus e <strong>tecnica con segmenti temporali</strong> (sprint tracker, jump tracker, countdown cambio tecnica nel Player).</p>
+  <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con Gemini AI</button>
+  <div id="ai-log"></div>
+  <div id="ai-warn" class="warn">Importa prima i brani (Step 1).</div>
+</div>
 
-  <!-- STEP 4: REVISIONE -->
-  <div class="card">
-    <h2><span class="step-num">4</span>Revisione Brani</h2>
-    <div id="cards"><p style="color:#6666aa;font-size:13px">I brani analizzati appariranno qui.</p></div>
-  </div>
+<div class="card">
+  <h2><span class="step-num">4</span>Revisione Brani</h2>
+  <div id="cards"><p style="color:#6666aa;font-size:13px">I brani analizzati appariranno qui con la preview dei segmenti tecnica.</p></div>
+</div>
 
-  <!-- STEP 5: GENERA PLAYER -->
-  <div class="card">
-    <h2><span class="step-num">5</span>Genera Player HTML</h2>
-    <p class="hint">Client ID e Redirect URI sono già pre-compilati. Inserisci solo l'URL della playlist Spotify di questa lezione.</p>
-    <div class="row">
-      <div>
-        <label>Client ID Spotify</label>
-        <input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c">
-      </div>
-      <div>
-        <label>Redirect URI</label>
-        <input id="sp-redirect" value="https://giusprim.github.io/Indoor/">
-      </div>
-    </div>
-    <div>
-      <label>URL Playlist Spotify</label>
-      <input id="sp-playlist" placeholder="https://open.spotify.com/playlist/XXXXXXXXXXXXXXXX">
-      <p class="hint">Spotify → tasto destro sulla playlist → Condividi → Copia link. Il planner converte automaticamente in URI.</p>
-    </div>
-    <button class="btn btn-gen" onclick="generatePlayer()">⬇ Genera e Scarica index.html</button>
-    <a id="dl-link" download="index.html">✅ index.html pronto — Clicca per scaricare</a>
-    <div style="margin-top:14px;background:var(--s2);border-radius:8px;padding:12px;font-size:12px;color:#6666aa;line-height:1.7">
-      <strong style="color:#e8e8f0">Dopo il download:</strong><br>
-      1. Vai su <strong>github.com/Giusprim/Indoor</strong><br>
-      2. <strong>Metodo A:</strong> clicca index.html → icona matita → Ctrl+A → incolla → Commit<br>
-      3. <strong>Metodo B:</strong> Add file → Upload files → trascina index.html → Commit<br>
-      4. Aspetta 30–60 secondi → <strong>giusprim.github.io/Indoor/</strong>
-    </div>
+<div class="card">
+  <h2><span class="step-num">5</span>Genera Player HTML</h2>
+  <p class="hint">Client ID e Redirect URI pre-compilati. Inserisci solo l'URL della playlist Spotify.</p>
+  <div class="row">
+    <div><label>Client ID Spotify</label><input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c"></div>
+    <div><label>Redirect URI</label><input id="sp-redirect" value="https://giusprim.github.io/Indoor/"></div>
   </div>
+  <div>
+    <label>URL Playlist Spotify</label>
+    <input id="sp-playlist" placeholder="https://open.spotify.com/playlist/XXXXXXXXXXXXXXXX">
+  </div>
+  <button class="btn btn-gen" onclick="generatePlayer()">⬇ Genera e Scarica index.html</button>
+  <a id="dl-link" download="index.html">✅ index.html pronto — Clicca per scaricare</a>
+  <div style="margin-top:14px;background:var(--s2);border-radius:8px;padding:12px;font-size:12px;color:#6666aa;line-height:1.7">
+    <strong style="color:#e8e8f0">Dopo il download:</strong><br>
+    github.com/Giusprim/Indoor → clicca index.html → matita → Ctrl+A → incolla → Commit<br>
+    Oppure: Add file → Upload files → trascina index.html → Commit<br>
+    Aspetta 30–60 secondi → <strong>giusprim.github.io/Indoor/</strong>
+  </div>
+</div>
 
 </main>
-
 <script>
-// ═══════════════════════════════════════════
-//  GEMINI API KEY — salvata in localStorage
-// ═══════════════════════════════════════════
-const KEY_STORAGE = 'gemini_api_key_prc';
+const WORKER_URL="https://anthropic-proxy.g-primavera-co.workers.dev";
+const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
+let TRACKS=[];
 
-function loadApiKey(){ return localStorage.getItem(KEY_STORAGE)||''; }
-
-function saveApiKey(){
-  const val = document.getElementById('apikey-input').value.trim();
-  if(!val){ setKeyStatus('Inserisci una chiave valida.','err'); return; }
-  if(!val.startsWith('AIza')){ setKeyStatus('La chiave Gemini deve iniziare con AIza...','err'); return; }
-  localStorage.setItem(KEY_STORAGE, val);
-  document.getElementById('apikey-input').value = '';
-  setKeyStatus('✓ Chiave salvata. Pronta per l\'analisi.','ok');
-  updateKeyIndicator(true);
-}
-
-function clearApiKey(){
-  localStorage.removeItem(KEY_STORAGE);
-  document.getElementById('apikey-input').value = '';
-  setKeyStatus('Chiave rimossa.','err');
-  updateKeyIndicator(false);
-}
-
-function setKeyStatus(msg,type){
-  const el = document.getElementById('apikey-status');
-  el.textContent = msg; el.className = 'apikey-status '+type;
-}
-
-function updateKeyIndicator(ok){
-  const ind = document.getElementById('apikey-indicator');
-  ind.className = ok ? 'ok' : 'err';
-  ind.title = ok ? 'Gemini API Key configurata' : 'API Key mancante';
-}
-
-(function initKey(){
-  const k = loadApiKey();
-  if(k){ updateKeyIndicator(true); setKeyStatus('✓ API Key già configurata — pronta per l\'analisi.','ok'); }
-  else { updateKeyIndicator(false); setKeyStatus('Nessuna chiave. Vai su aistudio.google.com per ottenerla gratis.','err'); }
-})();
-
-// ═══════════════════════════════════════════
-//  UTILS
-// ═══════════════════════════════════════════
-function fmt(s){ s=Math.max(0,Math.floor(s)); const m=Math.floor(s/60),sc=s%60; return `${m}:${String(sc).padStart(2,"0")}`; }
-
-function parseTime(t){
-  if(!t) return 0;
-  t = String(t).trim();
-  const p = t.split(":").map(Number);
-  if(p.length===2) return p[0]*60+p[1];
-  if(p.length===3) return p[0]*3600+p[1]*60+p[2];
-  return parseInt(t)||0;
-}
-
-function log(msg){ const el=document.getElementById("ai-log"); el.classList.add("visible"); el.textContent+=msg+"\n"; el.scrollTop=el.scrollHeight; }
-function clearLog(){ const el=document.getElementById("ai-log"); el.textContent=""; el.classList.add("visible"); }
-
-// ═══════════════════════════════════════════
-//  IMPORT
-// ═══════════════════════════════════════════
-let TRACKS = [];
+function fmt(s){s=Math.max(0,Math.floor(s));const m=Math.floor(s/60),sc=s%60;return m+":"+String(sc).padStart(2,"0");}
+function parseTime(t){if(!t)return 0;t=String(t).trim();const p=t.split(":").map(Number);if(p.length===2)return p[0]*60+p[1];if(p.length===3)return p[0]*3600+p[1]*60+p[2];return parseInt(t)||0;}
+function log(msg){const el=document.getElementById("ai-log");el.classList.add("visible");el.textContent+=msg+"\n";el.scrollTop=el.scrollHeight;}
+function clearLog(){const el=document.getElementById("ai-log");el.textContent="";el.classList.add("visible");}
 
 function importManual(){
-  const raw = document.getElementById("in-man").value.trim();
-  if(!raw){ setImportStatus("Nessun testo inserito.","err"); return; }
-  TRACKS = [];
-  const lines = raw.split(/\n/).filter(x=>x.trim());
-  let i = 1;
-  lines.forEach(line=>{
-    const parts = line.split("|").map(x=>x.trim());
-    if(parts.length<2) return;
-    const ta = parts[0], bpm = parseInt(parts[1])||0, dur = parseTime(parts[2]);
-    let title=ta, artist="";
-    if(ta.includes("—")){ const p=ta.split("—"); title=p[0].trim(); artist=p.slice(1).join("—").trim(); }
-    else if(ta.includes(" - ")){ const p=ta.split(" - "); title=p[0].trim(); artist=p.slice(1).join(" - ").trim(); }
-    TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
+  const raw=document.getElementById("in-man").value.trim();
+  if(!raw){setIS("Nessun testo inserito.","err");return;}
+  TRACKS=[];let i=1;
+  raw.split(/\n/).filter(x=>x.trim()).forEach(line=>{
+    const parts=line.split("|").map(x=>x.trim());
+    if(parts.length<2)return;
+    const ta=parts[0],bpm=parseInt(parts[1])||0,dur=parseTime(parts[2]);
+    if(!bpm||!dur)return;
+    let title=ta,artist="";
+    const sep=ta.includes("\u2014")?"\u2014":ta.includes(" - ")?" - ":null;
+    if(sep){const p=ta.split(sep);title=p[0].trim();artist=p.slice(1).join(sep).trim();}
+    TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"\u2014",rpm:"\u2014",res:"\u2014",rn:0,tec:"\u2014",mani:"P2",fase:"\u2014",focus:"\u2014",s:0});
   });
-  if(TRACKS.length===0){ setImportStatus("Formato non riconosciuto. Usa: Titolo — Artista | BPM | mm:ss","err"); return; }
-  calcStartTimes(); renderCards();
-  setImportStatus(`✓ ${TRACKS.length} brani importati — durata totale: ${fmt(TRACKS.reduce((a,b)=>a+b.d,0))}`,"ok");
+  if(TRACKS.length===0){setIS("Formato non riconosciuto. Schema: Titolo \u2014 Artista | BPM | mm:ss","err");return;}
+  calcS();renderCards();
+  setIS("\u2713 "+TRACKS.length+" brani \u2014 durata: "+fmt(TRACKS.reduce((a,b)=>a+b.d,0)),"ok");
 }
 
 function importCSV(){
-  const f = document.getElementById("in-file").files[0]; if(!f) return;
-  const r = new FileReader();
-  r.onload = ()=>{
-    TRACKS = [];
-    const rows = r.result.split(/\r?\n/).filter(x=>x.trim());
-    let i=1;
-    rows.forEach(row=>{
-      const c = row.split(","); if(c.length<2) return;
-      const ta=c[0].trim(), bpm=parseInt(c[1])||0, dur=parseTime(c[2]);
-      let title=ta, artist="";
-      if(ta.includes("—")){ const p=ta.split("—"); title=p[0].trim(); artist=p[1].trim(); }
-      TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
+  const f=document.getElementById("in-file").files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    TRACKS=[];let i=1;
+    r.result.split(/\r?\n/).filter(x=>x.trim()).forEach(row=>{
+      const sep=row.includes("|")?"|":",";
+      const c=row.split(sep);if(c.length<2)return;
+      const ta=c[0].trim(),bpm=parseInt(c[1])||0,dur=parseTime(c[2]);
+      if(!bpm)return;
+      let title=ta,artist="";
+      if(ta.includes("\u2014")){const p=ta.split("\u2014");title=p[0].trim();artist=p[1].trim();}
+      TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"\u2014",rpm:"\u2014",res:"\u2014",rn:0,tec:"\u2014",mani:"P2",fase:"\u2014",focus:"\u2014",s:0});
     });
-    calcStartTimes(); renderCards();
-    setImportStatus(`✓ ${TRACKS.length} brani da CSV — durata: ${fmt(TRACKS.reduce((a,b)=>a+b.d,0))}`,"ok");
+    calcS();renderCards();
+    setIS("\u2713 "+TRACKS.length+" brani da file \u2014 durata: "+fmt(TRACKS.reduce((a,b)=>a+b.d,0)),"ok");
   };
   r.readAsText(f,"utf-8");
 }
 
-function calcStartTimes(){ let cur=0; TRACKS.forEach(t=>{t.s=cur;cur+=t.d;}); }
-function setImportStatus(msg,type){ const el=document.getElementById("import-status"); el.textContent=msg; el.className=type==="ok"?"status-ok":"status-err"; }
+function clearTracks(){TRACKS=[];document.getElementById("cards").innerHTML='<p style="color:#6666aa;font-size:13px">Nessun brano.</p>';setIS("Lista svuotata.","err");}
+function calcS(){let cur=0;TRACKS.forEach(t=>{t.s=cur;cur+=t.d;});}
+function setIS(msg,type){const el=document.getElementById("import-status");el.textContent=msg;el.className=type==="ok"?"status-ok":"status-err";}
 
-// ═══════════════════════════════════════════
-//  RENDER CARDS
-// ═══════════════════════════════════════════
-const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
+function guessType(label){const l=label.toLowerCase();if(l.includes("sprint"))return"sprint";if(l.includes("jump"))return"jump";if(l.includes("in piedi")&&!l.includes("leggero"))return"standing";return"steady";}
 
 function renderCards(){
-  const wrap = document.getElementById("cards");
-  if(TRACKS.length===0){ wrap.innerHTML='<p style="color:#6666aa;font-size:13px">Nessun brano.</p>'; return; }
+  const wrap=document.getElementById("cards");
+  if(TRACKS.length===0){wrap.innerHTML='<p style="color:#6666aa;font-size:13px">Nessun brano.</p>';return;}
   wrap.innerHTML="";
   TRACKS.forEach(t=>{
-    const hasAI = t.z!=="—";
-    const zcolor = hasAI ? (ZC[t.z]||"#aaa") : "#aaa";
-    wrap.innerHTML+=`
-    <div class="track-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <h3 style="color:${zcolor}">${t.i}. ${t.title}</h3>
-          <div class="meta">${t.ar} · BPM ${t.bpm} · ${fmt(t.d)} · Inizio ${fmt(t.s)}</div>
-        </div>
-        ${hasAI?`<span style="color:${zcolor};font-weight:700;font-size:18px;font-family:monospace">${t.z}</span>`:''}
-      </div>
-      ${hasAI?`
-      <div class="params">
-        <div class="param"><div class="v" style="color:${zcolor}">${t.z}</div><div class="l">Zona</div></div>
-        <div class="param"><div class="v" style="color:#00cc70">${t.rpm}</div><div class="l">RPM</div></div>
-        <div class="param"><div class="v" style="color:#ffb347">${t.bpm}</div><div class="l">BPM</div></div>
-        <div class="param"><div class="v" style="color:#ff4466">${t.res}</div><div class="l">Resist.</div></div>
-        <div class="param"><div class="v" style="color:#4d79ff">${t.mani}</div><div class="l">Mani</div></div>
-      </div>
-      <div class="fase">${t.fase}</div>
-      <div class="tec">${t.tec}</div>
-      <div class="focus">${t.focus}</div>
-      `:'<div style="color:#6666aa;font-size:12px;margin-top:4px">Analisi AI non ancora eseguita</div>'}
-    </div>`;
+    const hasAI=t.z!=="\u2014",zc=hasAI?(ZC[t.z]||"#aaa"):"#aaa";
+    let segs="";
+    if(hasAI&&t.tec&&t.tec!=="\u2014"){
+      const parts=t.tec.split("\u2192").map(s=>s.trim()).filter(Boolean);
+      segs='<div class="segs-preview">'+parts.map(p=>'<span class="seg-pill '+guessType(p)+'">'+p+'</span>').join("")+'</div>';
+    }
+    wrap.innerHTML+='<div class="track-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h3 style="color:'+zc+'">'+t.i+'. '+t.title+'</h3><div class="track-meta">'+(t.ar||"\u2014")+' \u00b7 BPM '+t.bpm+' \u00b7 '+fmt(t.d)+' \u00b7 Inizio '+fmt(t.s)+'</div></div>'+(hasAI?'<span style="color:'+zc+';font-weight:700;font-size:20px;font-family:monospace;padding-top:4px">'+t.z+'</span>':'')+'</div>'+(hasAI?'<div class="params"><div class="param"><div class="v" style="color:'+zc+'">'+t.z+'</div><div class="l">Zona</div></div><div class="param"><div class="v" style="color:#00cc70">'+t.rpm+'</div><div class="l">RPM</div></div><div class="param"><div class="v" style="color:#ffb347">'+t.bpm+'</div><div class="l">BPM</div></div><div class="param"><div class="v" style="color:#ff4466">'+t.res+'</div><div class="l">Resist.</div></div><div class="param"><div class="v" style="color:#4d79ff">'+t.mani+'</div><div class="l">Mani</div></div></div><div class="fase-tag">'+t.fase+'</div><div class="tec-val">\ud83d\udd00 '+t.tec+'</div>'+segs+'<div class="focus-val" style="margin-top:6px">'+t.focus+'</div>':'<div style="color:#6666aa;font-size:12px;margin-top:4px">In attesa di analisi AI</div>')+'</div>';
   });
 }
 
-// ═══════════════════════════════════════════
-//  ANALISI AI — Google Gemini (gratuito)
-// ═══════════════════════════════════════════
 async function runAI(){
   document.getElementById("ai-warn").classList.remove("show");
-  document.getElementById("ai-nokey").classList.remove("show");
-
-  if(TRACKS.length===0){ document.getElementById("ai-warn").classList.add("show"); return; }
-
-  const apiKey = loadApiKey();
-  if(!apiKey){
-    document.getElementById("ai-nokey").classList.add("show");
-    document.getElementById('apikey-box').scrollIntoView({behavior:'smooth'});
-    return;
-  }
-
-  const title    = document.getElementById("wk-title").value||"Lezione Indoor";
-  const level    = document.getElementById("wk-level").value;
-  const protocol = document.getElementById("wk-protocol").value;
-  const totFmt   = fmt(TRACKS.reduce((a,b)=>a+b.d,0));
-
+  if(TRACKS.length===0){document.getElementById("ai-warn").classList.add("show");return;}
+  const title=document.getElementById("wk-title").value||"Lezione Indoor";
+  const level=document.getElementById("wk-level").value;
+  const protocol=document.getElementById("wk-protocol").value;
+  const totFmt=fmt(TRACKS.reduce((a,b)=>a+b.d,0));
   let list="";
-  TRACKS.forEach(t=>list+=`${t.i}. ${t.title} — ${t.ar} | BPM ${t.bpm} | ${fmt(t.d)} (${t.d}s)\n`);
+  TRACKS.forEach(t=>list+=t.i+'. "'+t.title+'" \u2014 '+t.ar+' | BPM:'+t.bpm+' | dur:'+t.d+'s ('+fmt(t.d)+')\n');
 
-  const prompt=`Sei un esperto istruttore di Indoor Cycling AIF 2° livello.
-Analizza questa playlist e genera i parametri ottimali per ogni brano.
-
-LEZIONE: ${title}
-LIVELLO: ${level}
-PROTOCOLLO: ${protocol}
-BRANI (${TRACKS.length} totali, durata ${totFmt}):
-${list}
-
-Rispondi ESCLUSIVAMENTE con un array JSON valido, senza testo prima o dopo, senza markdown, senza backtick.
-Un oggetto per brano, nell'ordine originale:
-[{"zona":"Z2","rpm_label":"80-90","res_label":"30%","res_num":0.30,"tecnica":"Seduto leggero → In piedi leggero","mani":"P1","fase":"Warm-up","focus":"Prepara le gambe, respira fondo."}]
-
-REGOLE OBBLIGATORIE:
-- zona: Z1/Z2/Z3/Z4/Z5 — Z1=recovery, Z2=aerobico leggero, Z3=moderato, Z4=hard, Z5=sprint massimale
-- Protocollo ${protocol}: struttura warm-up Z2 → corpo lezione → cooldown → stretching finale Z1
-- RPM per zona: Z1=60-70, Z2=80-95, Z3=85-100, Z4=70-105 (dipende da salita/sprint), Z5=100-120
-- Resistenza: Z1=15-25%, Z2=30-40%, Z3=40-55%, Z4=55-75%, Z5=65-80%
-- tecnica: usa → per separare i segmenti (max 3 segmenti per brano)
-- mani: P1 (recovery), P2 (standard), P3 (sprint/salita)
-- Il PRIMO brano: sempre warm-up Z2
-- L'ULTIMO brano: sempre stretching Z1, rpm 60-65, res 15-20%`;
+  const prompt='Sei un esperto istruttore Indoor Cycling AIF 2\u00b0 livello.\n\nLEZIONE: '+title+'\nLIVELLO: '+level+'\nPROTOCOLLO: '+protocol+'\nBRANI ('+TRACKS.length+', durata '+totFmt+'):\n'+list+'\nRispondi SOLO con array JSON valido, nessun testo, nessun markdown, nessun backtick.\nUn oggetto per brano nell ORDINE ORIGINALE:\n[{"zona":"Z2","rpm_label":"80\u201390","res_label":"30%","res_num":0.30,"mani":"P1\u21d4P2","fase":"Warm-up","tec":"Seduto leggero \u2192 In piedi leggero \u2192 Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]\n\nREGOLE ZONA FC:\nZ1=recovery 50-65% | Z2=aerobico 65-75% | Z3=soglia 75-85% | Z4=hard 85-92% | Z5=sprint 92-100%\n\nRPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:70-105 Z5:100-120\nRESISTENZA: Z1:15-25% Z2:30-40% Z3:40-55% Z4:55-75% Z5:65-80%\nMANUBRIO: P1=recovery P2=standard P3=sprint/salita usa \u2194 per alternanza \u2192 per progressione\n\nFORMATO CAMPO tec - USA ESATTAMENTE UNO DI QUESTI:\n1. SPRINT (brani Z5, HIIT): Sprint 20 secondi ON in piedi \u2192 Seduto 20 secondi OFF\n   oppure Sprint 30 secondi ON in piedi \u2192 Seduto 30 secondi OFF\n   oppure Sprint 15 secondi ON in piedi \u2192 Seduto 15 secondi OFF\n2. JUMP (brani Z3-Z4 ritmici): Jump in 8 \u2192 Jump in 4 \u2192 Jump in 2\n3. GENERICO max 3 segmenti: Seduto veloce \u2192 In piedi leggero \u2192 Seduto veloce\n   Salita progressiva Seduto carico \u2192 In piedi carico\n   Seduto ritmo costante\n\nSTRUTTURA:\n- Brano 1: warm-up Z2, Seduto leggero\n- Ultimi 2: defaticamento Z2 poi stretching Z1 mani P1\n- Sprint/Jump solo se BPM>110 e protocollo lo prevede\n- Montagna: Seduto carico \u2192 In piedi carico RPM 50-75';
 
   clearLog();
-  log("→ Chiamata a Google Gemini API (gratuita)...");
-  const btn = document.getElementById("btn-ai");
-  btn.disabled=true; btn.textContent="⏳ Analisi in corso...";
+  log("\u2192 Analisi "+TRACKS.length+" brani con Gemini...");
+  const btn=document.getElementById("btn-ai");
+  btn.disabled=true;btn.textContent="\u23f3 Analisi in corso...";
 
   try{
-    const GEMINI_MODEL = "gemini-1.5-flash";
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
-
-    const response = await fetch(url,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        contents:[{parts:[{text:prompt}]}],
-        generationConfig:{
-          temperature:0.3,
-          maxOutputTokens:4000,
-          responseMimeType:"application/json"
-        }
-      })
-    });
-
-    if(!response.ok){
-      const err = await response.text();
-      log(`✗ Errore HTTP ${response.status}: ${err}`);
-      btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
-      return;
-    }
-
-    const data = await response.json();
-    log("✓ Risposta ricevuta da Gemini.");
-
-    // Estrai testo dalla risposta Gemini
-    let text = "";
-    if(data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts){
-      text = data.candidates[0].content.parts.map(p=>p.text||"").join("");
-    } else if(data.error){
-      log(`✗ Errore Gemini: ${data.error.message||JSON.stringify(data.error)}`);
-      btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
-      return;
-    }
-
-    if(!text){ log("✗ Risposta vuota da Gemini."); btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI"; return; }
-
-    // Estrai JSON (Gemini con responseMimeType=application/json risponde direttamente JSON)
-    const clean = text.replace(/```json/g,"").replace(/```/g,"").trim();
-    const jsonMatch = clean.match(/\[[\s\S]*\]/);
-    if(!jsonMatch){
-      log("✗ JSON non trovato nella risposta.\nRisposta:\n"+text.substring(0,500));
-      btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
-      return;
-    }
-
-    const parsed = JSON.parse(jsonMatch[0]);
-    log(`✓ ${parsed.length} brani elaborati con successo.`);
-
-    TRACKS = TRACKS.map((t,i)=>{
-      const ai = parsed[i]; if(!ai) return t;
-      return{...t,
-        z:    ai.zona||t.z,
-        rpm:  ai.rpm_label||t.rpm,
-        res:  ai.res_label||t.res,
-        rn:   ai.res_num||0,
-        tec:  ai.tecnica||t.tec,
-        mani: ai.mani||t.mani,
-        fase: ai.fase||t.fase,
-        focus:ai.focus||t.focus
-      };
-    });
-
+    const r=await fetch(WORKER_URL+"/gemini",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
+    if(!r.ok){const err=await r.text();log("\u2717 Errore HTTP "+r.status+": "+err);btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";return;}
+    const data=await r.json();
+    let text="";
+    if(data.candidates&&data.candidates[0]&&data.candidates[0].content){text=data.candidates[0].content.parts.map(p=>p.text||"").join("");}
+    else if(data.error){log("\u2717 Errore: "+(data.error.message||JSON.stringify(data.error)));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";return;}
+    if(!text){log("\u2717 Risposta vuota.");btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";return;}
+    log("\u2713 Risposta ricevuta. Parsing...");
+    const clean=text.replace(/```json/g,"").replace(/```/g,"").trim();
+    const jsonMatch=clean.match(/\[[\s\S]*\]/);
+    if(!jsonMatch){log("\u2717 JSON non trovato:\n"+text.substring(0,300));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";return;}
+    const parsed=JSON.parse(jsonMatch[0]);
+    log("\u2713 "+parsed.length+" brani elaborati con successo.");
+    TRACKS=TRACKS.map((t,i)=>{const ai=parsed[i];if(!ai)return t;return{...t,z:ai.zona||t.z,rpm:ai.rpm_label||t.rpm,res:ai.res_label||t.res,rn:ai.res_num||0,tec:ai.tec||t.tec,mani:ai.mani||t.mani,fase:ai.fase||t.fase,focus:ai.focus||t.focus};});
     renderCards();
-    log("✓ Analisi completata. Revisiona i brani e poi vai al Step 5.");
-
-  }catch(err){
-    log("✗ Errore: "+err.message);
-  }
-
-  btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
+    log("\u2713 Completato. Revisiona i brani e vai al Step 5.");
+  }catch(err){log("\u2717 Errore: "+err.message);}
+  btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";
 }
 
-// ═══════════════════════════════════════════
-//  GENERA PLAYER
-// ═══════════════════════════════════════════
 async function generatePlayer(){
-  const client   = document.getElementById("sp-client-id").value.trim();
-  const redirect = document.getElementById("sp-redirect").value.trim();
-  let playlist   = document.getElementById("sp-playlist").value.trim();
-
-  if(!client||!redirect){ alert("Compila Client ID e Redirect URI."); return; }
-  if(!playlist){ alert("Inserisci l'URL della playlist Spotify."); return; }
-
-  // Converti URL → URI
-  if(playlist.startsWith("https://open.spotify.com/playlist/")){
-    const id = playlist.split("/playlist/")[1].split("?")[0];
-    playlist = "spotify:playlist:"+id;
-  }
-
-  const title   = document.getElementById("wk-title").value.trim()||"Indoor Cycling";
-  const instr   = document.getElementById("wk-instructor").value.trim()||"Istruttore";
-  const totSec  = TRACKS.reduce((a,b)=>a+b.d,0);
-  const h=Math.floor(totSec/3600), m=Math.floor((totSec%3600)/60), s=totSec%60;
-  const total   = `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-
+  const client=document.getElementById("sp-client-id").value.trim();
+  const redirect=document.getElementById("sp-redirect").value.trim();
+  let playlist=document.getElementById("sp-playlist").value.trim();
+  if(!client||!redirect){alert("Compila Client ID e Redirect URI.");return;}
+  if(!playlist){alert("Inserisci l URL della playlist Spotify.");return;}
+  if(playlist.startsWith("https://open.spotify.com/playlist/")){const id=playlist.split("/playlist/")[1].split("?")[0];playlist="spotify:playlist:"+id;}
+  const title=document.getElementById("wk-title").value.trim()||"Indoor Cycling";
+  const instr=document.getElementById("wk-instructor").value.trim()||"Istruttore";
+  const totSec=TRACKS.reduce((a,b)=>a+b.d,0);
+  const h=Math.floor(totSec/3600),m=Math.floor((totSec%3600)/60),s=totSec%60;
+  const total=h+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
   try{
-    let tpl = "";
-    try{
-      const res = await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");
-      if(res.ok) tpl = await res.text();
-    }catch(e){}
-
-    if(!tpl){ alert("Template non trovato. Assicurati che index_template_placeholder.html sia nel repo GitHub."); return; }
-
-    let filled = tpl
-      .replace(/\{\{TITLE\}\}/g,       title)
-      .replace(/\{\{INSTRUCTOR\}\}/g,   instr)
-      .replace(/\{\{TRACK_COUNT\}\}/g,  String(TRACKS.length))
-      .replace(/\{\{TOTAL_TIME\}\}/g,   total)
-      .replace(/\{\{CLIENT_ID\}\}/g,    client)
-      .replace(/\{\{REDIRECT_URI\}\}/g, redirect)
-      .replace(/\{\{PLAYLIST_URI\}\}/g, playlist)
-      .replace("const T = [];// Injected dynamically", `const T = ${JSON.stringify(TRACKS,null,2)};`)
-      .replace("const TOTAL=3495;",     `const TOTAL=${totSec};`)
-      .replace(/0:58:15/g,             total);
-
-    const blob = new Blob([filled],{type:"text/html"});
-    const url  = URL.createObjectURL(blob);
-    const a    = document.getElementById("dl-link");
-    a.href=url; a.download="index.html"; a.classList.add("show");
+    let tpl="";
+    try{const res=await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");if(res.ok)tpl=await res.text();}catch(e){}
+    if(!tpl){alert("Template non trovato su GitHub. Assicurati che index_template_placeholder.html sia nel repo giusprim/Indoor.");return;}
+    let filled=tpl
+      .replace(/\{\{TITLE\}\}/g,title).replace(/\{\{INSTRUCTOR\}\}/g,instr)
+      .replace(/\{\{TRACK_COUNT\}\}/g,String(TRACKS.length)).replace(/\{\{TOTAL_TIME\}\}/g,total)
+      .replace(/\{\{CLIENT_ID\}\}/g,client).replace(/\{\{REDIRECT_URI\}\}/g,redirect)
+      .replace(/\{\{PLAYLIST_URI\}\}/g,playlist)
+      .replace("const T = [];// Injected dynamically","const T = "+JSON.stringify(TRACKS,null,2)+";")
+      .replace("const TOTAL=3495;","const TOTAL="+totSec+";")
+      .replace(/0:58:15/g,total);
+    const blob=new Blob([filled],{type:"text/html"});
+    const url=URL.createObjectURL(blob);
+    const a=document.getElementById("dl-link");
+    a.href=url;a.download="index.html";a.classList.add("show");
     a.scrollIntoView({behavior:'smooth'});
-
-  }catch(err){ alert("Errore: "+err.message); }
+  }catch(err){alert("Errore: "+err.message);}
 }
 </script>
 </body>
