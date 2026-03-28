@@ -53,19 +53,20 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="apikey-indicator"></span>
-    <span class="badge">v3.2.4</span>
+    <span class="badge">v3.2.5</span>
   </div>
 </header>
 
 <main>
   <div id="apikey-box">
     <h2 style="color:#1DB954;font-size:15px;margin-bottom:8px">🔑 Google Gemini API Key</h2>
-    <p style="font-size:12px;color:#888;margin-bottom:12px">Inserisci la chiave da <code>aistudio.google.com</code>.</p>
+    <p style="font-size:12px;color:#888;margin-bottom:12px">Configurazione necessaria per l'analisi tecnica dei brani.</p>
     <div class="row" style="grid-template-columns:1fr auto auto">
       <input type="password" id="apikey-input" placeholder="AIzaSy..." style="margin-bottom:0"/>
-      <button class="btn btn-primary" onclick="saveApiKey()" style="background:#1DB954">Salva</button>
-      <button class="btn btn-secondary" onclick="clearApiKey()">✕</button>
+      <button class="btn btn-primary" onclick="handleSaveKey()" style="background:#1DB954">Salva</button>
+      <button class="btn btn-secondary" onclick="handleClearKey()">✕</button>
     </div>
+    <div id="key-status" style="font-size:11px;margin-top:8px"></div>
   </div>
 
   <div class="card">
@@ -82,7 +83,7 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
   <div class="card">
     <h2><span class="step-num">2</span>Setup Lezione</h2>
     <div class="row">
-      <div><label>Titolo</label><input id="wk-title" value="ROCK ITALIAN FIRE"></div>
+      <div><label>Titolo</label><input id="wk-title" value="POWER RIDE"></div>
       <div><label>Istruttore</label><input id="wk-instructor" value="Giuseppe Primavera"></div>
     </div>
     <div class="row">
@@ -92,7 +93,7 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
       </div>
       <div>
         <label>Protocollo</label>
-        <select id="wk-protocol"><option value="Interval Estensivo">Interval Estensivo</option><option value="Endurance">Endurance</option></select>
+        <select id="wk-protocol"><option value="Interval Estensivo">Interval Estensivo</option><option value="Endurance">Endurance</option><option value="Fartlek">Fartlek</option></select>
       </div>
     </div>
   </div>
@@ -110,12 +111,10 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 
   <div class="card">
     <h2><span class="step-num">5</span>Genera</h2>
-    <div class="row">
-      <input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c" hidden>
-      <input id="sp-redirect" value="https://giusprim.github.io/Indoor/" hidden>
-    </div>
+    <input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c" hidden>
+    <input id="sp-redirect" value="https://giusprim.github.io/Indoor/" hidden>
     <label>URL Playlist Spotify</label>
-    <input id="sp-playlist" placeholder="https://open.spotify.com/playlist/...">
+    <input id="sp-playlist" placeholder="Incolla link playlist Spotify">
     <button class="btn btn-gen" onclick="generatePlayer()" style="width:100%">Genera index.html</button>
     <a id="dl-link" download="index.html">✅ Scarica index.html</a>
   </div>
@@ -125,30 +124,64 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 const KEY_STORAGE = 'gemini_api_key_prc';
 let TRACKS = [];
 
-function loadApiKey(){ return localStorage.getItem(KEY_STORAGE)||''; }
-function saveApiKey(){ localStorage.setItem(KEY_STORAGE, document.getElementById('apikey-input').value.trim()); location.reload(); }
-function clearApiKey(){ localStorage.removeItem(KEY_STORAGE); location.reload(); }
+function getSavedKey(){ return localStorage.getItem(KEY_STORAGE) || ''; }
 
-(function init(){
-  const k = loadApiKey();
-  document.getElementById('apikey-indicator').className = k ? 'ok' : 'err';
-  if(k) document.getElementById('apikey-input').value = k;
-})();
+function updateUIStatus(){
+  const k = getSavedKey();
+  const ind = document.getElementById('apikey-indicator');
+  const inp = document.getElementById('apikey-input');
+  const stat = document.getElementById('key-status');
+  
+  if(k){
+    ind.className = 'ok';
+    inp.value = k;
+    stat.textContent = "✓ Chiave configurata correttamente";
+    stat.style.color = "#1DB954";
+  } else {
+    ind.className = 'err';
+    stat.textContent = "⚠ Inserire la chiave per procedere";
+    stat.style.color = "#ff4466";
+  }
+}
+
+function handleSaveKey(){
+  const val = document.getElementById('apikey-input').value.trim();
+  if(!val.startsWith('AIza')){ alert('Chiave non valida (deve iniziare con AIza)'); return; }
+  localStorage.setItem(KEY_STORAGE, val);
+  updateUIStatus();
+}
+
+function handleClearKey(){
+  localStorage.removeItem(KEY_STORAGE);
+  document.getElementById('apikey-input').value = '';
+  updateUIStatus();
+}
+
+// Inizializzazione al caricamento
+window.onload = updateUIStatus;
 
 function fmt(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; }
 function parseTime(t){
   const p = String(t).trim().split(":").map(Number);
   return p.length===2 ? p[0]*60+p[1] : parseInt(t)||0;
 }
-function log(msg){ const el=document.getElementById("ai-log"); el.classList.add("visible"); el.textContent+=msg+"\n"; }
+function log(msg){ 
+  const el=document.getElementById("ai-log"); 
+  el.classList.add("visible"); 
+  el.textContent+=msg+"\n"; 
+  el.scrollTop=el.scrollHeight;
+}
 
 function importManual(){
   const raw = document.getElementById("in-man").value.trim();
+  if(!raw) return;
   TRACKS = raw.split(/\n/).map((line, i)=>{
     const parts = line.split("|").map(x=>x.trim());
+    if(parts.length < 2) return null;
     const ta = parts[0];
-    return {i:i+1, title:ta.split("—")[0].trim(), ar:ta.split("—")[1]||"", bpm:parts[1], d:parseTime(parts[2]), z:"—", rpm:"—", res:"—", tec:"—", mani:"P2", fase:"—", focus:"—", s:0};
-  });
+    return {i:i+1, title:ta.split("—")[0].trim(), ar:ta.split("—")[1]||"", bpm:parts[1], d:parseTime(parts[2]||"180"), z:"—", rpm:"—", res:"—", tec:"—", mani:"P2", fase:"—", focus:"—", s:0};
+  }).filter(t => t !== null);
+  
   let cur=0; TRACKS.forEach(t=>{t.s=cur; cur+=t.d;});
   renderCards();
 }
@@ -160,7 +193,7 @@ function importCSV(){
     const rows = r.result.split(/\r?\n/).filter(x=>x.trim());
     TRACKS = rows.map((row, i)=>{
       const c = row.includes(";") ? row.split(";") : row.split(",");
-      return {i:i+1, title:c[0], ar:c[1]||"", bpm:c[2], d:parseTime(c[3]), z:"—", rpm:"—", res:"—", tec:"—", mani:"P2", fase:"—", focus:"—", s:0};
+      return {i:i+1, title:c[0], ar:c[1]||"", bpm:c[2], d:parseTime(c[3]||"180"), z:"—", rpm:"—", res:"—", tec:"—", mani:"P2", fase:"—", focus:"—", s:0};
     });
     let cur=0; TRACKS.forEach(t=>{t.s=cur; cur+=t.d;});
     renderCards();
@@ -186,8 +219,9 @@ function renderCards(){
 }
 
 async function runAI(){
-  const apiKey = loadApiKey();
-  if(!apiKey || TRACKS.length===0) return;
+  const apiKey = getSavedKey();
+  if(!apiKey || TRACKS.length===0) { alert("Dati o API Key mancanti."); return; }
+  
   const btn = document.getElementById("btn-ai");
   btn.disabled=true; btn.textContent="Analisi in corso...";
   document.getElementById("ai-log").textContent="";
@@ -211,9 +245,10 @@ async function runAI(){
     const cleanJson = raw.replace(/```json/g, "").replace(/```/g, "").trim();
     const results = JSON.parse(cleanJson);
 
-    TRACKS = TRACKS.map((t, i) => ({
+    TRACKS = TRACKS.map((t, i) => results[i] ? ({
       ...t, z:results[i].zona, rpm:results[i].rpm_label, res:results[i].res_label, rn:results[i].res_num, tec:results[i].tecnica, mani:results[i].mani, fase:results[i].fase, focus:results[i].focus
-    }));
+    }) : t);
+    
     renderCards();
     log("✓ Analisi completata.");
   } catch(e) { log("✗ Errore: " + e.message); }
@@ -229,7 +264,9 @@ async function generatePlayer(){
     const r = await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");
     if(r.ok) tpl = await r.text();
   } catch(e){}
+  
   if(!tpl){ alert("Template non trovato."); return; }
+  
   const final = tpl
     .replace(/\{\{TITLE\}\}/g, document.getElementById("wk-title").value)
     .replace(/\{\{INSTRUCTOR\}\}/g, document.getElementById("wk-instructor").value)
@@ -238,6 +275,7 @@ async function generatePlayer(){
     .replace(/\{\{PLAYLIST_URI\}\}/g, uri)
     .replace("const T = [];// Injected dynamically", `const T = ${JSON.stringify(TRACKS)};`)
     .replace("const TOTAL=3495;", `const TOTAL=${totSec};`);
+    
   const blob = new Blob([final], {type: "text/html"});
   const a = document.getElementById("dl-link");
   a.href = URL.createObjectURL(blob); a.classList.add("show");
