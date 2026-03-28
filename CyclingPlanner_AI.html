@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🚴 Indoor Cycling Planner — Power Ride Coach</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07070d;color:#e8e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;min-height:100vh}
+:root{--accent:#00d4aa;--red:#ff4466;--amber:#ffb347;--blue:#4d79ff;--purple:#cc88ff;--bg:#07070d;--s1:#0f0f1a;--s2:#16162a;--s3:#1e1e32;--border:#2a2a44}
+header{background:var(--s1);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px}
+header h1{font-size:18px;font-weight:700}
+header p{font-size:12px;color:#6666aa}
+.badge{background:#1a1a40;border:1px solid var(--border);color:var(--accent);padding:3px 10px;border-radius:6px;font-size:11px;font-family:monospace}
+main{max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:20px}
+.card h2{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--accent);text-transform:uppercase;letter-spacing:.6px}
+textarea,input,select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:#e8e8f0;padding:10px 12px;font-size:13px;margin-bottom:10px;outline:none;font-family:inherit}
+textarea:focus,input:focus,select:focus{border-color:var(--accent)}
+textarea{resize:vertical;line-height:1.5}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.btn{padding:11px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;transition:opacity .15s}
+.btn:active{opacity:.8}
+.btn-primary{background:var(--accent);color:#000}
+.btn-secondary{background:var(--s3);border:1px solid var(--border);color:#e8e8f0}
+.btn-gen{background:var(--red);color:#fff;width:100%;padding:14px;font-size:15px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+#ai-log{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;font-family:monospace;height:120px;overflow-y:auto;white-space:pre-wrap;display:none;color:#aaa;margin-top:10px}
+#ai-log.visible{display:block}
+.track-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px}
+.track-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+.track-card .meta{font-size:11px;color:#6666aa;margin-bottom:10px}
+.params{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
+.param{background:var(--s3);border-radius:6px;padding:6px 4px;text-align:center}
+.param .v{font-size:14px;font-weight:700;font-family:monospace}
+.param .l{font-size:9px;color:#6666aa;text-transform:uppercase;margin-top:2px}
+.param.z1{color:#4d79ff}.param.z2{color:#00cc70}.param.z3{color:#ffcc00}.param.z4{color:#ff8844}.param.z5{color:#ff4466}
+.fase{display:inline-block;background:#1a1040;border:1px solid #3a2080;color:var(--purple);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-bottom:6px}
+.tec{font-size:12px;color:#aaa;margin-bottom:4px}
+.focus{font-size:12px;color:#e8e8f0;font-style:italic;border-left:3px solid var(--purple);padding-left:8px}
+.status-ok{color:var(--accent)}
+.status-err{color:var(--red)}
+.hint{font-size:11px;color:#6666aa;margin-top:-6px;margin-bottom:10px;line-height:1.5}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+#dl-link{display:none;margin-top:12px;padding:12px 20px;background:var(--s2);border:1px solid var(--accent);border-radius:8px;text-align:center;text-decoration:none;color:var(--accent);font-weight:700;font-size:14px}
+#dl-link.show{display:block}
+.step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
+.warning{background:#1a0a00;border:1px solid #ff8844;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--amber);margin-top:8px;display:none}
+.warning.show{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🚴 Indoor Cycling Planner</h1>
+    <p>Power Ride Coach · Giuseppe Primavera · AIF 2° Livello</p>
+  </div>
+  <span class="badge">v3.0</span>
+</header>
+
+<main>
+
+  <!-- STEP 1: IMPORT -->
+  <div class="card">
+    <h2><span class="step-num">1</span>Importa Brani</h2>
+    <p class="hint">Formato: una riga per brano → <code>Titolo — Artista | BPM | mm:ss</code> oppure <code>Titolo — Artista | BPM | durata_sec</code></p>
+    <textarea id="in-man" rows="10" placeholder="Nell'aria 2021 — Ben DJ | 116 | 2:25
+Primavera — Ben DJ | 114 | 3:22
+Nel blu dipinto di blu — Domenico Modugno | 123 | 2:56
+Ti Sento — Bob Sinclar, Matia Bazar | 123 | 2:52
+ITALIA STARTER PACK — J-Ax | 115 | 2:42"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="importManual()">Importa</button>
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:#e8e8f0;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px">
+        <span>CSV</span>
+        <input type="file" accept=".csv" id="in-file" style="display:none" onchange="importCSV()">
+      </label>
+    </div>
+    <div id="import-status" style="margin-top:10px;font-size:13px"></div>
+  </div>
+
+  <!-- STEP 2: SETUP -->
+  <div class="card">
+    <h2><span class="step-num">2</span>Setup Lezione</h2>
+    <div class="row">
+      <div><label>Titolo Lezione</label><input id="wk-title" placeholder="Italian Power Ride"></div>
+      <div><label>Istruttore</label><input id="wk-instructor" value="Giuseppe Primavera" placeholder="Giuseppe Primavera"></div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Livello Partecipanti</label>
+        <select id="wk-level">
+          <option value="principiante">Principiante</option>
+          <option value="intermedio" selected>Intermedio</option>
+          <option value="avanzato">Avanzato</option>
+          <option value="misto">Misto</option>
+        </select>
+      </div>
+      <div>
+        <label>Protocollo</label>
+        <select id="wk-protocol">
+          <option value="endurance">Endurance</option>
+          <option value="interval_estensivo">Interval Estensivo</option>
+          <option value="hiit">HIIT</option>
+          <option value="montagna">Montagna</option>
+          <option value="recovery">Recovery</option>
+          <option value="forza">Forza/Strength</option>
+          <option value="piramidale">Piramidale</option>
+          <option value="tabata">Tabata Cycling</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: AI -->
+  <div class="card">
+    <h2><span class="step-num">3</span>Analisi AI</h2>
+    <p class="hint">Claude analizza la tua playlist e assegna zona FC, RPM, resistenza, manubrio, tecnica con segmenti temporali e focus coaching per ogni brano.</p>
+    <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con Claude AI</button>
+    <div id="ai-log"></div>
+    <div id="ai-warn" class="warning">
+      ⚠️ Importa prima i brani (Step 1) prima di eseguire l'analisi.
+    </div>
+  </div>
+
+  <!-- STEP 4: REVISIONE -->
+  <div class="card">
+    <h2><span class="step-num">4</span>Revisione Brani</h2>
+    <div id="cards"><p style="color:#6666aa;font-size:13px">I brani analizzati appariranno qui.</p></div>
+  </div>
+
+  <!-- STEP 5: GENERA PLAYER -->
+  <div class="card">
+    <h2><span class="step-num">5</span>Genera Player HTML</h2>
+    <p class="hint">I parametri Spotify sono già pre-compilati. Inserisci solo l'URI della playlist di questa lezione.</p>
+    <div class="row">
+      <div>
+        <label>Client ID Spotify</label>
+        <input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c" placeholder="Client ID">
+      </div>
+      <div>
+        <label>Redirect URI</label>
+        <input id="sp-redirect" value="https://giusprim.github.io/Indoor/" placeholder="Redirect URI">
+      </div>
+    </div>
+    <div>
+      <label>URI Playlist Spotify</label>
+      <input id="sp-playlist" placeholder="spotify:playlist:XXXXXXXXXXXXXXXXXXXXXX">
+      <p class="hint">Copia il link Spotify → tasto destro sulla playlist → Condividi → Copia link. Il formato sarà: https://open.spotify.com/playlist/XXXX — il planner lo converte automaticamente in URI.</p>
+    </div>
+    <button class="btn btn-gen" onclick="generatePlayer()">⬇ Genera e Scarica index.html</button>
+    <a id="dl-link" download="index.html">✅ index.html pronto — Clicca per scaricare</a>
+    <div style="margin-top:14px;background:var(--s2);border-radius:8px;padding:12px;font-size:12px;color:#6666aa">
+      <strong style="color:#e8e8f0">Dopo il download:</strong><br>
+      1. Vai su <strong>github.com/Giusprim/Indoor</strong><br>
+      2. Clicca su <code>index.html</code> → matita (edit) → Upload file → sostituisci il file<br>
+      3. Oppure usa Git: <code>git add index.html && git commit -m "nuova lezione" && git push</code><br>
+      4. Dopo 30–60 secondi il player è live su <strong>https://giusprim.github.io/Indoor/</strong>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const WORKER_URL = "https://anthropic-proxy.g-primavera-co.workers.dev";
+const TPL_URL    = "index_template_placeholder.html"; // stesso repo GitHub
+
+let TRACKS = [];
+
+// ── UTILS ─────────────────────────────────────────────
+function fmt(s){ s=Math.max(0,Math.floor(s)); const m=Math.floor(s/60),sc=s%60; return `${m}:${String(sc).padStart(2,"0")}`; }
+
+function parseTime(t){
+  if(!t) return 0;
+  t = String(t).trim();
+  const p = t.split(":").map(Number);
+  if(p.length===2) return p[0]*60+p[1];
+  if(p.length===3) return p[0]*3600+p[1]*60+p[2];
+  return parseInt(t)||0;
+}
+
+function log(msg){
+  const el=document.getElementById("ai-log");
+  el.classList.add("visible");
+  el.textContent += msg+"\n";
+  el.scrollTop=el.scrollHeight;
+}
+
+function clearLog(){
+  const el=document.getElementById("ai-log");
+  el.textContent="";
+  el.classList.add("visible");
+}
+
+// ── IMPORT MANUALE ─────────────────────────────────────
+function importManual(){
+  const raw=document.getElementById("in-man").value.trim();
+  if(!raw){setImportStatus("Nessun testo inserito.","err");return;}
+  TRACKS=[];
+  const lines=raw.split(/\n/).filter(x=>x.trim());
+  let i=1;
+  lines.forEach(line=>{
+    // Supporta: "Titolo — Artista | BPM | mm:ss" oppure "Titolo | BPM | mm:ss"
+    const parts=line.split("|").map(x=>x.trim());
+    if(parts.length<2) return;
+    const ta=parts[0];
+    const bpm=parseInt(parts[1])||0;
+    const dur=parseTime(parts[2]);
+    let title=ta, artist="";
+    if(ta.includes("—")){const p=ta.split("—");title=p[0].trim();artist=p.slice(1).join("—").trim();}
+    else if(ta.includes("-")){const p=ta.split("-");title=p[0].trim();artist=p.slice(1).join("-").trim();}
+    TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,
+      z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
+  });
+  if(TRACKS.length===0){setImportStatus("Formato non riconosciuto. Usa: Titolo — Artista | BPM | mm:ss","err");return;}
+  calcStartTimes();
+  renderCards();
+  setImportStatus(`✓ ${TRACKS.length} brani importati (durata totale: ${fmt(TRACKS.reduce((a,b)=>a+b.d,0))})`, "ok");
+}
+
+// ── IMPORT CSV ─────────────────────────────────────────
+function importCSV(){
+  const f=document.getElementById("in-file").files[0];
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    TRACKS=[];
+    const rows=r.result.split(/\r?\n/).filter(x=>x.trim());
+    let i=1;
+    rows.forEach(row=>{
+      const c=row.split(",");
+      if(c.length<2) return;
+      const ta=c[0].trim();
+      const bpm=parseInt(c[1])||0;
+      const dur=parseTime(c[2]);
+      let title=ta,artist="";
+      if(ta.includes("—")){const p=ta.split("—");title=p[0].trim();artist=p[1].trim();}
+      TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,
+        z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
+    });
+    calcStartTimes();
+    renderCards();
+    setImportStatus(`✓ ${TRACKS.length} brani da CSV (durata: ${fmt(TRACKS.reduce((a,b)=>a+b.d,0))})`, "ok");
+  };
+  r.readAsText(f,"utf-8");
+}
+
+function calcStartTimes(){
+  let cur=0;
+  TRACKS.forEach(t=>{t.s=cur;cur+=t.d;});
+}
+
+function setImportStatus(msg,type){
+  const el=document.getElementById("import-status");
+  el.textContent=msg;
+  el.className=type==="ok"?"status-ok":"status-err";
+}
+
+// ── RENDER CARDS ───────────────────────────────────────
+const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
+
+function renderCards(){
+  const wrap=document.getElementById("cards");
+  if(TRACKS.length===0){wrap.innerHTML='<p style="color:#6666aa;font-size:13px">Nessun brano.</p>';return;}
+  wrap.innerHTML="";
+  TRACKS.forEach((t,idx)=>{
+    const hasAI = t.z!=="—";
+    const zcolor = hasAI ? (ZC[t.z]||"#aaa") : "#aaa";
+    wrap.innerHTML+=`
+    <div class="track-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <h3 style="color:${zcolor}">${t.i}. ${t.title}</h3>
+          <div class="meta">${t.ar} · BPM ${t.bpm} · ${fmt(t.d)} · Inizio ${fmt(t.s)}</div>
+        </div>
+        ${hasAI?`<span style="color:${zcolor};font-weight:700;font-size:18px;font-family:monospace">${t.z}</span>`:''}
+      </div>
+      ${hasAI?`
+      <div class="params">
+        <div class="param"><div class="v" style="color:${zcolor}">${t.z}</div><div class="l">Zona</div></div>
+        <div class="param"><div class="v" style="color:#00cc70">${t.rpm}</div><div class="l">RPM</div></div>
+        <div class="param"><div class="v" style="color:#ffb347">${t.bpm}</div><div class="l">BPM</div></div>
+        <div class="param"><div class="v" style="color:#ff4466">${t.res}</div><div class="l">Resist.</div></div>
+        <div class="param"><div class="v" style="color:#4d79ff">${t.mani}</div><div class="l">Mani</div></div>
+      </div>
+      <div class="fase">${t.fase}</div>
+      <div class="tec">${t.tec}</div>
+      <div class="focus">${t.focus}</div>
+      `:'<div style="color:#6666aa;font-size:12px">Analisi AI non ancora eseguita</div>'}
+    </div>`;
+  });
+}
+
+// ── ANALISI AI ─────────────────────────────────────────
+async function runAI(){
+  document.getElementById("ai-warn").classList.remove("show");
+  if(TRACKS.length===0){document.getElementById("ai-warn").classList.add("show");return;}
+
+  const title=document.getElementById("wk-title").value||"Lezione Indoor";
+  const level=document.getElementById("wk-level").value;
+  const protocol=document.getElementById("wk-protocol").value;
+
+  let list="";
+  TRACKS.forEach(t=>list+=`${t.i}. ${t.title} — ${t.ar} | BPM ${t.bpm} | ${fmt(t.d)} (${t.d}s)\n`);
+
+  const prompt=`Sei un esperto istruttore di Indoor Cycling AIF 2° livello.
+Analizza questa playlist e genera i parametri per ogni brano.
+
+LEZIONE: ${title}
+LIVELLO: ${level}
+PROTOCOLLO: ${protocol}
+
+BRANI (${TRACKS.length} totali, durata totale ${fmt(TRACKS.reduce((a,b)=>a+b.d,0))}):
+${list}
+
+Per ogni brano genera esattamente questo JSON (array ordinato, un elemento per brano):
+[
+  {
+    "zona": "Z3",
+    "rpm_label": "85–95",
+    "res_label": "45%",
+    "res_num": 0.45,
+    "tecnica": "Seduto veloce → In piedi leggero → Seduto veloce",
+    "mani": "P2",
+    "fase": "Endurance",
+    "focus": "Mantieni regolarità; respira ogni 4 battiti."
+  }
+]
+
+REGOLE:
+- Zone: Z1 (recovery), Z2 (easy aerobico), Z3 (moderato soglia), Z4 (hard lattato), Z5 (max sprint)
+- Protocollo ${protocol}: rispetta la struttura corretta (warm-up, corpo, cooldown/defaticamento)
+- RPM: Z1=60-70, Z2=80-95, Z3=85-100, Z4=70-105, Z5=100-120
+- Resistenza: Z1=15-25%, Z2=30-40%, Z3=40-55%, Z4=55-75%, Z5=65-80%
+- Tecnica con → tra segmenti (es: Seduto veloce → In piedi leggero)
+- Focus coaching: breve, pratico, al presente
+- L'ultimo brano deve essere SEMPRE stretching (Z1, RPM 60-65, res 15-20%)
+- Il primo brano deve essere SEMPRE warm-up (Z2)
+- Rispondi SOLO con il JSON, nessun testo aggiuntivo, nessun markdown`;
+
+  clearLog();
+  log("→ Invio richiesta a Claude AI...");
+  const btn=document.getElementById("btn-ai");
+  btn.disabled=true; btn.textContent="⏳ Analisi in corso...";
+
+  try{
+    const r=await fetch(`${WORKER_URL}/claude`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:4000,
+        messages:[{role:"user",content:prompt}]
+      })
+    });
+
+    if(!r.ok){
+      const err=await r.text();
+      log(`✗ Errore HTTP ${r.status}: ${err}`);
+      btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";
+      return;
+    }
+
+    const data=await r.json();
+    log("✓ Risposta ricevuta.");
+
+    // Estrai il testo dalla risposta Anthropic
+    let text="";
+    if(data.content&&data.content[0]&&data.content[0].text){
+      text=data.content[0].text;
+    } else if(data.error){
+      log(`✗ Errore API: ${data.error.message||JSON.stringify(data.error)}`);
+      btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";
+      return;
+    } else {
+      log(`✗ Risposta inattesa: ${JSON.stringify(data).substring(0,200)}`);
+      btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";
+      return;
+    }
+
+    // Estrai JSON dall'output
+    const clean=text.replace(/```json/g,"").replace(/```/g,"").trim();
+    const jsonMatch=clean.match(/\[[\s\S]*\]/);
+    if(!jsonMatch){log("✗ JSON non trovato nella risposta AI.\nRisposta:\n"+text.substring(0,500));btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";return;}
+
+    const parsed=JSON.parse(jsonMatch[0]);
+    if(!Array.isArray(parsed)||parsed.length===0){log("✗ Array JSON vuoto.");btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";return;}
+
+    log(`✓ ${parsed.length} brani elaborati con successo.`);
+
+    TRACKS=TRACKS.map((t,i)=>{
+      const ai=parsed[i];
+      if(!ai) return t;
+      return{
+        ...t,
+        z: ai.zona||t.z,
+        rpm: ai.rpm_label||t.rpm,
+        res: ai.res_label||t.res,
+        rn: ai.res_num||0,
+        tec: ai.tecnica||t.tec,
+        mani: ai.mani||t.mani,
+        fase: ai.fase||t.fase,
+        focus: ai.focus||t.focus
+      };
+    });
+
+    renderCards();
+    log("✓ Analisi completata. Procedi con Step 4 per revisionare e Step 5 per generare il player.");
+
+  } catch(err){
+    log("✗ Errore: "+err.message);
+  }
+
+  btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";
+}
+
+// ── GENERAZIONE PLAYER ─────────────────────────────────
+async function generatePlayer(){
+  const client=document.getElementById("sp-client-id").value.trim();
+  const redirect=document.getElementById("sp-redirect").value.trim();
+  let playlist=document.getElementById("sp-playlist").value.trim();
+
+  if(!client||!redirect){alert("Compila Client ID e Redirect URI.");return;}
+  if(!playlist){alert("Inserisci l'URI o URL della playlist Spotify.");return;}
+
+  // Converti URL in URI se necessario
+  if(playlist.startsWith("https://open.spotify.com/playlist/")){
+    const id=playlist.split("/playlist/")[1].split("?")[0];
+    playlist="spotify:playlist:"+id;
+  }
+
+  const title=document.getElementById("wk-title").value.trim()||"Indoor Cycling";
+  const instr=document.getElementById("wk-instructor").value.trim()||"Istruttore";
+  const totSec=TRACKS.reduce((a,b)=>a+b.d,0);
+  const h=Math.floor(totSec/3600),m=Math.floor((totSec%3600)/60),s=totSec%60;
+  const total=h?`${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`0:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+  try{
+    // Carica il template dal repo
+    let tpl="";
+    try{
+      const res=await fetch(TPL_URL);
+      if(res.ok) tpl=await res.text();
+    }catch(e){}
+
+    // Se il template non è disponibile (locale), usa quello integrato
+    if(!tpl) tpl=FALLBACK_TEMPLATE;
+
+    const trackData=JSON.stringify(TRACKS,null,2);
+    const TOTAL_SEC=totSec;
+
+    let filled=tpl
+      .replace(/\{\{TITLE\}\}/g, title)
+      .replace(/\{\{INSTRUCTOR\}\}/g, instr)
+      .replace(/\{\{TRACK_COUNT\}\}/g, String(TRACKS.length))
+      .replace(/\{\{TOTAL_TIME\}\}/g, total)
+      .replace(/\{\{CLIENT_ID\}\}/g, client)
+      .replace(/\{\{REDIRECT_URI\}\}/g, redirect)
+      .replace(/\{\{PLAYLIST_URI\}\}/g, playlist);
+
+    // Inietta i dati tracce e la durata totale
+    filled=filled
+      .replace("const T = [];// Injected dynamically", `const T = ${trackData};`)
+      .replace("const TOTAL=3495;", `const TOTAL=${TOTAL_SEC};`)
+      // Aggiorna anche il testo della durata totale nel player
+      .replace(/0:58:15/g, total);
+
+    const blob=new Blob([filled],{type:"text/html"});
+    const url=URL.createObjectURL(blob);
+    const a=document.getElementById("dl-link");
+    a.href=url;
+    a.download="index.html";
+    a.classList.add("show");
+
+  } catch(err){
+    alert("Errore nella generazione: "+err.message);
+  }
+}
+
+// ── FALLBACK TEMPLATE ──────────────────────────────────
+// Usato se index_template_placeholder.html non è raggiungibile
+const FALLBACK_TEMPLATE = `<!-- FALLBACK: carica index_template_placeholder.html dal repo GitHub -->
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>{{TITLE}}</title></head>
+<body><p>Errore: template non trovato. Assicurati che index_template_placeholder.html
+sia nel tuo repo GitHub alla stessa posizione di CyclingPlanner_AI.html.</p>
+<p>Dati brani: <pre id="d"></pre></p>
+<script>
+const T = [];// Injected dynamically
+const TOTAL=3495;
+document.getElementById('d').textContent=JSON.stringify(T,null,2);
+<\/script></body></html>`;
+
+</script>
+</body>
+</html>
