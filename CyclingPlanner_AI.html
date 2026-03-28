@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Cycling Planner v3.2.7</title>
+<title>Cycling Planner v3.3.0</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:#07070d;color:#e8e8f0;font-family:sans-serif;font-size:14px;padding:20px}
@@ -95,13 +95,27 @@ window.onload = checkKey;
 function importData() {
     const input = document.getElementById('csv-input').value.trim();
     if (!input) { alert("Inserisci dei brani!"); return; }
+    
+    // Normalizzazione separatori per gestire ogni tipo di trattino
     TRACKS = input.split('\n').filter(l => l.includes('|')).map((line, i) => {
         const p = line.split('|').map(s => s.trim());
+        const infoBrano = p[0];
+        const separatorMatch = infoBrano.match(/[—–-]/);
+        let titolo = infoBrano;
+        let artista = "";
+
+        if (separatorMatch) {
+            const sIdx = infoBrano.indexOf(separatorMatch[0]);
+            titolo = infoBrano.substring(0, sIdx).trim();
+            artista = infoBrano.substring(sIdx + 1).trim();
+        }
+
         return {
-            i: i + 1, title: p[0], bpm: p[1], d: parseTime(p[2]),
+            i: i + 1, title: titolo, ar: artista, bpm: p[1], d: parseTime(p[2]),
             z: '—', rpm: '—', res: '—', tec: '—', mani: 'P2', fase: '—', focus: '—', s: 0
         };
     });
+    
     let cur = 0; TRACKS.forEach(t => { t.s = cur; cur += t.d; });
     renderTracks();
     document.getElementById('track-list').style.display = 'block';
@@ -116,7 +130,7 @@ function renderTracks() {
     document.getElementById('tracks-container').innerHTML = TRACKS.map(t => `
         <div class="track-card">
             <strong>${t.i}. ${t.title}</strong> (BPM: ${t.bpm})<br>
-            <small>${t.fase} | ${t.z} | ${t.rpm} RPM | ${t.tec}</small>
+            <small>${t.fase} | ${t.z} | ${t.rpm} RPM | ${t.tec} | ${t.focus}</small>
         </div>
     `).join('');
 }
@@ -128,13 +142,14 @@ async function runAI() {
     const log = document.getElementById('ai-log');
     const btn = document.getElementById('btn-ai');
     log.style.display = 'block';
-    log.textContent = 'Analisi in corso...';
+    log.textContent = 'Analisi tecnica in corso...';
     btn.disabled = true;
 
     const protocol = document.getElementById('wk-protocol').value;
-    const prompt = `Sei un Master Instructor Indoor Cycling. Analizza questi brani per un profilo ${protocol}.
-    Playlist: ${TRACKS.map(t => `${t.i}. BPM ${t.bpm}`).join(', ')}.
-    Restituisci SOLO un array JSON senza markdown: [{"zona":"Z2","rpm_label":"85","res_label":"35%","res_num":0.35,"tecnica":"Seduto","mani":"P2","fase":"Lavoro","focus":"Mantieni"}]`;
+    // Invio solo ID e BPM per evitare blocchi Status 400
+    const inputData = TRACKS.map(t => `T${t.i}:BPM${t.bpm}`).join(",");
+    
+    const prompt = `Task: Indoor Cycling Profile (${protocol}). Data: ${inputData}. Output JSON ONLY: [{"zona":"Z3","rpm_label":"90","res_label":"45%","res_num":0.45,"tecnica":"Seduto","mani":"P2","fase":"Lavoro","focus":"Constant"}]`;
 
     try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`, {
@@ -142,23 +157,26 @@ async function runAI() {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { temperature: 0.1 }
+                generationConfig: { temperature: 0.1, topP: 1, maxOutputTokens: 1000 }
             })
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error?.message || "Errore 400: Richiesta non valida");
+        if (!response.ok) throw new Error(data.error?.message || "Richiesta non valida");
 
         let cleanJson = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
         const results = JSON.parse(cleanJson);
 
-        TRACKS = TRACKS.map((t, i) => ({
-            ...t, z: results[i].zona, rpm: results[i].rpm_label, res: results[i].res_label,
-            rn: results[i].res_num, tec: results[i].tecnica, mani: results[i].mani, fase: results[i].fase, focus: results[i].focus
-        }));
+        TRACKS = TRACKS.map((t, i) => {
+            const r = results[i] || results[0];
+            return {
+                ...t, z: r.zona, rpm: r.rpm_label, res: r.res_label,
+                rn: r.res_num, tec: r.tecnica, mani: r.mani, fase: r.fase, focus: r.focus
+            };
+        });
 
         renderTracks();
-        log.textContent = '✓ Analisi completata con successo!';
+        log.textContent = '✓ Analisi completata!';
     } catch (e) {
         log.textContent = 'ERRORE: ' + e.message;
     } finally {
@@ -176,7 +194,7 @@ async function generatePlayer() {
         if(r.ok) tpl = await r.text();
     } catch(e) {}
     
-    if(!tpl) { alert("Impossibile caricare il template online."); return; }
+    if(!tpl) { alert("Template non trovato online."); return; }
     
     const final = tpl
         .replace(/\{\{TITLE\}\}/g, "POWER RIDE")
