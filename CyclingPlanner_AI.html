@@ -3,282 +3,192 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>🚴 Indoor Cycling Planner — Power Ride Coach</title>
+<title>Cycling Planner v3.2.7</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#07070d;color:#e8e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;min-height:100vh}
-:root{--accent:#00d4aa;--red:#ff4466;--amber:#ffb347;--blue:#4d79ff;--purple:#cc88ff;--bg:#07070d;--s1:#0f0f1a;--s2:#16162a;--s3:#1e1e32;--border:#2a2a44}
-header{background:var(--s1);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px}
-header h1{font-size:18px;font-weight:700}
-header p{font-size:12px;color:#6666aa}
-.badge{background:#1a1a40;border:1px solid var(--border);color:var(--accent);padding:3px 10px;border-radius:6px;font-size:11px;font-family:monospace}
-main{max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:16px}
-.card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:20px}
-.card h2{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--accent);text-transform:uppercase;letter-spacing:.6px}
-textarea,input,select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:#e8e8f0;padding:10px 12px;font-size:13px;margin-bottom:10px;outline:none;font-family:inherit}
-textarea:focus,input:focus,select:focus{border-color:var(--accent)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
-.btn{padding:11px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;transition:opacity .15s}
-.btn-primary{background:var(--accent);color:#000}
-.btn-secondary{background:var(--s3);border:1px solid var(--border);color:#e8e8f0}
-.btn-gen{background:var(--red);color:#fff;width:100%;padding:14px;font-size:15px}
-#ai-log{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;font-family:monospace;height:100px;overflow-y:auto;white-space:pre-wrap;display:none;color:#aaa;margin-top:10px}
-#ai-log.visible{display:block}
-.track-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px}
-.track-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
-.meta{font-size:11px;color:#6666aa;margin-bottom:10px}
-.params{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
-.param{background:var(--s3);border-radius:6px;padding:6px 4px;text-align:center}
-.param .v{font-size:14px;font-weight:700;font-family:monospace}
-.param .l{font-size:9px;color:#6666aa;text-transform:uppercase;margin-top:2px}
-.fase{display:inline-block;background:#1a1040;border:1px solid #3a2080;color:var(--purple);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-bottom:6px}
-.tec{font-size:12px;color:#aaa;margin-bottom:4px}
-.focus{font-size:12px;color:#e8e8f0;font-style:italic;border-left:3px solid var(--purple);padding-left:8px}
-#dl-link{display:none;margin-top:12px;padding:12px 20px;background:var(--s2);border:1px solid var(--accent);border-radius:8px;text-align:center;text-decoration:none;color:var(--accent);font-weight:700}
-#dl-link.show{display:block}
-.step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px}
-#apikey-box{background:linear-gradient(135deg,#0a1a0a,#0d1a14);border:2px solid #1DB954;border-radius:12px;padding:20px}
-#apikey-indicator{width:10px;height:10px;border-radius:50%;background:#333355;display:inline-block;margin-right:6px}
-#apikey-indicator.ok{background:#1DB954;box-shadow:0 0 8px #1DB954}
-#apikey-indicator.err{background:var(--red)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#07070d;color:#e8e8f0;font-family:sans-serif;font-size:14px;padding:20px}
+  :root{--accent:#00d4aa;--red:#ff4466;--s1:#0f0f1a;--border:#2a2a44}
+  .card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;max-width:800px;margin-left:auto;margin-right:auto}
+  h2{font-size:14px;color:var(--accent);margin-bottom:15px;text-transform:uppercase}
+  textarea,input,select{width:100%;background:#16162a;border:1px solid var(--border);border-radius:8px;color:#fff;padding:12px;margin-bottom:10px;outline:none}
+  .btn{padding:12px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;transition:0.2s}
+  .btn-primary{background:var(--accent);color:#000}
+  .btn-red{background:var(--red);color:#fff}
+  #ai-log{background:#000;padding:10px;font-family:monospace;font-size:12px;margin-top:10px;display:none;color:#aaa;border:1px solid #333;white-space:pre-wrap}
+  .status-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;background:#333}
+  .track-card{background:#16162a;padding:10px;border-radius:8px;margin-top:10px;border-left:4px solid var(--accent)}
+  #dl-link{display:none;margin-top:12px;padding:12px;background:var(--accent);color:#000;text-align:center;text-decoration:none;border-radius:8px;font-weight:bold}
+  #dl-link.show{display:block}
 </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>🚴 Indoor Cycling Planner</h1>
-    <p>Power Ride Coach · Giuseppe Primavera · AIF 2° Livello</p>
+<div class="card">
+  <h2>🔑 Configurazione API Gemini</h2>
+  <div style="display:flex;align-items:center;margin-bottom:10px">
+    <div id="status-dot" class="status-dot"></div>
+    <span id="status-text">Chiave non configurata</span>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <span id="apikey-indicator"></span>
-    <span class="badge">v3.2.5</span>
+  <input type="password" id="api-key-input" placeholder="Incolla chiave AIza...">
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-primary" onclick="saveKey()">SALVA CHIAVE</button>
+    <button class="btn" onclick="clearKey()" style="background:#333;color:#fff">CANCELLA</button>
   </div>
-</header>
+</div>
 
-<main>
-  <div id="apikey-box">
-    <h2 style="color:#1DB954;font-size:15px;margin-bottom:8px">🔑 Google Gemini API Key</h2>
-    <p style="font-size:12px;color:#888;margin-bottom:12px">Configurazione necessaria per l'analisi tecnica dei brani.</p>
-    <div class="row" style="grid-template-columns:1fr auto auto">
-      <input type="password" id="apikey-input" placeholder="AIzaSy..." style="margin-bottom:0"/>
-      <button class="btn btn-primary" onclick="handleSaveKey()" style="background:#1DB954">Salva</button>
-      <button class="btn btn-secondary" onclick="handleClearKey()">✕</button>
-    </div>
-    <div id="key-status" style="font-size:11px;margin-top:8px"></div>
-  </div>
+<div class="card">
+  <h2>1. Importa Playlist</h2>
+  <textarea id="csv-input" rows="5" placeholder="Titolo — Artista | 128 | 3:30"></textarea>
+  <button class="btn btn-primary" onclick="importData()">IMPORTA BRANI</button>
+</div>
 
-  <div class="card">
-    <h2><span class="step-num">1</span>Importa Brani</h2>
-    <textarea id="in-man" rows="6" placeholder="Titolo — Artista | BPM | mm:ss"></textarea>
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-primary" onclick="importManual()">Importa Lista</button>
-      <label style="cursor:pointer;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px;font-size:13px">
-        Carica CSV <input type="file" accept=".csv" id="in-file" style="display:none" onchange="importCSV()">
-      </label>
-    </div>
-  </div>
+<div class="card">
+  <h2>2. Setup & Analisi</h2>
+  <label style="font-size:10px; color:#666">PROTOCOLLO</label>
+  <select id="wk-protocol">
+    <option value="Interval Estensivo">Interval Estensivo</option>
+    <option value="Endurance">Endurance</option>
+    <option value="Fartlek">Fartlek</option>
+  </select>
+  <button class="btn btn-red" id="btn-ai" onclick="runAI()" style="width:100%">🤖 ANALIZZA CON GEMINI AI</button>
+  <div id="ai-log"></div>
+</div>
 
-  <div class="card">
-    <h2><span class="step-num">2</span>Setup Lezione</h2>
-    <div class="row">
-      <div><label>Titolo</label><input id="wk-title" value="POWER RIDE"></div>
-      <div><label>Istruttore</label><input id="wk-instructor" value="Giuseppe Primavera"></div>
-    </div>
-    <div class="row">
-      <div>
-        <label>Livello</label>
-        <select id="wk-level"><option value="Avanzato">Avanzato</option><option value="Intermedio">Intermedio</option></select>
-      </div>
-      <div>
-        <label>Protocollo</label>
-        <select id="wk-protocol"><option value="Interval Estensivo">Interval Estensivo</option><option value="Endurance">Endurance</option><option value="Fartlek">Fartlek</option></select>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step-num">3</span>Analisi AI</h2>
-    <button class="btn btn-primary" onclick="runAI()" id="btn-ai" style="width:100%">🤖 Analizza con Gemini AI</button>
-    <div id="ai-log"></div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step-num">4</span>Revisione</h2>
-    <div id="cards"></div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step-num">5</span>Genera</h2>
-    <input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c" hidden>
-    <input id="sp-redirect" value="https://giusprim.github.io/Indoor/" hidden>
-    <label>URL Playlist Spotify</label>
-    <input id="sp-playlist" placeholder="Incolla link playlist Spotify">
-    <button class="btn btn-gen" onclick="generatePlayer()" style="width:100%">Genera index.html</button>
-    <a id="dl-link" download="index.html">✅ Scarica index.html</a>
-  </div>
-</main>
+<div id="track-list" class="card" style="display:none">
+  <h2>3. Revisione & Download</h2>
+  <div id="tracks-container"></div>
+  <input id="sp-playlist" placeholder="URL Playlist Spotify" style="margin-top:20px">
+  <button class="btn btn-primary" onclick="generatePlayer()" style="width:100%">GENERA FILE FINALE</button>
+  <a id="dl-link" download="index.html">✅ SCARICA INDEX.HTML</a>
+</div>
 
 <script>
-const KEY_STORAGE = 'gemini_api_key_prc';
+const STORAGE_KEY = 'gemini_key_v3';
 let TRACKS = [];
 
-function getSavedKey(){ return localStorage.getItem(KEY_STORAGE) || ''; }
-
-function updateUIStatus(){
-  const k = getSavedKey();
-  const ind = document.getElementById('apikey-indicator');
-  const inp = document.getElementById('apikey-input');
-  const stat = document.getElementById('key-status');
-  
-  if(k){
-    ind.className = 'ok';
-    inp.value = k;
-    stat.textContent = "✓ Chiave configurata correttamente";
-    stat.style.color = "#1DB954";
-  } else {
-    ind.className = 'err';
-    stat.textContent = "⚠ Inserire la chiave per procedere";
-    stat.style.color = "#ff4466";
-  }
+function saveKey() {
+    const key = document.getElementById('api-key-input').value.trim();
+    if (!key.startsWith('AIza')) { alert('Chiave non valida'); return; }
+    localStorage.setItem(STORAGE_KEY, key);
+    checkKey();
 }
 
-function handleSaveKey(){
-  const val = document.getElementById('apikey-input').value.trim();
-  if(!val.startsWith('AIza')){ alert('Chiave non valida (deve iniziare con AIza)'); return; }
-  localStorage.setItem(KEY_STORAGE, val);
-  updateUIStatus();
+function clearKey() { localStorage.removeItem(STORAGE_KEY); checkKey(); }
+
+function checkKey() {
+    const key = localStorage.getItem(STORAGE_KEY);
+    const dot = document.getElementById('status-dot');
+    const txt = document.getElementById('status-text');
+    if (key) {
+        dot.style.background = '#00d4aa';
+        txt.textContent = 'API Key Pronta';
+        document.getElementById('api-key-input').value = key;
+    } else {
+        dot.style.background = '#ff4466';
+        txt.textContent = 'Mancante';
+        document.getElementById('api-key-input').value = '';
+    }
 }
 
-function handleClearKey(){
-  localStorage.removeItem(KEY_STORAGE);
-  document.getElementById('apikey-input').value = '';
-  updateUIStatus();
-}
+window.onload = checkKey;
 
-// Inizializzazione al caricamento
-window.onload = updateUIStatus;
-
-function fmt(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; }
-function parseTime(t){
-  const p = String(t).trim().split(":").map(Number);
-  return p.length===2 ? p[0]*60+p[1] : parseInt(t)||0;
-}
-function log(msg){ 
-  const el=document.getElementById("ai-log"); 
-  el.classList.add("visible"); 
-  el.textContent+=msg+"\n"; 
-  el.scrollTop=el.scrollHeight;
-}
-
-function importManual(){
-  const raw = document.getElementById("in-man").value.trim();
-  if(!raw) return;
-  TRACKS = raw.split(/\n/).map((line, i)=>{
-    const parts = line.split("|").map(x=>x.trim());
-    if(parts.length < 2) return null;
-    const ta = parts[0];
-    return {i:i+1, title:ta.split("—")[0].trim(), ar:ta.split("—")[1]||"", bpm:parts[1], d:parseTime(parts[2]||"180"), z:"—", rpm:"—", res:"—", tec:"—", mani:"P2", fase:"—", focus:"—", s:0};
-  }).filter(t => t !== null);
-  
-  let cur=0; TRACKS.forEach(t=>{t.s=cur; cur+=t.d;});
-  renderCards();
-}
-
-function importCSV(){
-  const f = document.getElementById("in-file").files[0];
-  const r = new FileReader();
-  r.onload = ()=>{
-    const rows = r.result.split(/\r?\n/).filter(x=>x.trim());
-    TRACKS = rows.map((row, i)=>{
-      const c = row.includes(";") ? row.split(";") : row.split(",");
-      return {i:i+1, title:c[0], ar:c[1]||"", bpm:c[2], d:parseTime(c[3]||"180"), z:"—", rpm:"—", res:"—", tec:"—", mani:"P2", fase:"—", focus:"—", s:0};
+function importData() {
+    const input = document.getElementById('csv-input').value.trim();
+    if (!input) { alert("Inserisci dei brani!"); return; }
+    TRACKS = input.split('\n').filter(l => l.includes('|')).map((line, i) => {
+        const p = line.split('|').map(s => s.trim());
+        return {
+            i: i + 1, title: p[0], bpm: p[1], d: parseTime(p[2]),
+            z: '—', rpm: '—', res: '—', tec: '—', mani: 'P2', fase: '—', focus: '—', s: 0
+        };
     });
-    let cur=0; TRACKS.forEach(t=>{t.s=cur; cur+=t.d;});
-    renderCards();
-  };
-  r.readAsText(f);
+    let cur = 0; TRACKS.forEach(t => { t.s = cur; cur += t.d; });
+    renderTracks();
+    document.getElementById('track-list').style.display = 'block';
 }
 
-function renderCards(){
-  const wrap = document.getElementById("cards"); wrap.innerHTML="";
-  const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
-  TRACKS.forEach(t=>{
-    wrap.innerHTML+=`<div class="track-card">
-      <h3 style="color:${ZC[t.z]||'#eee'}">${t.i}. ${t.title}</h3>
-      <div class="meta">BPM ${t.bpm} | ${fmt(t.d)} | Inizio ${fmt(t.s)}</div>
-      ${t.z!=="—"?`<div class="params">
-        <div class="param"><div class="v">${t.z}</div><div class="l">Zona</div></div>
-        <div class="param"><div class="v">${t.rpm}</div><div class="l">RPM</div></div>
-        <div class="param"><div class="v">${t.res}</div><div class="l">Res.</div></div>
-        <div class="param"><div class="v">${t.mani}</div><div class="l">Mani</div></div>
-      </div><div class="fase">${t.fase}</div><div class="tec">${t.tec}</div><div class="focus">${t.focus}</div>`:''}
-    </div>`;
-  });
+function parseTime(t) {
+    const p = String(t).split(':').map(Number);
+    return p.length === 2 ? p[0] * 60 + p[1] : parseInt(t) || 180;
 }
 
-async function runAI(){
-  const apiKey = getSavedKey();
-  if(!apiKey || TRACKS.length===0) { alert("Dati o API Key mancanti."); return; }
-  
-  const btn = document.getElementById("btn-ai");
-  btn.disabled=true; btn.textContent="Analisi in corso...";
-  document.getElementById("ai-log").textContent="";
-
-  const prompt = `Sei un Master Instructor Indoor Cycling. Analizza questi brani per una lezione ${document.getElementById("wk-protocol").value}.
-  Playlist: ${TRACKS.map(t=>`${t.i}. BPM ${t.bpm}`).join(", ")}.
-  Restituisci SOLO un array JSON senza markdown: [{"zona":"Z2","rpm_label":"85","res_label":"35%","res_num":0.35,"tecnica":"Seduto","mani":"P2","fase":"Lavoro","focus":"Mantieni"}]`;
-
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-    const resp = await fetch(url, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ contents: [{parts: [{text: prompt}]}], generationConfig: { temperature: 0.1 } })
-    });
-
-    const data = await resp.json();
-    if(!resp.ok) throw new Error(data.error?.message || "Errore API");
-    
-    let raw = data.candidates[0].content.parts[0].text;
-    const cleanJson = raw.replace(/```json/g, "").replace(/```/g, "").trim();
-    const results = JSON.parse(cleanJson);
-
-    TRACKS = TRACKS.map((t, i) => results[i] ? ({
-      ...t, z:results[i].zona, rpm:results[i].rpm_label, res:results[i].res_label, rn:results[i].res_num, tec:results[i].tecnica, mani:results[i].mani, fase:results[i].fase, focus:results[i].focus
-    }) : t);
-    
-    renderCards();
-    log("✓ Analisi completata.");
-  } catch(e) { log("✗ Errore: " + e.message); }
-  btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
+function renderTracks() {
+    document.getElementById('tracks-container').innerHTML = TRACKS.map(t => `
+        <div class="track-card">
+            <strong>${t.i}. ${t.title}</strong> (BPM: ${t.bpm})<br>
+            <small>${t.fase} | ${t.z} | ${t.rpm} RPM | ${t.tec}</small>
+        </div>
+    `).join('');
 }
 
-async function generatePlayer(){
-  const pl = document.getElementById("sp-playlist").value.trim();
-  const uri = pl.includes("/playlist/") ? "spotify:playlist:" + pl.split("/playlist/")[1].split("?")[0] : pl;
-  const totSec = TRACKS.reduce((a,b)=>a+b.d,0);
-  let tpl = "";
-  try {
-    const r = await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");
-    if(r.ok) tpl = await r.text();
-  } catch(e){}
-  
-  if(!tpl){ alert("Template non trovato."); return; }
-  
-  const final = tpl
-    .replace(/\{\{TITLE\}\}/g, document.getElementById("wk-title").value)
-    .replace(/\{\{INSTRUCTOR\}\}/g, document.getElementById("wk-instructor").value)
-    .replace(/\{\{CLIENT_ID\}\}/g, document.getElementById("sp-client-id").value)
-    .replace(/\{\{REDIRECT_URI\}\}/g, document.getElementById("sp-redirect").value)
-    .replace(/\{\{PLAYLIST_URI\}\}/g, uri)
-    .replace("const T = [];// Injected dynamically", `const T = ${JSON.stringify(TRACKS)};`)
-    .replace("const TOTAL=3495;", `const TOTAL=${totSec};`);
+async function runAI() {
+    const key = localStorage.getItem(STORAGE_KEY);
+    if (!key || TRACKS.length === 0) { alert('Verifica Chiave e Brani!'); return; }
+
+    const log = document.getElementById('ai-log');
+    const btn = document.getElementById('btn-ai');
+    log.style.display = 'block';
+    log.textContent = 'Analisi in corso...';
+    btn.disabled = true;
+
+    const protocol = document.getElementById('wk-protocol').value;
+    const prompt = `Sei un Master Instructor Indoor Cycling. Analizza questi brani per un profilo ${protocol}.
+    Playlist: ${TRACKS.map(t => `${t.i}. BPM ${t.bpm}`).join(', ')}.
+    Restituisci SOLO un array JSON senza markdown: [{"zona":"Z2","rpm_label":"85","res_label":"35%","res_num":0.35,"tecnica":"Seduto","mani":"P2","fase":"Lavoro","focus":"Mantieni"}]`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { temperature: 0.1 }
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || "Errore 400: Richiesta non valida");
+
+        let cleanJson = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
+        const results = JSON.parse(cleanJson);
+
+        TRACKS = TRACKS.map((t, i) => ({
+            ...t, z: results[i].zona, rpm: results[i].rpm_label, res: results[i].res_label,
+            rn: results[i].res_num, tec: results[i].tecnica, mani: results[i].mani, fase: results[i].fase, focus: results[i].focus
+        }));
+
+        renderTracks();
+        log.textContent = '✓ Analisi completata con successo!';
+    } catch (e) {
+        log.textContent = 'ERRORE: ' + e.message;
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function generatePlayer() {
+    const pl = document.getElementById("sp-playlist").value.trim();
+    const uri = pl.includes("/playlist/") ? "spotify:playlist:" + pl.split("/playlist/")[1].split("?")[0] : pl;
     
-  const blob = new Blob([final], {type: "text/html"});
-  const a = document.getElementById("dl-link");
-  a.href = URL.createObjectURL(blob); a.classList.add("show");
+    let tpl = "";
+    try {
+        const r = await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");
+        if(r.ok) tpl = await r.text();
+    } catch(e) {}
+    
+    if(!tpl) { alert("Impossibile caricare il template online."); return; }
+    
+    const final = tpl
+        .replace(/\{\{TITLE\}\}/g, "POWER RIDE")
+        .replace(/\{\{INSTRUCTOR\}\}/g, "Giuseppe Primavera")
+        .replace(/\{\{PLAYLIST_URI\}\}/g, uri)
+        .replace("const T = [];// Injected dynamically", `const T = ${JSON.stringify(TRACKS)};`)
+        .replace("const TOTAL=3495;", `const TOTAL=${TRACKS.reduce((a,b)=>a+b.d,0)};`);
+        
+    const blob = new Blob([final], {type: "text/html"});
+    const a = document.getElementById("dl-link");
+    a.href = URL.createObjectURL(blob);
+    a.classList.add("show");
 }
 </script>
 </body>
