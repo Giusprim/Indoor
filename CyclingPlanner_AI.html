@@ -47,7 +47,6 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0}
 .step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
 .warning{background:#1a0a00;border:1px solid #ff8844;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--amber);margin-top:8px;display:none}
 .warning.show{display:block}
-/* API KEY BOX */
 #apikey-box{background:linear-gradient(135deg,#0a1a0a,#0d1a14);border:2px solid #1DB954;border-radius:12px;padding:20px}
 #apikey-box h2{color:#1DB954;font-size:15px;font-weight:700;margin-bottom:8px}
 #apikey-box p{font-size:12px;color:#8888aa;margin-bottom:14px;line-height:1.7}
@@ -71,21 +70,18 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="apikey-indicator" title="Stato API Key Gemini"></span>
-    <span class="badge">v3.2</span>
+    <span class="badge">v3.2.1</span>
   </div>
 </header>
 
 <main>
 
-  <!-- GEMINI API KEY -->
   <div id="apikey-box">
     <h2>🔑 Google Gemini API Key — Gratuita</h2>
     <p>
-      Necessaria per l'analisi AI. <strong>Completamente gratuita</strong>, 1500 richieste/giorno, nessuna carta di credito.<br>
-      <strong>Come ottenerla (2 minuti):</strong><br>
+      Necessaria per l'analisi AI. <strong>Completamente gratuita</strong>.<br>
       1. Vai su <strong>aistudio.google.com</strong> → accedi con Google<br>
-      2. Clicca <strong>Get API key</strong> → <strong>Create API key</strong> → copia la chiave<br>
-      La chiave inizia con <code>AIza...</code> — viene salvata solo nel tuo browser.
+      2. Clicca <strong>Get API key</strong> → copia la chiave (inizia con <code>AIza...</code>).
     </p>
     <div class="apikey-row">
       <div style="flex:1">
@@ -99,35 +95,22 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0}
     <div id="apikey-status" class="apikey-status"></div>
   </div>
 
-  <!-- STEP 1: IMPORT -->
   <div class="card">
     <h2><span class="step-num">1</span>Importa Brani</h2>
-    <p class="hint">Una riga per brano: <code>Titolo — Artista | BPM | mm:ss</code></p>
+    <p class="hint">Formato: <code>Titolo — Artista | BPM | mm:ss</code>. Il CSV supporta virgola o punto e virgola.</p>
     <textarea id="in-man" rows="10" placeholder="Nell'aria 2021 — Ben DJ | 116 | 2:25
 Primavera — Ben DJ | 114 | 3:22
-Nel blu dipinto di blu — Domenico Modugno | 123 | 2:56
-Ti Sento — Bob Sinclar, Matia Bazar | 123 | 2:52
-ITALIA STARTER PACK — J-Ax | 115 | 2:42
-Con un Deca — 883, Fargetta | 124 | 5:46
-Gloria — Umberto Tozzi | 134 | 2:48
-Happy Hour — DJ Matrix | 140 | 3:38
-Mambo Salentino — Boomdabash | 100 | 2:27
-Far l'Amore — Bob Sinclar | 128 | 2:54
-Rumore — Raffaella Carrà | 125 | 3:24
-Blue — Eiffel 65, Gabry Ponte | 198 | 3:32
-Ti Porto Via Con Me — Jovanotti | 132 | 4:12
-La Cura — Franco Battiato | 90 | 3:55"></textarea>
+..."></textarea>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="importManual()">Importa</button>
+      <button class="btn btn-primary" onclick="importManual()">Importa Lista</button>
       <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:#e8e8f0;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px">
-        <span>CSV</span>
+        <span>Carica CSV</span>
         <input type="file" accept=".csv" id="in-file" style="display:none" onchange="importCSV()">
       </label>
     </div>
     <div id="import-status" style="margin-top:10px;font-size:13px"></div>
   </div>
 
-  <!-- STEP 2: SETUP -->
   <div class="card">
     <h2><span class="step-num">2</span>Setup Lezione</h2>
     <div class="row">
@@ -136,7 +119,7 @@ La Cura — Franco Battiato | 90 | 3:55"></textarea>
     </div>
     <div class="row">
       <div>
-        <label>Livello Partecipanti</label>
+        <label>Livello</label>
         <select id="wk-level">
           <option value="principiante">Principiante</option>
           <option value="intermedio" selected>Intermedio</option>
@@ -160,136 +143,76 @@ La Cura — Franco Battiato | 90 | 3:55"></textarea>
     </div>
   </div>
 
-  <!-- STEP 3: AI -->
   <div class="card">
     <h2><span class="step-num">3</span>Analisi AI</h2>
-    <p class="hint">Gemini analizza la playlist e assegna zona FC, RPM, resistenza, manubrio, tecnica e focus coaching per ogni brano.</p>
     <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con Gemini AI</button>
     <div id="ai-log"></div>
     <div id="ai-warn" class="warning">⚠️ Importa prima i brani (Step 1).</div>
-    <div id="ai-nokey" class="warning">⚠️ Inserisci la Gemini API Key nel box verde in cima alla pagina.</div>
+    <div id="ai-nokey" class="warning">⚠️ Inserisci la API Key nel box verde.</div>
   </div>
 
-  <!-- STEP 4: REVISIONE -->
   <div class="card">
     <h2><span class="step-num">4</span>Revisione Brani</h2>
-    <div id="cards"><p style="color:#6666aa;font-size:13px">I brani analizzati appariranno qui.</p></div>
+    <div id="cards"><p style="color:#6666aa;font-size:13px">I brani appariranno qui dopo l'analisi.</p></div>
   </div>
 
-  <!-- STEP 5: GENERA PLAYER -->
   <div class="card">
-    <h2><span class="step-num">5</span>Genera Player HTML</h2>
-    <p class="hint">Client ID e Redirect URI sono già pre-compilati. Inserisci solo l'URL della playlist Spotify di questa lezione.</p>
+    <h2><span class="step-num">5</span>Genera Player</h2>
     <div class="row">
-      <div>
-        <label>Client ID Spotify</label>
-        <input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c">
-      </div>
-      <div>
-        <label>Redirect URI</label>
-        <input id="sp-redirect" value="https://giusprim.github.io/Indoor/">
-      </div>
+      <div><label>Client ID Spotify</label><input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c"></div>
+      <div><label>Redirect URI</label><input id="sp-redirect" value="https://giusprim.github.io/Indoor/"></div>
     </div>
-    <div>
-      <label>URL Playlist Spotify</label>
-      <input id="sp-playlist" placeholder="https://open.spotify.com/playlist/XXXXXXXXXXXXXXXX">
-      <p class="hint">Spotify → tasto destro sulla playlist → Condividi → Copia link. Il planner converte automaticamente in URI.</p>
-    </div>
-    <button class="btn btn-gen" onclick="generatePlayer()">⬇ Genera e Scarica index.html</button>
-    <a id="dl-link" download="index.html">✅ index.html pronto — Clicca per scaricare</a>
-    <div style="margin-top:14px;background:var(--s2);border-radius:8px;padding:12px;font-size:12px;color:#6666aa;line-height:1.7">
-      <strong style="color:#e8e8f0">Dopo il download:</strong><br>
-      1. Vai su <strong>github.com/Giusprim/Indoor</strong><br>
-      2. <strong>Metodo A:</strong> clicca index.html → icona matita → Ctrl+A → incolla → Commit<br>
-      3. <strong>Metodo B:</strong> Add file → Upload files → trascina index.html → Commit<br>
-      4. Aspetta 30–60 secondi → <strong>giusprim.github.io/Indoor/</strong>
-    </div>
+    <label>URL Playlist Spotify</label>
+    <input id="sp-playlist" placeholder="https://open.spotify.com/playlist/...">
+    <button class="btn btn-gen" onclick="generatePlayer()">⬇ Genera index.html</button>
+    <a id="dl-link" download="index.html">✅ Clicca qui per scaricare index.html</a>
   </div>
 
 </main>
 
 <script>
-// ═══════════════════════════════════════════
-//  GEMINI API KEY — salvata in localStorage
-// ═══════════════════════════════════════════
 const KEY_STORAGE = 'gemini_api_key_prc';
+let TRACKS = [];
 
 function loadApiKey(){ return localStorage.getItem(KEY_STORAGE)||''; }
-
 function saveApiKey(){
   const val = document.getElementById('apikey-input').value.trim();
-  if(!val){ setKeyStatus('Inserisci una chiave valida.','err'); return; }
-  if(!val.startsWith('AIza')){ setKeyStatus('La chiave Gemini deve iniziare con AIza...','err'); return; }
+  if(!val.startsWith('AIza')){ setKeyStatus('Chiave non valida.','err'); return; }
   localStorage.setItem(KEY_STORAGE, val);
-  document.getElementById('apikey-input').value = '';
-  setKeyStatus('✓ Chiave salvata. Pronta per l\'analisi.','ok');
+  setKeyStatus('✓ Salvata.','ok');
   updateKeyIndicator(true);
 }
+function clearApiKey(){ localStorage.removeItem(KEY_STORAGE); updateKeyIndicator(false); setKeyStatus('Rimossa.','err'); }
+function setKeyStatus(msg,type){ const el = document.getElementById('apikey-status'); el.textContent = msg; el.className = 'apikey-status '+type; }
+function updateKeyIndicator(ok){ const ind = document.getElementById('apikey-indicator'); ind.className = ok ? 'ok' : 'err'; }
 
-function clearApiKey(){
-  localStorage.removeItem(KEY_STORAGE);
-  document.getElementById('apikey-input').value = '';
-  setKeyStatus('Chiave rimossa.','err');
-  updateKeyIndicator(false);
-}
-
-function setKeyStatus(msg,type){
-  const el = document.getElementById('apikey-status');
-  el.textContent = msg; el.className = 'apikey-status '+type;
-}
-
-function updateKeyIndicator(ok){
-  const ind = document.getElementById('apikey-indicator');
-  ind.className = ok ? 'ok' : 'err';
-  ind.title = ok ? 'Gemini API Key configurata' : 'API Key mancante';
-}
-
-(function initKey(){
+(function init(){
   const k = loadApiKey();
-  if(k){ updateKeyIndicator(true); setKeyStatus('✓ API Key già configurata — pronta per l\'analisi.','ok'); }
-  else { updateKeyIndicator(false); setKeyStatus('Nessuna chiave. Vai su aistudio.google.com per ottenerla gratis.','err'); }
+  updateKeyIndicator(!!k);
 })();
 
-// ═══════════════════════════════════════════
-//  UTILS
-// ═══════════════════════════════════════════
 function fmt(s){ s=Math.max(0,Math.floor(s)); const m=Math.floor(s/60),sc=s%60; return `${m}:${String(sc).padStart(2,"0")}`; }
-
 function parseTime(t){
   if(!t) return 0;
-  t = String(t).trim();
-  const p = t.split(":").map(Number);
-  if(p.length===2) return p[0]*60+p[1];
-  if(p.length===3) return p[0]*3600+p[1]*60+p[2];
-  return parseInt(t)||0;
+  const p = String(t).trim().split(":").map(Number);
+  return p.length===2 ? p[0]*60+p[1] : parseInt(t)||0;
 }
-
 function log(msg){ const el=document.getElementById("ai-log"); el.classList.add("visible"); el.textContent+=msg+"\n"; el.scrollTop=el.scrollHeight; }
-function clearLog(){ const el=document.getElementById("ai-log"); el.textContent=""; el.classList.add("visible"); }
-
-// ═══════════════════════════════════════════
-//  IMPORT
-// ═══════════════════════════════════════════
-let TRACKS = [];
 
 function importManual(){
   const raw = document.getElementById("in-man").value.trim();
-  if(!raw){ setImportStatus("Nessun testo inserito.","err"); return; }
+  if(!raw) return;
   TRACKS = [];
-  const lines = raw.split(/\n/).filter(x=>x.trim());
-  let i = 1;
-  lines.forEach(line=>{
+  raw.split(/\n/).forEach((line, i)=>{
     const parts = line.split("|").map(x=>x.trim());
     if(parts.length<2) return;
-    const ta = parts[0], bpm = parseInt(parts[1])||0, dur = parseTime(parts[2]);
+    const ta = parts[0], bpm = parts[1], dur = parseTime(parts[2]);
     let title=ta, artist="";
-    if(ta.includes("—")){ const p=ta.split("—"); title=p[0].trim(); artist=p.slice(1).join("—").trim(); }
-    else if(ta.includes(" - ")){ const p=ta.split(" - "); title=p[0].trim(); artist=p.slice(1).join(" - ").trim(); }
-    TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
+    if(ta.includes("—")){ [title, artist] = ta.split("—").map(x=>x.trim()); }
+    TRACKS.push({i:i+1,title,ar:artist,bpm,d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
   });
-  if(TRACKS.length===0){ setImportStatus("Formato non riconosciuto. Usa: Titolo — Artista | BPM | mm:ss","err"); return; }
   calcStartTimes(); renderCards();
-  setImportStatus(`✓ ${TRACKS.length} brani importati — durata totale: ${fmt(TRACKS.reduce((a,b)=>a+b.d,0))}`,"ok");
+  document.getElementById("import-status").textContent = `✓ ${TRACKS.length} brani pronti.`;
 }
 
 function importCSV(){
@@ -298,238 +221,122 @@ function importCSV(){
   r.onload = ()=>{
     TRACKS = [];
     const rows = r.result.split(/\r?\n/).filter(x=>x.trim());
-    let i=1;
-    rows.forEach(row=>{
-      const c = row.split(","); if(c.length<2) return;
-      const ta=c[0].trim(), bpm=parseInt(c[1])||0, dur=parseTime(c[2]);
-      let title=ta, artist="";
-      if(ta.includes("—")){ const p=ta.split("—"); title=p[0].trim(); artist=p[1].trim(); }
-      TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
+    rows.forEach((row, i)=>{
+      // Supporto sia virgola che punto e virgola (Excel ITA)
+      const c = row.includes(";") ? row.split(";") : row.split(",");
+      if(c.length<2) return;
+      TRACKS.push({i:i+1,title:c[0].trim(),ar:c[1]||"",bpm:c[2]||"0",d:parseTime(c[3]||"0"),z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
     });
     calcStartTimes(); renderCards();
-    setImportStatus(`✓ ${TRACKS.length} brani da CSV — durata: ${fmt(TRACKS.reduce((a,b)=>a+b.d,0))}`,"ok");
   };
-  r.readAsText(f,"utf-8");
+  r.readAsText(f);
 }
 
 function calcStartTimes(){ let cur=0; TRACKS.forEach(t=>{t.s=cur;cur+=t.d;}); }
-function setImportStatus(msg,type){ const el=document.getElementById("import-status"); el.textContent=msg; el.className=type==="ok"?"status-ok":"status-err"; }
-
-// ═══════════════════════════════════════════
-//  RENDER CARDS
-// ═══════════════════════════════════════════
-const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
 
 function renderCards(){
   const wrap = document.getElementById("cards");
-  if(TRACKS.length===0){ wrap.innerHTML='<p style="color:#6666aa;font-size:13px">Nessun brano.</p>'; return; }
   wrap.innerHTML="";
+  const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
   TRACKS.forEach(t=>{
     const hasAI = t.z!=="—";
-    const zcolor = hasAI ? (ZC[t.z]||"#aaa") : "#aaa";
+    const zc = ZC[t.z]||"#aaa";
     wrap.innerHTML+=`
     <div class="track-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <h3 style="color:${zcolor}">${t.i}. ${t.title}</h3>
-          <div class="meta">${t.ar} · BPM ${t.bpm} · ${fmt(t.d)} · Inizio ${fmt(t.s)}</div>
-        </div>
-        ${hasAI?`<span style="color:${zcolor};font-weight:700;font-size:18px;font-family:monospace">${t.z}</span>`:''}
-      </div>
+      <h3 style="color:${zc}">${t.i}. ${t.title} <small>${t.ar}</small></h3>
+      <div class="meta">BPM ${t.bpm} · ${fmt(t.d)} · Start ${fmt(t.s)}</div>
       ${hasAI?`
       <div class="params">
-        <div class="param"><div class="v" style="color:${zcolor}">${t.z}</div><div class="l">Zona</div></div>
-        <div class="param"><div class="v" style="color:#00cc70">${t.rpm}</div><div class="l">RPM</div></div>
-        <div class="param"><div class="v" style="color:#ffb347">${t.bpm}</div><div class="l">BPM</div></div>
-        <div class="param"><div class="v" style="color:#ff4466">${t.res}</div><div class="l">Resist.</div></div>
-        <div class="param"><div class="v" style="color:#4d79ff">${t.mani}</div><div class="l">Mani</div></div>
+        <div class="param"><div class="v">${t.z}</div><div class="l">Zona</div></div>
+        <div class="param"><div class="v">${t.rpm}</div><div class="l">RPM</div></div>
+        <div class="param"><div class="v">${t.res}</div><div class="l">Res.</div></div>
+        <div class="param"><div class="v">${t.mani}</div><div class="l">Mani</div></div>
       </div>
       <div class="fase">${t.fase}</div>
       <div class="tec">${t.tec}</div>
       <div class="focus">${t.focus}</div>
-      `:'<div style="color:#6666aa;font-size:12px;margin-top:4px">Analisi AI non ancora eseguita</div>'}
+      `:'<div class="meta">In attesa di analisi AI...</div>'}
     </div>`;
   });
 }
 
-// ═══════════════════════════════════════════
-//  ANALISI AI — Google Gemini (gratuito)
-// ═══════════════════════════════════════════
 async function runAI(){
-  document.getElementById("ai-warn").classList.remove("show");
-  document.getElementById("ai-nokey").classList.remove("show");
-
-  if(TRACKS.length===0){ document.getElementById("ai-warn").classList.add("show"); return; }
-
   const apiKey = loadApiKey();
-  if(!apiKey){
-    document.getElementById("ai-nokey").classList.add("show");
-    document.getElementById('apikey-box').scrollIntoView({behavior:'smooth'});
-    return;
-  }
-
-  const title    = document.getElementById("wk-title").value||"Lezione Indoor";
-  const level    = document.getElementById("wk-level").value;
-  const protocol = document.getElementById("wk-protocol").value;
-  const totFmt   = fmt(TRACKS.reduce((a,b)=>a+b.d,0));
-
-  let list="";
-  TRACKS.forEach(t=>list+=`${t.i}. ${t.title} — ${t.ar} | BPM ${t.bpm} | ${fmt(t.d)} (${t.d}s)\n`);
-
-  const prompt=`Sei un esperto istruttore di Indoor Cycling AIF 2° livello.
-Analizza questa playlist e genera i parametri ottimali per ogni brano.
-
-LEZIONE: ${title}
-LIVELLO: ${level}
-PROTOCOLLO: ${protocol}
-BRANI (${TRACKS.length} totali, durata ${totFmt}):
-${list}
-
-Rispondi ESCLUSIVAMENTE con un array JSON valido, senza testo prima o dopo, senza markdown, senza backtick.
-Un oggetto per brano, nell'ordine originale:
-[{"zona":"Z2","rpm_label":"80-90","res_label":"30%","res_num":0.30,"tecnica":"Seduto leggero → In piedi leggero","mani":"P1","fase":"Warm-up","focus":"Prepara le gambe, respira fondo."}]
-
-REGOLE OBBLIGATORIE:
-- zona: Z1/Z2/Z3/Z4/Z5 — Z1=recovery, Z2=aerobico leggero, Z3=moderato, Z4=hard, Z5=sprint massimale
-- Protocollo ${protocol}: struttura warm-up Z2 → corpo lezione → cooldown → stretching finale Z1
-- RPM per zona: Z1=60-70, Z2=80-95, Z3=85-100, Z4=70-105 (dipende da salita/sprint), Z5=100-120
-- Resistenza: Z1=15-25%, Z2=30-40%, Z3=40-55%, Z4=55-75%, Z5=65-80%
-- tecnica: usa → per separare i segmenti (max 3 segmenti per brano)
-- mani: P1 (recovery), P2 (standard), P3 (sprint/salita)
-- Il PRIMO brano: sempre warm-up Z2
-- L'ULTIMO brano: sempre stretching Z1, rpm 60-65, res 15-20%`;
-
-  clearLog();
-  log("→ Chiamata a Google Gemini API (gratuita)...");
+  if(!apiKey || TRACKS.length===0) return;
+  
   const btn = document.getElementById("btn-ai");
-  btn.disabled=true; btn.textContent="⏳ Analisi in corso...";
+  btn.disabled=true; btn.textContent="Analisi in corso...";
+  document.getElementById("ai-log").textContent="";
 
-  try{
-    const GEMINI_MODEL = "gemini-1.5-flash";
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  const prompt=`Sei un Master Instructor Indoor Cycling. Genera un array JSON per questi brani:
+  ${TRACKS.map(t=>`${t.i}. ${t.title} | BPM ${t.bpm} | ${fmt(t.d)}`).join("\n")}
+  Usa questo formato: [{"zona":"Z2","rpm_label":"85","res_label":"35%","res_num":0.35,"tecnica":"Seduto","mani":"P2","fase":"Warm-up","focus":"Respira"}]
+  REGOLE: Z1 (Recovery), Z2 (Base), Z3 (Tempo), Z4 (Soglia), Z5 (Sprint). Primo brano Z2, ultimo Z1.`;
 
-    const response = await fetch(url,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        contents:[{parts:[{text:prompt}]}],
-        generationConfig:{
-          temperature:0.3,
-          maxOutputTokens:4000,
-          responseMimeType:"application/json"
-        }
+  try {
+    // CORREZIONE: Uso della v1 stabile e corretta gestione endpoint
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const resp = await fetch(url, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        contents: [{parts: [{text: prompt}]}],
+        generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
       })
     });
 
-    if(!response.ok){
-      const err = await response.text();
-      log(`✗ Errore HTTP ${response.status}: ${err}`);
-      btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
-      return;
-    }
+    if(!resp.ok) throw new Error(`Status ${resp.status}`);
+    const data = await resp.json();
+    const results = JSON.parse(data.candidates[0].content.parts[0].text);
 
-    const data = await response.json();
-    log("✓ Risposta ricevuta da Gemini.");
-
-    // Estrai testo dalla risposta Gemini
-    let text = "";
-    if(data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts){
-      text = data.candidates[0].content.parts.map(p=>p.text||"").join("");
-    } else if(data.error){
-      log(`✗ Errore Gemini: ${data.error.message||JSON.stringify(data.error)}`);
-      btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
-      return;
-    }
-
-    if(!text){ log("✗ Risposta vuota da Gemini."); btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI"; return; }
-
-    // Estrai JSON (Gemini con responseMimeType=application/json risponde direttamente JSON)
-    const clean = text.replace(/```json/g,"").replace(/```/g,"").trim();
-    const jsonMatch = clean.match(/\[[\s\S]*\]/);
-    if(!jsonMatch){
-      log("✗ JSON non trovato nella risposta.\nRisposta:\n"+text.substring(0,500));
-      btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
-      return;
-    }
-
-    const parsed = JSON.parse(jsonMatch[0]);
-    log(`✓ ${parsed.length} brani elaborati con successo.`);
-
-    TRACKS = TRACKS.map((t,i)=>{
-      const ai = parsed[i]; if(!ai) return t;
-      return{...t,
-        z:    ai.zona||t.z,
-        rpm:  ai.rpm_label||t.rpm,
-        res:  ai.res_label||t.res,
-        rn:   ai.res_num||0,
-        tec:  ai.tecnica||t.tec,
-        mani: ai.mani||t.mani,
-        fase: ai.fase||t.fase,
-        focus:ai.focus||t.focus
-      };
-    });
-
+    TRACKS = TRACKS.map((t, i) => ({
+      ...t,
+      z: results[i].zona,
+      rpm: results[i].rpm_label,
+      res: results[i].res_label,
+      rn: results[i].res_num,
+      tec: results[i].tecnica,
+      mani: results[i].mani,
+      fase: results[i].fase,
+      focus: results[i].focus
+    }));
     renderCards();
-    log("✓ Analisi completata. Revisiona i brani e poi vai al Step 5.");
-
-  }catch(err){
-    log("✗ Errore: "+err.message);
+    log("✓ Analisi completata con successo.");
+  } catch(e) {
+    log("✗ Errore: " + e.message);
   }
-
   btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
 }
 
-// ═══════════════════════════════════════════
-//  GENERA PLAYER
-// ═══════════════════════════════════════════
 async function generatePlayer(){
-  const client   = document.getElementById("sp-client-id").value.trim();
-  const redirect = document.getElementById("sp-redirect").value.trim();
-  let playlist   = document.getElementById("sp-playlist").value.trim();
-
-  if(!client||!redirect){ alert("Compila Client ID e Redirect URI."); return; }
-  if(!playlist){ alert("Inserisci l'URL della playlist Spotify."); return; }
-
-  // Converti URL → URI
-  if(playlist.startsWith("https://open.spotify.com/playlist/")){
-    const id = playlist.split("/playlist/")[1].split("?")[0];
-    playlist = "spotify:playlist:"+id;
+  const playlistInput = document.getElementById("sp-playlist").value.trim();
+  let playlistUri = playlistInput;
+  if(playlistInput.includes("/playlist/")){
+    playlistUri = "spotify:playlist:" + playlistInput.split("/playlist/")[1].split("?")[0];
   }
 
-  const title   = document.getElementById("wk-title").value.trim()||"Indoor Cycling";
-  const instr   = document.getElementById("wk-instructor").value.trim()||"Istruttore";
-  const totSec  = TRACKS.reduce((a,b)=>a+b.d,0);
-  const h=Math.floor(totSec/3600), m=Math.floor((totSec%3600)/60), s=totSec%60;
-  const total   = `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  const totSec = TRACKS.reduce((a,b)=>a+b.d,0);
+  let tpl = "";
+  try {
+    const r = await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");
+    if(r.ok) tpl = await r.text();
+  } catch(e){}
 
-  try{
-    let tpl = "";
-    try{
-      const res = await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");
-      if(res.ok) tpl = await res.text();
-    }catch(e){}
+  if(!tpl) { alert("Template base non trovato sul server."); return; }
 
-    if(!tpl){ alert("Template non trovato. Assicurati che index_template_placeholder.html sia nel repo GitHub."); return; }
+  const final = tpl
+    .replace(/\{\{TITLE\}\}/g, document.getElementById("wk-title").value || "Indoor Ride")
+    .replace(/\{\{INSTRUCTOR\}\}/g, document.getElementById("wk-instructor").value)
+    .replace(/\{\{CLIENT_ID\}\}/g, document.getElementById("sp-client-id").value)
+    .replace(/\{\{REDIRECT_URI\}\}/g, document.getElementById("sp-redirect").value)
+    .replace(/\{\{PLAYLIST_URI\}\}/g, playlistUri)
+    .replace("const T = [];// Injected dynamically", `const T = ${JSON.stringify(TRACKS)};`)
+    .replace("const TOTAL=3495;", `const TOTAL=${totSec};`);
 
-    let filled = tpl
-      .replace(/\{\{TITLE\}\}/g,       title)
-      .replace(/\{\{INSTRUCTOR\}\}/g,   instr)
-      .replace(/\{\{TRACK_COUNT\}\}/g,  String(TRACKS.length))
-      .replace(/\{\{TOTAL_TIME\}\}/g,   total)
-      .replace(/\{\{CLIENT_ID\}\}/g,    client)
-      .replace(/\{\{REDIRECT_URI\}\}/g, redirect)
-      .replace(/\{\{PLAYLIST_URI\}\}/g, playlist)
-      .replace("const T = [];// Injected dynamically", `const T = ${JSON.stringify(TRACKS,null,2)};`)
-      .replace("const TOTAL=3495;",     `const TOTAL=${totSec};`)
-      .replace(/0:58:15/g,             total);
-
-    const blob = new Blob([filled],{type:"text/html"});
-    const url  = URL.createObjectURL(blob);
-    const a    = document.getElementById("dl-link");
-    a.href=url; a.download="index.html"; a.classList.add("show");
-    a.scrollIntoView({behavior:'smooth'});
-
-  }catch(err){ alert("Errore: "+err.message); }
+  const blob = new Blob([final], {type: "text/html"});
+  const a = document.getElementById("dl-link");
+  a.href = URL.createObjectURL(blob);
+  a.classList.add("show");
 }
 </script>
 </body>
