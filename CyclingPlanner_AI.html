@@ -347,11 +347,42 @@ REGOLE:
   btn.disabled=true; btn.textContent="⏳ Analisi in corso...";
 
   try{
-    const r=await fetch(`${WORKER_URL}/ai`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
- const data=await r.json();
- log('✓ Risposta ricevuta.');
- const text=data.output||JSON.stringify(data);
- const clean=text;.replace(/```json/g,"").replace(/```/g,"").trim();
+    const r=await fetch(`${WORKER_URL}/claude`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:4000,
+        messages:[{role:"user",content:prompt}]
+      })
+    });
+
+    if(!r.ok){
+      const err=await r.text();
+      log(`✗ Errore HTTP ${r.status}: ${err}`);
+      btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";
+      return;
+    }
+
+    const data=await r.json();
+    log("✓ Risposta ricevuta.");
+
+    // Estrai il testo dalla risposta Anthropic
+    let text="";
+    if(data.content&&data.content[0]&&data.content[0].text){
+      text=data.content[0].text;
+    } else if(data.error){
+      log(`✗ Errore API: ${data.error.message||JSON.stringify(data.error)}`);
+      btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";
+      return;
+    } else {
+      log(`✗ Risposta inattesa: ${JSON.stringify(data).substring(0,200)}`);
+      btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";
+      return;
+    }
+
+    // Estrai JSON dall'output
+    const clean=text.replace(/```json/g,"").replace(/```/g,"").trim();
     const jsonMatch=clean.match(/\[[\s\S]*\]/);
     if(!jsonMatch){log("✗ JSON non trovato nella risposta AI.\nRisposta:\n"+text.substring(0,500));btn.disabled=false;btn.textContent="🤖 Analizza con Claude AI";return;}
 
