@@ -17,20 +17,17 @@ main{max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:colu
 .card h2{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--accent);text-transform:uppercase;letter-spacing:.6px}
 textarea,input,select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:#e8e8f0;padding:10px 12px;font-size:13px;margin-bottom:10px;outline:none;font-family:inherit}
 textarea:focus,input:focus,select:focus{border-color:var(--accent)}
-textarea{resize:vertical;line-height:1.5}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
 .btn{padding:11px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;transition:opacity .15s}
-.btn:active{opacity:.8}
 .btn-primary{background:var(--accent);color:#000}
 .btn-secondary{background:var(--s3);border:1px solid var(--border);color:#e8e8f0}
 .btn-gen{background:var(--red);color:#fff;width:100%;padding:14px;font-size:15px}
-.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-#ai-log{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;font-family:monospace;height:120px;overflow-y:auto;white-space:pre-wrap;display:none;color:#aaa;margin-top:10px}
+#ai-log{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;font-family:monospace;height:100px;overflow-y:auto;white-space:pre-wrap;display:none;color:#aaa;margin-top:10px}
 #ai-log.visible{display:block}
 .track-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px}
 .track-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
-.track-card .meta{font-size:11px;color:#6666aa;margin-bottom:10px}
+.meta{font-size:11px;color:#6666aa;margin-bottom:10px}
 .params{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
 .param{background:var(--s3);border-radius:6px;padding:6px 4px;text-align:center}
 .param .v{font-size:14px;font-weight:700;font-family:monospace}
@@ -38,20 +35,11 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 .fase{display:inline-block;background:#1a1040;border:1px solid #3a2080;color:var(--purple);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-bottom:6px}
 .tec{font-size:12px;color:#aaa;margin-bottom:4px}
 .focus{font-size:12px;color:#e8e8f0;font-style:italic;border-left:3px solid var(--purple);padding-left:8px}
-.hint{font-size:11px;color:#6666aa;margin-top:-6px;margin-bottom:10px;line-height:1.6}
-hr{border:none;border-top:1px solid var(--border);margin:14px 0}
-#dl-link{display:none;margin-top:12px;padding:12px 20px;background:var(--s2);border:1px solid var(--accent);border-radius:8px;text-align:center;text-decoration:none;color:var(--accent);font-weight:700;font-size:14px}
+#dl-link{display:none;margin-top:12px;padding:12px 20px;background:var(--s2);border:1px solid var(--accent);border-radius:8px;text-align:center;text-decoration:none;color:var(--accent);font-weight:700}
 #dl-link.show{display:block}
-.step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
+.step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px}
 #apikey-box{background:linear-gradient(135deg,#0a1a0a,#0d1a14);border:2px solid #1DB954;border-radius:12px;padding:20px}
-#apikey-box h2{color:#1DB954;font-size:15px;font-weight:700;margin-bottom:8px}
-#apikey-box p{font-size:12px;color:#8888aa;margin-bottom:14px;line-height:1.7}
-.apikey-row{display:flex;gap:10px;align-items:flex-end}
-.apikey-row input{margin-bottom:0;font-family:monospace}
-.apikey-status{font-size:12px;font-family:monospace;margin-top:8px}
-.apikey-status.ok{color:#1DB954}
-.apikey-status.err{color:var(--red)}
-#apikey-indicator{width:10px;height:10px;border-radius:50%;background:#333355;display:inline-block;margin-right:6px;transition:all .3s}
+#apikey-indicator{width:10px;height:10px;border-radius:50%;background:#333355;display:inline-block;margin-right:6px}
 #apikey-indicator.ok{background:#1DB954;box-shadow:0 0 8px #1DB954}
 #apikey-indicator.err{background:var(--red)}
 </style>
@@ -65,86 +53,71 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="apikey-indicator"></span>
-    <span class="badge">v3.2.3</span>
+    <span class="badge">v3.2.4</span>
   </div>
 </header>
 
 <main>
   <div id="apikey-box">
-    <h2>🔑 Google Gemini API Key</h2>
-    <p>Inserisci la chiave da <code>aistudio.google.com</code> per attivare l'analisi automatica.</p>
-    <div class="apikey-row">
-      <div style="flex:1">
-        <label>Gemini API Key</label>
-        <input type="password" id="apikey-input" placeholder="AIzaSy..."/>
-      </div>
-      <button class="btn btn-primary" onclick="saveApiKey()" style="margin-bottom:10px;background:#1DB954;color:#000">Salva</button>
-      <button class="btn btn-secondary" onclick="clearApiKey()" style="margin-bottom:10px">✕</button>
+    <h2 style="color:#1DB954;font-size:15px;margin-bottom:8px">🔑 Google Gemini API Key</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px">Inserisci la chiave da <code>aistudio.google.com</code>.</p>
+    <div class="row" style="grid-template-columns:1fr auto auto">
+      <input type="password" id="apikey-input" placeholder="AIzaSy..." style="margin-bottom:0"/>
+      <button class="btn btn-primary" onclick="saveApiKey()" style="background:#1DB954">Salva</button>
+      <button class="btn btn-secondary" onclick="clearApiKey()">✕</button>
     </div>
-    <div id="apikey-status" class="apikey-status"></div>
   </div>
 
   <div class="card">
     <h2><span class="step-num">1</span>Importa Brani</h2>
-    <textarea id="in-man" rows="8" placeholder="Titolo — Artista | BPM | mm:ss"></textarea>
-    <div class="btn-row">
+    <textarea id="in-man" rows="6" placeholder="Titolo — Artista | BPM | mm:ss"></textarea>
+    <div style="display:flex;gap:10px">
       <button class="btn btn-primary" onclick="importManual()">Importa Lista</button>
-      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:#e8e8f0;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px">
-        <span>Carica CSV</span>
-        <input type="file" accept=".csv" id="in-file" style="display:none" onchange="importCSV()">
+      <label style="cursor:pointer;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 20px;font-size:13px">
+        Carica CSV <input type="file" accept=".csv" id="in-file" style="display:none" onchange="importCSV()">
       </label>
     </div>
-    <div id="import-status" style="margin-top:10px;font-size:13px"></div>
   </div>
 
   <div class="card">
     <h2><span class="step-num">2</span>Setup Lezione</h2>
     <div class="row">
-      <div><label>Titolo Lezione</label><input id="wk-title" placeholder="ROCK ITALIAN FIRE"></div>
+      <div><label>Titolo</label><input id="wk-title" value="ROCK ITALIAN FIRE"></div>
       <div><label>Istruttore</label><input id="wk-instructor" value="Giuseppe Primavera"></div>
     </div>
     <div class="row">
       <div>
         <label>Livello</label>
-        <select id="wk-level">
-          <option value="principiante">Principiante</option>
-          <option value="intermedio">Intermedio</option>
-          <option value="avanzato" selected>Avanzato</option>
-        </select>
+        <select id="wk-level"><option value="Avanzato">Avanzato</option><option value="Intermedio">Intermedio</option></select>
       </div>
       <div>
         <label>Protocollo</label>
-        <select id="wk-protocol">
-          <option value="endurance">Endurance</option>
-          <option value="interval_estensivo" selected>Interval Estensivo</option>
-          <option value="hiit">HIIT</option>
-          <option value="montagna">Montagna</option>
-        </select>
+        <select id="wk-protocol"><option value="Interval Estensivo">Interval Estensivo</option><option value="Endurance">Endurance</option></select>
       </div>
     </div>
   </div>
 
   <div class="card">
     <h2><span class="step-num">3</span>Analisi AI</h2>
-    <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con Gemini AI</button>
+    <button class="btn btn-primary" onclick="runAI()" id="btn-ai" style="width:100%">🤖 Analizza con Gemini AI</button>
     <div id="ai-log"></div>
   </div>
 
   <div class="card">
-    <h2><span class="step-num">4</span>Revisione Brani</h2>
+    <h2><span class="step-num">4</span>Revisione</h2>
     <div id="cards"></div>
   </div>
 
   <div class="card">
-    <h2><span class="step-num">5</span>Genera Player</h2>
+    <h2><span class="step-num">5</span>Genera</h2>
     <div class="row">
-      <div><label>Spotify Client ID</label><input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c"></div>
-      <div><label>Redirect URI</label><input id="sp-redirect" value="https://giusprim.github.io/Indoor/"></div>
+      <input id="sp-client-id" value="fec34f5ffb9a46ca912190a6557e637c" hidden>
+      <input id="sp-redirect" value="https://giusprim.github.io/Indoor/" hidden>
     </div>
     <label>URL Playlist Spotify</label>
     <input id="sp-playlist" placeholder="https://open.spotify.com/playlist/...">
-    <button class="btn btn-gen" onclick="generatePlayer()">⬇ Genera index.html</button>
-    <a id="dl-link" download="index.html">✅ Clicca qui per scaricare</a>
+    <button class="btn btn-gen" onclick="generatePlayer()" style="width:100%">Genera index.html</button>
+    <a id="dl-link" download="index.html">✅ Scarica index.html</a>
   </div>
 </main>
 
@@ -153,80 +126,61 @@ const KEY_STORAGE = 'gemini_api_key_prc';
 let TRACKS = [];
 
 function loadApiKey(){ return localStorage.getItem(KEY_STORAGE)||''; }
-function saveApiKey(){
-  const val = document.getElementById('apikey-input').value.trim();
-  if(!val.startsWith('AIza')){ alert('Chiave non valida.'); return; }
-  localStorage.setItem(KEY_STORAGE, val);
-  location.reload();
-}
+function saveApiKey(){ localStorage.setItem(KEY_STORAGE, document.getElementById('apikey-input').value.trim()); location.reload(); }
 function clearApiKey(){ localStorage.removeItem(KEY_STORAGE); location.reload(); }
 
 (function init(){
   const k = loadApiKey();
-  const ind = document.getElementById('apikey-indicator');
-  if(k){ ind.className='ok'; document.getElementById('apikey-input').value=k; }
-  else { ind.className='err'; }
+  document.getElementById('apikey-indicator').className = k ? 'ok' : 'err';
+  if(k) document.getElementById('apikey-input').value = k;
 })();
 
-function fmt(s){ s=Math.max(0,Math.floor(s)); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; }
+function fmt(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; }
 function parseTime(t){
-  if(!t) return 0;
   const p = String(t).trim().split(":").map(Number);
   return p.length===2 ? p[0]*60+p[1] : parseInt(t)||0;
 }
-function log(msg){ const el=document.getElementById("ai-log"); el.classList.add("visible"); el.textContent+=msg+"\n"; el.scrollTop=el.scrollHeight; }
+function log(msg){ const el=document.getElementById("ai-log"); el.classList.add("visible"); el.textContent+=msg+"\n"; }
 
 function importManual(){
   const raw = document.getElementById("in-man").value.trim();
-  if(!raw) return;
-  TRACKS = [];
-  raw.split(/\n/).forEach((line, i)=>{
+  TRACKS = raw.split(/\n/).map((line, i)=>{
     const parts = line.split("|").map(x=>x.trim());
-    if(parts.length<2) return;
-    const ta = parts[0], bpm = parts[1], dur = parseTime(parts[2]);
-    let title=ta, artist="";
-    if(ta.includes("—")){ [title, artist] = ta.split("—").map(x=>x.trim()); }
-    TRACKS.push({i:i+1,title,ar:artist,bpm,d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
+    const ta = parts[0];
+    return {i:i+1, title:ta.split("—")[0].trim(), ar:ta.split("—")[1]||"", bpm:parts[1], d:parseTime(parts[2]), z:"—", rpm:"—", res:"—", tec:"—", mani:"P2", fase:"—", focus:"—", s:0};
   });
-  calcStartTimes(); renderCards();
+  let cur=0; TRACKS.forEach(t=>{t.s=cur; cur+=t.d;});
+  renderCards();
 }
 
 function importCSV(){
-  const f = document.getElementById("in-file").files[0]; if(!f) return;
+  const f = document.getElementById("in-file").files[0];
   const r = new FileReader();
   r.onload = ()=>{
-    TRACKS = [];
     const rows = r.result.split(/\r?\n/).filter(x=>x.trim());
-    rows.forEach((row, i)=>{
+    TRACKS = rows.map((row, i)=>{
       const c = row.includes(";") ? row.split(";") : row.split(",");
-      if(c.length<2) return;
-      TRACKS.push({i:i+1,title:c[0].trim(),ar:c[1]||"",bpm:c[2]||"0",d:parseTime(c[3]||"0"),z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
+      return {i:i+1, title:c[0], ar:c[1]||"", bpm:c[2], d:parseTime(c[3]), z:"—", rpm:"—", res:"—", tec:"—", mani:"P2", fase:"—", focus:"—", s:0};
     });
-    calcStartTimes(); renderCards();
+    let cur=0; TRACKS.forEach(t=>{t.s=cur; cur+=t.d;});
+    renderCards();
   };
   r.readAsText(f);
 }
-
-function calcStartTimes(){ let cur=0; TRACKS.forEach(t=>{t.s=cur;cur+=t.d;}); }
 
 function renderCards(){
   const wrap = document.getElementById("cards"); wrap.innerHTML="";
   const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
   TRACKS.forEach(t=>{
-    const zc = ZC[t.z]||"#aaa";
-    wrap.innerHTML+=`
-    <div class="track-card">
-      <h3 style="color:${zc}">${t.i}. ${t.title}</h3>
-      <div class="meta">BPM ${t.bpm} · ${fmt(t.d)} · Start ${fmt(t.s)}</div>
-      ${t.z!=="—"?`
-      <div class="params">
+    wrap.innerHTML+=`<div class="track-card">
+      <h3 style="color:${ZC[t.z]||'#eee'}">${t.i}. ${t.title}</h3>
+      <div class="meta">BPM ${t.bpm} | ${fmt(t.d)} | Inizio ${fmt(t.s)}</div>
+      ${t.z!=="—"?`<div class="params">
         <div class="param"><div class="v">${t.z}</div><div class="l">Zona</div></div>
         <div class="param"><div class="v">${t.rpm}</div><div class="l">RPM</div></div>
         <div class="param"><div class="v">${t.res}</div><div class="l">Res.</div></div>
         <div class="param"><div class="v">${t.mani}</div><div class="l">Mani</div></div>
-      </div>
-      <div class="fase">${t.fase}</div><div class="tec">${t.tec}</div><div class="focus">${t.focus}</div>
-      `:'<div class="meta">Analisi mancante...</div>'}
+      </div><div class="fase">${t.fase}</div><div class="tec">${t.tec}</div><div class="focus">${t.focus}</div>`:''}
     </div>`;
   });
 }
@@ -235,32 +189,33 @@ async function runAI(){
   const apiKey = loadApiKey();
   if(!apiKey || TRACKS.length===0) return;
   const btn = document.getElementById("btn-ai");
-  btn.disabled=true; btn.textContent="Analisi...";
+  btn.disabled=true; btn.textContent="Analisi in corso...";
   document.getElementById("ai-log").textContent="";
 
-  const prompt = `Sei un Master Instructor Indoor Cycling. Genera un array JSON per questi brani:
-  ${TRACKS.map(t=>`${t.i}. ${t.title} | BPM ${t.bpm}`).join("\n")}
-  Usa questo formato esatto: [{"zona":"Z2","rpm_label":"85","res_label":"35%","res_num":0.35,"tecnica":"Seduto","mani":"P2","fase":"Lavoro","focus":"Concentrati"}]`;
+  const prompt = `Sei un Master Instructor Indoor Cycling. Analizza questi brani per una lezione ${document.getElementById("wk-protocol").value}.
+  Playlist: ${TRACKS.map(t=>`${t.i}. BPM ${t.bpm}`).join(", ")}.
+  Restituisci SOLO un array JSON senza markdown: [{"zona":"Z2","rpm_label":"85","res_label":"35%","res_num":0.35,"tecnica":"Seduto","mani":"P2","fase":"Lavoro","focus":"Mantieni"}]`;
 
   try {
-    // Endpoint V1 stabile
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     const resp = await fetch(url, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        contents: [{parts: [{text: prompt}]}],
-        generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
-      })
+      body: JSON.stringify({ contents: [{parts: [{text: prompt}]}], generationConfig: { temperature: 0.1 } })
     });
 
     const data = await resp.json();
-    if(!resp.ok) throw new Error(data.error ? data.error.message : `Status ${resp.status}`);
+    if(!resp.ok) throw new Error(data.error?.message || "Errore API");
     
-    const results = JSON.parse(data.candidates[0].content.parts[0].text);
-    TRACKS = TRACKS.map((t, i) => results[i] ? {...t, z:results[i].zona, rpm:results[i].rpm_label, res:results[i].res_label, rn:results[i].res_num, tec:results[i].tecnica, mani:results[i].mani, fase:results[i].fase, focus:results[i].focus} : t);
+    let raw = data.candidates[0].content.parts[0].text;
+    const cleanJson = raw.replace(/```json/g, "").replace(/```/g, "").trim();
+    const results = JSON.parse(cleanJson);
+
+    TRACKS = TRACKS.map((t, i) => ({
+      ...t, z:results[i].zona, rpm:results[i].rpm_label, res:results[i].res_label, rn:results[i].res_num, tec:results[i].tecnica, mani:results[i].mani, fase:results[i].fase, focus:results[i].focus
+    }));
     renderCards();
-    log("✓ Successo.");
+    log("✓ Analisi completata.");
   } catch(e) { log("✗ Errore: " + e.message); }
   btn.disabled=false; btn.textContent="🤖 Analizza con Gemini AI";
 }
