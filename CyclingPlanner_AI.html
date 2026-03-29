@@ -64,7 +64,7 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 <main>
 
 <div class="info-bar">
-  <strong>🤖 AI via Cloudflare Worker + Google Gemini</strong><br>
+  <strong>🤖 AI via Cloudflare Worker + Groq LLaMA 3</strong><br>
   Worker: <code>anthropic-proxy.g-primavera-co.workers.dev/ai</code> &nbsp;·&nbsp;
   Chiave Groq nel Worker (variabile <code>GROQ_API_KEY</code> — gratuita su console.groq.com).<br>
   Il Planner genera tecniche con segmenti a 32 battiti compatibili con il Player Coach (sprint tracker, jump tracker, countdown tecnica).
@@ -137,7 +137,7 @@ La Cura — Franco Battiato | 90 | 3:55"></textarea>
 <div class="card">
   <h2><span class="step-num">3</span>Analisi AI — segmenti a 32 battiti</h2>
   <p class="hint">Groq LLaMA 3 genera zona FC, RPM, resistenza, manubrio, fase, focus e <strong>tecnica con segmenti temporali</strong> (sprint tracker, jump tracker, countdown cambio tecnica nel Player).</p>
-  <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con Gemini AI</button>
+  <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con AI</button>
   <div id="ai-log"></div>
   <div id="ai-warn" class="warn">Importa prima i brani (Step 1).</div>
 </div>
@@ -257,11 +257,13 @@ async function runAI(){
   btn.disabled=true;btn.textContent="\u23f3 Analisi in corso...";
 
   try{
-    const r=await fetch(WORKER_URL+"/gemini",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
+    const r=await fetch(WORKER_URL+"/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
     if(!r.ok){const err=await r.text();log("\u2717 Errore HTTP "+r.status+": "+err);btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
     const data=await r.json();
     let text="";
     if(typeof data.text==="string"){text=data.text;}
+    else if(data.choices&&data.choices[0]){text=data.choices[0].message?.content||"";}
+    else if(data.candidates&&data.candidates[0]){text=data.candidates[0].content?.parts?.map(p=>p.text||"").join("")||"";}
     else if(data.error){log("\u2717 Errore: "+(data.error||JSON.stringify(data)));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
     if(!text){log("\u2717 Risposta vuota. Raw: "+JSON.stringify(data).substring(0,150));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
     log("\u2713 Risposta ricevuta. Parsing...");
