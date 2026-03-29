@@ -261,9 +261,9 @@ async function runAI(){
     if(!r.ok){const err=await r.text();log("\u2717 Errore HTTP "+r.status+": "+err);btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
     const data=await r.json();
     let text="";
-    if(data.candidates&&data.candidates[0]&&data.candidates[0].content){text=data.candidates[0].content.parts.map(p=>p.text||"").join("");}
-    else if(data.error){log("\u2717 Errore: "+(data.error.message||JSON.stringify(data.error)));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
-    if(!text){log("\u2717 Risposta vuota.");btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
+    if(typeof data.text==="string"){text=data.text;}
+    else if(data.error){log("\u2717 Errore: "+(data.error||JSON.stringify(data)));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
+    if(!text){log("\u2717 Risposta vuota. Raw: "+JSON.stringify(data).substring(0,150));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
     log("\u2713 Risposta ricevuta. Parsing...");
     const clean=text.replace(/```json/g,"").replace(/```/g,"").trim();
     const jsonMatch=clean.match(/\[[\s\S]*\]/);
