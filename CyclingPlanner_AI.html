@@ -59,7 +59,7 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 <body>
 <header>
   <div><h1>🚴 Indoor Cycling Planner</h1><p>Power Ride Coach · Giuseppe Primavera · AIF 2° Livello</p></div>
-  <span class="badge">v3.4</span>
+  <span class="badge">v3.5</span>
 </header>
 <main>
 
@@ -256,7 +256,36 @@ async function runAI(){
   let list="";
   TRACKS.forEach(t=>list+=t.i+'. "'+t.title+'" — '+t.ar+' | BPM:'+t.bpm+' | dur:'+t.d+'s ('+fmt(t.d)+')\n');
 
-  const prompt='Sei un esperto istruttore Indoor Cycling AIF 2° livello.\n\nLEZIONE: '+title+'\nLIVELLO: '+level+'\nPROTOCOLLO: '+protocol+'\nBRANI ('+TRACKS.length+', durata '+totFmt+'):\n'+list+'\nRispondi SOLO con array JSON valido, nessun testo, nessun markdown, nessun backtick.\nUn oggetto per brano nell ORDINE ORIGINALE:\n[{"zona":"Z2","rpm_label":"80–90","res_label":"30%","res_num":0.30,"mani":"P1⇔P2","fase":"Warm-up","tec":"Seduto leggero → In piedi leggero → Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]\n\nREGOLE ZONA FC:\nZ1=recovery 50-65% | Z2=aerobico 65-75% | Z3=soglia 75-85% | Z4=hard 85-92% | Z5=sprint 92-100%\n\nRPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:70-105 Z5:100-120\nRESISTENZA: Z1:15-25% Z2:30-40% Z3:40-55% Z4:55-75% Z5:65-80%\nMANUBRIO: P1=recovery P2=standard P3=sprint/salita usa ↔ per alternanza → per progressione\n\nFORMATO CAMPO tec - USA ESATTAMENTE UNO DI QUESTI:\n1. SPRINT (brani Z5, HIIT): Sprint 20'' ON (in piedi) → Seduto 20'' OFF\n   oppure Sprint 30'' ON (in piedi) → Seduto 30'' OFF\n   oppure Sprint 15'' ON (in piedi) → Seduto 15'' OFF\n   IMPORTANTE: usa SEMPRE gli apostrofi '' per i secondi, NON la parola secondi\n2. JUMP (brani Z3-Z4 ritmici): Jump in 8 → Jump in 4 → Jump in 2\n3. GENERICO max 3 segmenti: Seduto veloce → In piedi leggero → Seduto veloce\n   Salita progressiva Seduto carico → In piedi carico\n   Seduto ritmo costante\n\nSTRUTTURA:\n- Brano 1: warm-up Z2, Seduto leggero\n- Ultimi 2: defaticamento Z2 poi stretching Z1 mani P1\n- Sprint/Jump solo se BPM>110 e protocollo lo prevede\n- Montagna: Seduto carico → In piedi carico RPM 50-75';
+  const prompt=`Sei un esperto istruttore Indoor Cycling AIF 2° livello.
+
+LEZIONE: ${title}
+LIVELLO: ${level}
+PROTOCOLLO: ${protocol}
+BRANI (${TRACKS.length}, durata ${totFmt}):
+${list}
+
+Rispondi SOLO con array JSON valido, nessun testo, nessun markdown, nessun backtick.
+Un oggetto per brano nell'ORDINE ORIGINALE:
+[{"zona":"Z2","rpm_label":"80-90","res_label":"30%","res_num":0.30,"mani":"P1","fase":"Warm-up","tec":"Seduto leggero → In piedi leggero → Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]
+
+REGOLE ZONE: Z1=recovery Z2=aerobico Z3=soglia Z4=hard Z5=sprint
+RPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:70-105 Z5:100-120
+RESISTENZA: Z1:15-25% Z2:30-40% Z3:40-55% Z4:55-75% Z5:65-80%
+MANUBRIO: P1=recovery P2=standard P3=sprint/salita. Usa ↔ per alternanza, → per progressione.
+
+FORMATO tec — USA ESATTAMENTE UNO DI QUESTI TRE:
+1. SPRINT (Z5/HIIT): Sprint 20'' ON (in piedi) → Seduto 20'' OFF
+   oppure: Sprint 30'' ON (in piedi) → Seduto 30'' OFF
+   oppure: Sprint 15'' ON (in piedi) → Seduto 15'' OFF
+   IMPORTANTE: usa '' (due apici) per indicare i secondi, NON la parola "secondi"
+2. JUMP (Z3-Z4 ritmici): Jump in 8 → Jump in 4 → Jump in 2
+3. GENERICO (max 3 segmenti con →): Seduto leggero → In piedi leggero → Seduto leggero
+
+STRUTTURA ${protocol.toUpperCase()}:
+- Brano 1: warm-up Z2, Seduto leggero, mani P1
+- Ultimi 2: defaticamento Z2 poi stretching Z1, mani P1
+- Sprint/Jump solo se BPM>110 e protocollo lo prevede
+- Montagna: Seduto carico → In piedi carico, RPM 50-75`;
 
   clearLog();
   log("→ Analisi "+TRACKS.length+" brani con Groq LLaMA 3 (gratuito)...");
