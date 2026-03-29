@@ -65,8 +65,8 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 
 <div class="info-bar">
   <strong>🤖 AI via Cloudflare Worker + Google Gemini</strong><br>
-  Worker: <code>anthropic-proxy.g-primavera-co.workers.dev/gemini</code> &nbsp;·&nbsp;
-  Chiave Gemini nel Worker (variabile <code>GEMINI_API_KEY</code>).<br>
+  Worker: <code>anthropic-proxy.g-primavera-co.workers.dev/ai</code> &nbsp;·&nbsp;
+  Chiave Groq nel Worker (variabile <code>GROQ_API_KEY</code> — gratuita su console.groq.com).<br>
   Il Planner genera tecniche con segmenti a 32 battiti compatibili con il Player Coach (sprint tracker, jump tracker, countdown tecnica).
 </div>
 
@@ -136,7 +136,7 @@ La Cura — Franco Battiato | 90 | 3:55"></textarea>
 
 <div class="card">
   <h2><span class="step-num">3</span>Analisi AI — segmenti a 32 battiti</h2>
-  <p class="hint">Gemini genera zona FC, RPM, resistenza, manubrio, fase, focus e <strong>tecnica con segmenti temporali</strong> (sprint tracker, jump tracker, countdown cambio tecnica nel Player).</p>
+  <p class="hint">Groq LLaMA 3 genera zona FC, RPM, resistenza, manubrio, fase, focus e <strong>tecnica con segmenti temporali</strong> (sprint tracker, jump tracker, countdown cambio tecnica nel Player).</p>
   <button class="btn btn-primary" onclick="runAI()" id="btn-ai">🤖 Analizza con Gemini AI</button>
   <div id="ai-log"></div>
   <div id="ai-warn" class="warn">Importa prima i brani (Step 1).</div>
@@ -252,29 +252,29 @@ async function runAI(){
   const prompt='Sei un esperto istruttore Indoor Cycling AIF 2\u00b0 livello.\n\nLEZIONE: '+title+'\nLIVELLO: '+level+'\nPROTOCOLLO: '+protocol+'\nBRANI ('+TRACKS.length+', durata '+totFmt+'):\n'+list+'\nRispondi SOLO con array JSON valido, nessun testo, nessun markdown, nessun backtick.\nUn oggetto per brano nell ORDINE ORIGINALE:\n[{"zona":"Z2","rpm_label":"80\u201390","res_label":"30%","res_num":0.30,"mani":"P1\u21d4P2","fase":"Warm-up","tec":"Seduto leggero \u2192 In piedi leggero \u2192 Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]\n\nREGOLE ZONA FC:\nZ1=recovery 50-65% | Z2=aerobico 65-75% | Z3=soglia 75-85% | Z4=hard 85-92% | Z5=sprint 92-100%\n\nRPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:70-105 Z5:100-120\nRESISTENZA: Z1:15-25% Z2:30-40% Z3:40-55% Z4:55-75% Z5:65-80%\nMANUBRIO: P1=recovery P2=standard P3=sprint/salita usa \u2194 per alternanza \u2192 per progressione\n\nFORMATO CAMPO tec - USA ESATTAMENTE UNO DI QUESTI:\n1. SPRINT (brani Z5, HIIT): Sprint 20 secondi ON in piedi \u2192 Seduto 20 secondi OFF\n   oppure Sprint 30 secondi ON in piedi \u2192 Seduto 30 secondi OFF\n   oppure Sprint 15 secondi ON in piedi \u2192 Seduto 15 secondi OFF\n2. JUMP (brani Z3-Z4 ritmici): Jump in 8 \u2192 Jump in 4 \u2192 Jump in 2\n3. GENERICO max 3 segmenti: Seduto veloce \u2192 In piedi leggero \u2192 Seduto veloce\n   Salita progressiva Seduto carico \u2192 In piedi carico\n   Seduto ritmo costante\n\nSTRUTTURA:\n- Brano 1: warm-up Z2, Seduto leggero\n- Ultimi 2: defaticamento Z2 poi stretching Z1 mani P1\n- Sprint/Jump solo se BPM>110 e protocollo lo prevede\n- Montagna: Seduto carico \u2192 In piedi carico RPM 50-75';
 
   clearLog();
-  log("\u2192 Analisi "+TRACKS.length+" brani con Gemini...");
+  log("\u2192 Analisi "+TRACKS.length+" brani con Groq LLaMA 3 (gratuito)...");
   const btn=document.getElementById("btn-ai");
   btn.disabled=true;btn.textContent="\u23f3 Analisi in corso...";
 
   try{
     const r=await fetch(WORKER_URL+"/gemini",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
-    if(!r.ok){const err=await r.text();log("\u2717 Errore HTTP "+r.status+": "+err);btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";return;}
+    if(!r.ok){const err=await r.text();log("\u2717 Errore HTTP "+r.status+": "+err);btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
     const data=await r.json();
     let text="";
     if(data.candidates&&data.candidates[0]&&data.candidates[0].content){text=data.candidates[0].content.parts.map(p=>p.text||"").join("");}
-    else if(data.error){log("\u2717 Errore: "+(data.error.message||JSON.stringify(data.error)));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";return;}
-    if(!text){log("\u2717 Risposta vuota.");btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";return;}
+    else if(data.error){log("\u2717 Errore: "+(data.error.message||JSON.stringify(data.error)));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
+    if(!text){log("\u2717 Risposta vuota.");btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
     log("\u2713 Risposta ricevuta. Parsing...");
     const clean=text.replace(/```json/g,"").replace(/```/g,"").trim();
     const jsonMatch=clean.match(/\[[\s\S]*\]/);
-    if(!jsonMatch){log("\u2717 JSON non trovato:\n"+text.substring(0,300));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";return;}
+    if(!jsonMatch){log("\u2717 JSON non trovato:\n"+text.substring(0,300));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
     const parsed=JSON.parse(jsonMatch[0]);
     log("\u2713 "+parsed.length+" brani elaborati con successo.");
     TRACKS=TRACKS.map((t,i)=>{const ai=parsed[i];if(!ai)return t;return{...t,z:ai.zona||t.z,rpm:ai.rpm_label||t.rpm,res:ai.res_label||t.res,rn:ai.res_num||0,tec:ai.tec||t.tec,mani:ai.mani||t.mani,fase:ai.fase||t.fase,focus:ai.focus||t.focus};});
     renderCards();
     log("\u2713 Completato. Revisiona i brani e vai al Step 5.");
   }catch(err){log("\u2717 Errore: "+err.message);}
-  btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con Gemini AI";
+  btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";
 }
 
 async function generatePlayer(){
