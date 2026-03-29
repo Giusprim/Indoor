@@ -183,19 +183,26 @@ function importManual(){
   const raw=document.getElementById("in-man").value.trim();
   if(!raw){setIS("Nessun testo inserito.","err");return;}
   TRACKS=[];let i=1;
-  raw.split(/\n/).filter(x=>x.trim()).forEach(line=>{
+  raw.split("\n").filter(x=>x.trim()).forEach(line=>{
     const parts=line.split("|").map(x=>x.trim());
-    if(parts.length<2)return;
-    const ta=parts[0],bpm=parseInt(parts[1])||0,dur=parseTime(parts[2]);
-    if(!bpm||!dur)return;
-    let title=ta,artist="";
-    const sep=ta.includes("\u2014")?"\u2014":ta.includes(" - ")?" - ":null;
-    if(sep){const p=ta.split(sep);title=p[0].trim();artist=p.slice(1).join(sep).trim();}
-    TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"\u2014",rpm:"\u2014",res:"\u2014",rn:0,tec:"\u2014",mani:"P2",fase:"\u2014",focus:"\u2014",s:0});
+    if(parts.length<2) return;
+    const ta=parts[0];
+    const bpm=parseInt(parts[1])||0;
+    const dur=parts[2]?parseTime(parts[2]):0;
+    if(!ta||!bpm) return;  // BPM obbligatorio, durata opzionale
+    let title=ta, artist="";
+    // Supporta — (em dash), – (en dash), - (trattino) come separatore titolo/artista
+    const dashIdx=ta.search(/—|–| - /);
+    if(dashIdx>0){
+      title=ta.substring(0,dashIdx).trim();
+      artist=ta.substring(dashIdx).replace(/^[—–\-\s]+/,"").trim();
+    }
+    TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur||180,
+      z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
   });
-  if(TRACKS.length===0){setIS("Formato non riconosciuto. Schema: Titolo \u2014 Artista | BPM | mm:ss","err");return;}
+  if(TRACKS.length===0){setIS("Nessun brano valido. Schema: Titolo — Artista | BPM | mm:ss","err");return;}
   calcS();renderCards();
-  setIS("\u2713 "+TRACKS.length+" brani \u2014 durata: "+fmt(TRACKS.reduce((a,b)=>a+b.d,0)),"ok");
+  setIS("✓ "+TRACKS.length+" brani importati — durata: "+fmt(TRACKS.reduce((a,b)=>a+b.d,0)),"ok");
 }
 
 function importCSV(){
@@ -209,11 +216,11 @@ function importCSV(){
       const ta=c[0].trim(),bpm=parseInt(c[1])||0,dur=parseTime(c[2]);
       if(!bpm)return;
       let title=ta,artist="";
-      if(ta.includes("\u2014")){const p=ta.split("\u2014");title=p[0].trim();artist=p[1].trim();}
-      TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"\u2014",rpm:"\u2014",res:"\u2014",rn:0,tec:"\u2014",mani:"P2",fase:"\u2014",focus:"\u2014",s:0});
+      if(ta.includes("—")){const p=ta.split("—");title=p[0].trim();artist=p[1].trim();}
+      TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
     });
     calcS();renderCards();
-    setIS("\u2713 "+TRACKS.length+" brani da file \u2014 durata: "+fmt(TRACKS.reduce((a,b)=>a+b.d,0)),"ok");
+    setIS("✓ "+TRACKS.length+" brani da file — durata: "+fmt(TRACKS.reduce((a,b)=>a+b.d,0)),"ok");
   };
   r.readAsText(f,"utf-8");
 }
@@ -229,13 +236,13 @@ function renderCards(){
   if(TRACKS.length===0){wrap.innerHTML='<p style="color:#6666aa;font-size:13px">Nessun brano.</p>';return;}
   wrap.innerHTML="";
   TRACKS.forEach(t=>{
-    const hasAI=t.z!=="\u2014",zc=hasAI?(ZC[t.z]||"#aaa"):"#aaa";
+    const hasAI=t.z!=="—",zc=hasAI?(ZC[t.z]||"#aaa"):"#aaa";
     let segs="";
-    if(hasAI&&t.tec&&t.tec!=="\u2014"){
-      const parts=t.tec.split("\u2192").map(s=>s.trim()).filter(Boolean);
+    if(hasAI&&t.tec&&t.tec!=="—"){
+      const parts=t.tec.split("→").map(s=>s.trim()).filter(Boolean);
       segs='<div class="segs-preview">'+parts.map(p=>'<span class="seg-pill '+guessType(p)+'">'+p+'</span>').join("")+'</div>';
     }
-    wrap.innerHTML+='<div class="track-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h3 style="color:'+zc+'">'+t.i+'. '+t.title+'</h3><div class="track-meta">'+(t.ar||"\u2014")+' \u00b7 BPM '+t.bpm+' \u00b7 '+fmt(t.d)+' \u00b7 Inizio '+fmt(t.s)+'</div></div>'+(hasAI?'<span style="color:'+zc+';font-weight:700;font-size:20px;font-family:monospace;padding-top:4px">'+t.z+'</span>':'')+'</div>'+(hasAI?'<div class="params"><div class="param"><div class="v" style="color:'+zc+'">'+t.z+'</div><div class="l">Zona</div></div><div class="param"><div class="v" style="color:#00cc70">'+t.rpm+'</div><div class="l">RPM</div></div><div class="param"><div class="v" style="color:#ffb347">'+t.bpm+'</div><div class="l">BPM</div></div><div class="param"><div class="v" style="color:#ff4466">'+t.res+'</div><div class="l">Resist.</div></div><div class="param"><div class="v" style="color:#4d79ff">'+t.mani+'</div><div class="l">Mani</div></div></div><div class="fase-tag">'+t.fase+'</div><div class="tec-val">\ud83d\udd00 '+t.tec+'</div>'+segs+'<div class="focus-val" style="margin-top:6px">'+t.focus+'</div>':'<div style="color:#6666aa;font-size:12px;margin-top:4px">In attesa di analisi AI</div>')+'</div>';
+    wrap.innerHTML+='<div class="track-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h3 style="color:'+zc+'">'+t.i+'. '+t.title+'</h3><div class="track-meta">'+(t.ar||"—")+' · BPM '+t.bpm+' · '+fmt(t.d)+' · Inizio '+fmt(t.s)+'</div></div>'+(hasAI?'<span style="color:'+zc+';font-weight:700;font-size:20px;font-family:monospace;padding-top:4px">'+t.z+'</span>':'')+'</div>'+(hasAI?'<div class="params"><div class="param"><div class="v" style="color:'+zc+'">'+t.z+'</div><div class="l">Zona</div></div><div class="param"><div class="v" style="color:#00cc70">'+t.rpm+'</div><div class="l">RPM</div></div><div class="param"><div class="v" style="color:#ffb347">'+t.bpm+'</div><div class="l">BPM</div></div><div class="param"><div class="v" style="color:#ff4466">'+t.res+'</div><div class="l">Resist.</div></div><div class="param"><div class="v" style="color:#4d79ff">'+t.mani+'</div><div class="l">Mani</div></div></div><div class="fase-tag">'+t.fase+'</div><div class="tec-val">🔀 '+t.tec+'</div>'+segs+'<div class="focus-val" style="margin-top:6px">'+t.focus+'</div>':'<div style="color:#6666aa;font-size:12px;margin-top:4px">In attesa di analisi AI</div>')+'</div>';
   });
 }
 
@@ -247,36 +254,36 @@ async function runAI(){
   const protocol=document.getElementById("wk-protocol").value;
   const totFmt=fmt(TRACKS.reduce((a,b)=>a+b.d,0));
   let list="";
-  TRACKS.forEach(t=>list+=t.i+'. "'+t.title+'" \u2014 '+t.ar+' | BPM:'+t.bpm+' | dur:'+t.d+'s ('+fmt(t.d)+')\n');
+  TRACKS.forEach(t=>list+=t.i+'. "'+t.title+'" — '+t.ar+' | BPM:'+t.bpm+' | dur:'+t.d+'s ('+fmt(t.d)+')\n');
 
-  const prompt='Sei un esperto istruttore Indoor Cycling AIF 2\u00b0 livello.\n\nLEZIONE: '+title+'\nLIVELLO: '+level+'\nPROTOCOLLO: '+protocol+'\nBRANI ('+TRACKS.length+', durata '+totFmt+'):\n'+list+'\nRispondi SOLO con array JSON valido, nessun testo, nessun markdown, nessun backtick.\nUn oggetto per brano nell ORDINE ORIGINALE:\n[{"zona":"Z2","rpm_label":"80\u201390","res_label":"30%","res_num":0.30,"mani":"P1\u21d4P2","fase":"Warm-up","tec":"Seduto leggero \u2192 In piedi leggero \u2192 Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]\n\nREGOLE ZONA FC:\nZ1=recovery 50-65% | Z2=aerobico 65-75% | Z3=soglia 75-85% | Z4=hard 85-92% | Z5=sprint 92-100%\n\nRPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:70-105 Z5:100-120\nRESISTENZA: Z1:15-25% Z2:30-40% Z3:40-55% Z4:55-75% Z5:65-80%\nMANUBRIO: P1=recovery P2=standard P3=sprint/salita usa \u2194 per alternanza \u2192 per progressione\n\nFORMATO CAMPO tec - USA ESATTAMENTE UNO DI QUESTI:\n1. SPRINT (brani Z5, HIIT): Sprint 20'' ON (in piedi) \u2192 Seduto 20'' OFF\n   oppure Sprint 30'' ON (in piedi) \u2192 Seduto 30'' OFF\n   oppure Sprint 15'' ON (in piedi) \u2192 Seduto 15'' OFF\n   IMPORTANTE: usa SEMPRE gli apostrofi '' per i secondi, NON la parola secondi\n2. JUMP (brani Z3-Z4 ritmici): Jump in 8 \u2192 Jump in 4 \u2192 Jump in 2\n3. GENERICO max 3 segmenti: Seduto veloce \u2192 In piedi leggero \u2192 Seduto veloce\n   Salita progressiva Seduto carico \u2192 In piedi carico\n   Seduto ritmo costante\n\nSTRUTTURA:\n- Brano 1: warm-up Z2, Seduto leggero\n- Ultimi 2: defaticamento Z2 poi stretching Z1 mani P1\n- Sprint/Jump solo se BPM>110 e protocollo lo prevede\n- Montagna: Seduto carico \u2192 In piedi carico RPM 50-75';
+  const prompt='Sei un esperto istruttore Indoor Cycling AIF 2° livello.\n\nLEZIONE: '+title+'\nLIVELLO: '+level+'\nPROTOCOLLO: '+protocol+'\nBRANI ('+TRACKS.length+', durata '+totFmt+'):\n'+list+'\nRispondi SOLO con array JSON valido, nessun testo, nessun markdown, nessun backtick.\nUn oggetto per brano nell ORDINE ORIGINALE:\n[{"zona":"Z2","rpm_label":"80–90","res_label":"30%","res_num":0.30,"mani":"P1⇔P2","fase":"Warm-up","tec":"Seduto leggero → In piedi leggero → Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]\n\nREGOLE ZONA FC:\nZ1=recovery 50-65% | Z2=aerobico 65-75% | Z3=soglia 75-85% | Z4=hard 85-92% | Z5=sprint 92-100%\n\nRPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:70-105 Z5:100-120\nRESISTENZA: Z1:15-25% Z2:30-40% Z3:40-55% Z4:55-75% Z5:65-80%\nMANUBRIO: P1=recovery P2=standard P3=sprint/salita usa ↔ per alternanza → per progressione\n\nFORMATO CAMPO tec - USA ESATTAMENTE UNO DI QUESTI:\n1. SPRINT (brani Z5, HIIT): Sprint 20'' ON (in piedi) → Seduto 20'' OFF\n   oppure Sprint 30'' ON (in piedi) → Seduto 30'' OFF\n   oppure Sprint 15'' ON (in piedi) → Seduto 15'' OFF\n   IMPORTANTE: usa SEMPRE gli apostrofi '' per i secondi, NON la parola secondi\n2. JUMP (brani Z3-Z4 ritmici): Jump in 8 → Jump in 4 → Jump in 2\n3. GENERICO max 3 segmenti: Seduto veloce → In piedi leggero → Seduto veloce\n   Salita progressiva Seduto carico → In piedi carico\n   Seduto ritmo costante\n\nSTRUTTURA:\n- Brano 1: warm-up Z2, Seduto leggero\n- Ultimi 2: defaticamento Z2 poi stretching Z1 mani P1\n- Sprint/Jump solo se BPM>110 e protocollo lo prevede\n- Montagna: Seduto carico → In piedi carico RPM 50-75';
 
   clearLog();
-  log("\u2192 Analisi "+TRACKS.length+" brani con Groq LLaMA 3 (gratuito)...");
+  log("→ Analisi "+TRACKS.length+" brani con Groq LLaMA 3 (gratuito)...");
   const btn=document.getElementById("btn-ai");
-  btn.disabled=true;btn.textContent="\u23f3 Analisi in corso...";
+  btn.disabled=true;btn.textContent="⏳ Analisi in corso...";
 
   try{
     const r=await fetch(WORKER_URL+"/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
-    if(!r.ok){const err=await r.text();log("\u2717 Errore HTTP "+r.status+": "+err);btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
+    if(!r.ok){const err=await r.text();log("✗ Errore HTTP "+r.status+": "+err);btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
     const data=await r.json();
     let text="";
     if(typeof data.text==="string"){text=data.text;}
     else if(data.choices&&data.choices[0]){text=data.choices[0].message?.content||"";}
     else if(data.candidates&&data.candidates[0]){text=data.candidates[0].content?.parts?.map(p=>p.text||"").join("")||"";}
-    else if(data.error){log("\u2717 Errore: "+(data.error||JSON.stringify(data)));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
-    if(!text){log("\u2717 Risposta vuota. Raw: "+JSON.stringify(data).substring(0,150));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
-    log("\u2713 Risposta ricevuta. Parsing...");
+    else if(data.error){log("✗ Errore: "+(data.error||JSON.stringify(data)));btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
+    if(!text){log("✗ Risposta vuota. Raw: "+JSON.stringify(data).substring(0,150));btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
+    log("✓ Risposta ricevuta. Parsing...");
     const clean=text.replace(/```json/g,"").replace(/```/g,"").trim();
     const jsonMatch=clean.match(/\[[\s\S]*\]/);
-    if(!jsonMatch){log("\u2717 JSON non trovato:\n"+text.substring(0,300));btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";return;}
+    if(!jsonMatch){log("✗ JSON non trovato:\n"+text.substring(0,300));btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
     const parsed=JSON.parse(jsonMatch[0]);
-    log("\u2713 "+parsed.length+" brani elaborati con successo.");
+    log("✓ "+parsed.length+" brani elaborati con successo.");
     TRACKS=TRACKS.map((t,i)=>{const ai=parsed[i];if(!ai)return t;return{...t,z:ai.zona||t.z,rpm:ai.rpm_label||t.rpm,res:ai.res_label||t.res,rn:ai.res_num||0,tec:ai.tec||t.tec,mani:ai.mani||t.mani,fase:ai.fase||t.fase,focus:ai.focus||t.focus};});
     renderCards();
-    log("\u2713 Completato. Revisiona i brani e vai al Step 5.");
-  }catch(err){log("\u2717 Errore: "+err.message);}
-  btn.disabled=false;btn.textContent="\ud83e\udd16 Analizza con AI";
+    log("✓ Completato. Revisiona i brani e vai al Step 5.");
+  }catch(err){log("✗ Errore: "+err.message);}
+  btn.disabled=false;btn.textContent="🤖 Analizza con AI";
 }
 
 async function generatePlayer(){
