@@ -879,15 +879,42 @@ function getActiveSegIdx(t, posInTrack){
 // Trova il prossimo cambio tecnica dentro il brano corrente
 function getNextTecChange(el){
   const t=T[ci];
-  if(!t._segs||t._segs.length<=1) return null;
   const posInTrack=el-t.s;
-  // Trova segmento corrente e il prossimo
-  const si=getActiveSegIdx(t,posInTrack);
-  if(si<t._segs.length-1){
-    const nextSeg=t._segs[si+1];
-    const secToChange=(t.s+nextSeg.from)-el;
-    if(secToChange>0) return {secToChange, nextSeg};
+
+  // ── Cambio tecnica DENTRO il brano corrente ──
+  if(t._segs&&t._segs.length>1){
+    const si=getActiveSegIdx(t,posInTrack);
+    if(si<t._segs.length-1){
+      const nextSeg=t._segs[si+1];
+      const secToChange=(t.s+nextSeg.from)-el;
+      if(secToChange>0) return {secToChange,nextSeg};
+    }
   }
+
+  // ── Look-ahead: cambio tecnica al passaggio al brano successivo ──
+  // Scatta 10s prima della fine del brano se il prossimo ha tecnica diversa
+  if(ci<T.length-1){
+    const nextTrack=T[ci+1];
+    const secToNextTrack=(t.s+t.d)-el;
+    if(secToNextTrack>0&&nextTrack._segs&&nextTrack._segs.length>0){
+      const nextFirstSeg=nextTrack._segs[0];
+      const curLastSeg=t._segs&&t._segs.length>0?t._segs[t._segs.length-1]:null;
+      const tecCambia=!curLastSeg||curLastSeg.label!==nextFirstSeg.label;
+      if(tecCambia){
+        return {
+          secToChange:secToNextTrack,
+          nextSeg:{
+            label:nextFirstSeg.label,
+            mani:nextTrack.mani,
+            from:0,
+            to:nextFirstSeg.to,
+            type:nextFirstSeg.type
+          }
+        };
+      }
+    }
+  }
+
   return null;
 }
 
