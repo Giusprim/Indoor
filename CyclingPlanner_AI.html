@@ -169,35 +169,6 @@ La Cura — Franco Battiato | 90 | 3:55"></textarea>
 </div>
 
 </main>
-
-<!-- EDITOR BRANO -->
-<div id="edit-modal">
-  <div id="edit-box">
-    <h3>✏️ Modifica brano <span id="edit-track-title"></span></h3>
-    <div class="edit-grid">
-      <div class="edit-field"><label>Zona FC</label>
-        <select id="e-zona"><option>Z1</option><option>Z2</option><option>Z3</option><option>Z4</option><option>Z5</option></select>
-      </div>
-      <div class="edit-field"><label>Fase</label><input id="e-fase" placeholder="Warm-up"></div>
-      <div class="edit-field"><label>RPM</label><input id="e-rpm" placeholder="80–95"></div>
-      <div class="edit-field"><label>Resistenza</label><input id="e-res" placeholder="40%"></div>
-      <div class="edit-field"><label>Manubrio</label><input id="e-mani" placeholder="P2"></div>
-      <div class="edit-field"><label>BPM</label><input id="e-bpm" type="number"></div>
-    </div>
-    <div class="edit-field" style="margin-bottom:8px">
-      <label>Tecnica (usa → tra segmenti)</label>
-      <textarea id="e-tec" rows="2" placeholder="Seduto leggero → In piedi leggero → Seduto leggero"></textarea>
-    </div>
-    <div class="edit-field">
-      <label>Focus Coaching</label>
-      <textarea id="e-focus" rows="2" placeholder="Mantieni il ritmo; respira ogni 4 battiti."></textarea>
-    </div>
-    <div class="edit-actions">
-      <button class="btn btn-secondary" onclick="closeEditor()">Annulla</button>
-      <button class="btn btn-primary" onclick="saveEdit()">✓ Salva</button>
-    </div>
-  </div>
-</div>
 <script>
 const WORKER_URL="https://anthropic-proxy.g-primavera-co.workers.dev";
 const ZC={Z1:'#4d79ff',Z2:'#00cc70',Z3:'#ffcc00',Z4:'#ff8844',Z5:'#ff4466'};
@@ -271,7 +242,7 @@ function renderCards(){
       const parts=t.tec.split("→").map(s=>s.trim()).filter(Boolean);
       segs='<div class="segs-preview">'+parts.map(p=>'<span class="seg-pill '+guessType(p)+'">'+p+'</span>').join("")+'</div>';
     }
-    wrap.innerHTML+='<div class="track-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h3 style="color:'+zc+'">'+t.i+'. '+t.title+'</h3><div class="track-meta">'+(t.ar||"—")+' · BPM '+t.bpm+' · '+fmt(t.d)+' · Inizio '+fmt(t.s)+'</div></div>'+(hasAI?'<span style="color:'+zc+';font-weight:700;font-size:20px;font-family:monospace;padding-top:4px">'+t.z+'</span>':'')+'</div>'+(hasAI?'<div class="params"><div class="param"><div class="v" style="color:'+zc+'">'+t.z+'</div><div class="l">Zona</div></div><div class="param"><div class="v" style="color:#00cc70">'+t.rpm+'</div><div class="l">RPM</div></div><div class="param"><div class="v" style="color:#ffb347">'+t.bpm+'</div><div class="l">BPM</div></div><div class="param"><div class="v" style="color:#ff4466">'+t.res+'</div><div class="l">Resist.</div></div><div class="param"><div class="v" style="color:#4d79ff">'+t.mani+'</div><div class="l">Mani</div></div></div><div class="fase-tag">'+t.fase+'</div><div class="tec-val">🔀 '+t.tec+'</div>'+segs+'<div class="focus-val" style="margin-top:6px">'+t.focus+'</div><div style="margin-top:8px"><button class="edit-btn" onclick="openEditor('+i+')">✏️ Modifica</button></div>':'<div style="color:#6666aa;font-size:12px;margin-top:4px">In attesa di analisi AI</div>')+'</div>';
+    wrap.innerHTML+='<div class="track-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h3 style="color:'+zc+'">'+t.i+'. '+t.title+'</h3><div class="track-meta">'+(t.ar||"—")+' · BPM '+t.bpm+' · '+fmt(t.d)+' · Inizio '+fmt(t.s)+'</div></div>'+(hasAI?'<span style="color:'+zc+';font-weight:700;font-size:20px;font-family:monospace;padding-top:4px">'+t.z+'</span>':'')+'</div>'+(hasAI?'<div class="params"><div class="param"><div class="v" style="color:'+zc+'">'+t.z+'</div><div class="l">Zona</div></div><div class="param"><div class="v" style="color:#00cc70">'+t.rpm+'</div><div class="l">RPM</div></div><div class="param"><div class="v" style="color:#ffb347">'+t.bpm+'</div><div class="l">BPM</div></div><div class="param"><div class="v" style="color:#ff4466">'+t.res+'</div><div class="l">Resist.</div></div><div class="param"><div class="v" style="color:#4d79ff">'+t.mani+'</div><div class="l">Mani</div></div></div><div class="fase-tag">'+t.fase+'</div><div class="tec-val">🔀 '+t.tec+'</div>'+segs+'<div class="focus-val" style="margin-top:6px">'+t.focus+'</div>':'<div style="color:#6666aa;font-size:12px;margin-top:4px">In attesa di analisi AI</div>')+'</div>';
   });
 }
 
@@ -310,16 +281,11 @@ FORMATO tec — USA ESATTAMENTE UNO DI QUESTI TRE:
 2. JUMP (Z3-Z4 ritmici): Jump in 8 → Jump in 4 → Jump in 2
 3. GENERICO (max 3 segmenti con →): Seduto leggero → In piedi leggero → Seduto leggero
 
-STRUTTURA OBBLIGATORIA PER QUALSIASI PROTOCOLLO:
-FASE 1 - WARM-UP (primi 1-2 brani): Z2, RPM 75-90, res 25-35%, Seduto leggero, mani P1↔P2
-FASE 2 - CORPO LEZIONE (brani centrali): zone e tecniche specifiche del protocollo ${protocol}
-FASE 3 - DEFATICAMENTO (penultimo brano): Z2, RPM 75-85, res 25-35%, Seduto leggero, mani P1↔P2
-FASE 4 - STRETCHING (SEMPRE ultimo brano): Z1, RPM 55-65, res 15-20%, Stretching in bici, mani P1
-
-REGOLE AGGIUNTIVE:
-- NON saltare nessuna delle 4 fasi — è obbligatorio per tutti i protocolli AIF
-- Sprint/Jump solo se BPM>110 e la fase è nel corpo lezione (non in warm-up/defaticamento/stretching)
-- Montagna: usa RPM 50-75, Seduto carico → In piedi carico nella fase centrale`;
+STRUTTURA ${protocol.toUpperCase()}:
+- Brano 1: warm-up Z2, Seduto leggero, mani P1
+- Ultimi 2: defaticamento Z2 poi stretching Z1, mani P1
+- Sprint/Jump solo se BPM>110 e protocollo lo prevede
+- Montagna: Seduto carico → In piedi carico, RPM 50-75`;
 
   clearLog();
   log("→ Analisi "+TRACKS.length+" brani con Groq LLaMA 3 (gratuito)...");
@@ -380,52 +346,6 @@ async function generatePlayer(){
     a.scrollIntoView({behavior:'smooth'});
   }catch(err){alert("Errore: "+err.message);}
 }
-
-// ── EDITOR INLINE ─────────────────────────────────────
-let editIdx = -1;
-
-function openEditor(idx){
-  editIdx = idx;
-  const t = TRACKS[idx];
-  document.getElementById('edit-track-title').textContent = t.i+'. '+t.title;
-  document.getElementById('e-zona').value = t.z==='—'?'Z2':t.z;
-  document.getElementById('e-fase').value = t.fase==='—'?'':t.fase;
-  document.getElementById('e-rpm').value  = t.rpm==='—'?'':t.rpm;
-  document.getElementById('e-res').value  = t.res==='—'?'':t.res;
-  document.getElementById('e-mani').value = t.mani||'P2';
-  document.getElementById('e-bpm').value  = t.bpm||'';
-  document.getElementById('e-tec').value  = t.tec==='—'?'':t.tec;
-  document.getElementById('e-focus').value= t.focus==='—'?'':t.focus;
-  document.getElementById('edit-modal').classList.add('open');
-}
-
-function closeEditor(){
-  document.getElementById('edit-modal').classList.remove('open');
-  editIdx = -1;
-}
-
-function saveEdit(){
-  if(editIdx<0) return;
-  const t = TRACKS[editIdx];
-  t.z     = document.getElementById('e-zona').value;
-  t.fase  = document.getElementById('e-fase').value || t.fase;
-  t.rpm   = document.getElementById('e-rpm').value  || t.rpm;
-  t.res   = document.getElementById('e-res').value  || t.res;
-  t.mani  = document.getElementById('e-mani').value || t.mani;
-  t.bpm   = document.getElementById('e-bpm').value  || t.bpm;
-  t.tec   = document.getElementById('e-tec').value  || t.tec;
-  t.focus = document.getElementById('e-focus').value|| t.focus;
-  // Aggiorna res_num
-  const rn = parseFloat(t.res)/100;
-  t.rn = isNaN(rn)?0:rn;
-  closeEditor();
-  renderCards();
-}
-
-// Chiudi modale cliccando fuori
-document.getElementById('edit-modal').addEventListener('click',function(e){
-  if(e.target===this) closeEditor();
-});
 </script>
 </body>
 </html>
