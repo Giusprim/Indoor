@@ -556,11 +556,12 @@ body{display:flex;flex-direction:column}
 <!-- HEADER -->
 <div id="hdr">
   <div>
-    <div id="hdr-title">🚴 Italian Power Ride</div>
+    <div id="hdr-title">🚴 {{TITLE}}</div>
     <div id="hdr-sub">{{INSTRUCTOR}} · {{TRACK_COUNT}} BRANI · {{TOTAL_TIME}}</div>
   </div>
   <div id="hdr-r">
     <span id="wake-ind"></span>
+    <button id="proj-btn" onclick="openProjection()" title="Proietta su schermo esterno" style="background:var(--s3);border:1px solid var(--border2);border-radius:8px;color:var(--muted);padding:6px 12px;cursor:pointer;font-size:16px;margin-right:4px">📺</button>
     <button id="fs-btn" onclick="toggleFS()">⛶</button>
   </div>
 </div>
@@ -1529,6 +1530,217 @@ window.addEventListener('resize',()=>{drawChart();updateUI();});
 setTimeout(()=>drawChart(),200);
 setTimeout(()=>drawChart(),600);
 setTimeout(()=>updateMetroBpm(T[0].bpm),300);
+
+// ═══════════════════════════════════════════════════════
+//  📺 PROIEZIONE SU SCHERMO ESTERNO
+//  Usa BroadcastChannel per sincronizzare in tempo reale
+//  La finestra di proiezione si auto-adatta alla risoluzione
+// ═══════════════════════════════════════════════════════
+let projWin = null;
+const projChannel = new BroadcastChannel('indoor_cycling_proj');
+
+function buildProjHTML() {
+  const ZC_PROJ = {Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>📺 Indoor Cycling — Proiezione</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--zc:#00cc70;--bg:#000;--s1:#0a0a12}
+html,body{width:100%;height:100%;background:var(--bg);color:#fff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .5s}
+#zone-bar{position:absolute;top:0;left:0;right:0;height:12px;background:var(--zc);transition:background .5s;box-shadow:0 0 30px var(--zc)}
+#title{font-size:clamp(48px,8vw,120px);font-weight:900;letter-spacing:-1px;line-height:1;text-align:center;padding:0 4vw;word-break:break-word;color:#fff;text-shadow:0 0 40px rgba(255,255,255,.15);max-width:95vw}
+#artist{font-size:clamp(20px,3vw,48px);color:rgba(255,255,255,.5);margin-top:1.5vh;text-align:center;font-weight:400}
+#metrics{display:flex;gap:3vw;margin-top:5vh;align-items:center;justify-content:center;flex-wrap:wrap}
+.met{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:16px;padding:2vh 3vw;text-align:center;min-width:16vw;backdrop-filter:blur(10px)}
+.met .val{font-size:clamp(32px,5.5vw,88px);font-weight:900;font-family:monospace;line-height:1}
+.met .lbl{font-size:clamp(10px,1.4vw,20px);color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:2px;margin-top:.8vh;font-weight:700}
+#tec{font-size:clamp(18px,2.8vw,44px);font-weight:700;color:rgba(255,255,255,.85);margin-top:4vh;text-align:center;padding:0 5vw;min-height:3vw}
+#fase{font-size:clamp(12px,1.6vw,26px);color:rgba(255,255,255,.4);margin-top:1vh;text-align:center;letter-spacing:3px;text-transform:uppercase;font-weight:600}
+#prog{position:absolute;bottom:0;left:0;height:8px;background:var(--zc);transition:width .5s linear,background .5s;box-shadow:0 0 20px var(--zc)}
+#countdown{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:99}
+#countdown.show{display:flex}
+#cd-label{font-size:clamp(16px,2.5vw,36px);font-weight:800;color:#ffbf00;text-transform:uppercase;letter-spacing:4px;margin-bottom:3vh}
+#cd-num{font-size:clamp(120px,20vw,280px);font-weight:900;color:#ffbf00;line-height:1;text-shadow:0 0 80px rgba(255,191,0,.6);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+#cd-next{font-size:clamp(24px,4vw,64px);font-weight:900;color:#fff;margin-top:3vh;text-align:center;padding:0 5vw}
+#cd-mani{font-size:clamp(14px,2vw,30px);color:#4488ff;margin-top:2vh;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:12px;padding:1vh 3vw}
+#standby{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3vh;z-index:50}
+#standby p{font-size:clamp(20px,3vw,40px);color:#333;text-align:center}
+#standby .logo{font-size:clamp(60px,10vw,120px)}
+</style>
+</head>
+<body>
+<div id="zone-bar"></div>
+<div id="standby">
+  <div class="logo">📺</div>
+  <p>In attesa del player…<br><small style="font-size:.6em;color:#222">giusprim.github.io/Indoor/</small></p>
+</div>
+<div id="title">—</div>
+<div id="artist"></div>
+<div id="metrics">
+  <div class="met"><div class="val" id="p-zone" style="color:var(--zc)">—</div><div class="lbl">Zona FC</div></div>
+  <div class="met"><div class="val" id="p-rpm" style="color:#00cc70">—</div><div class="lbl">RPM</div></div>
+  <div class="met"><div class="val" id="p-res" style="color:#ff1f42">—</div><div class="lbl">Resist.</div></div>
+  <div class="met"><div class="val" id="p-bpm" style="color:#ffbf00">—</div><div class="lbl">BPM</div></div>
+</div>
+<div id="tec">—</div>
+<div id="fase">—</div>
+<div id="prog" style="width:0%"></div>
+<div id="countdown">
+  <div id="cd-label">⚡ CAMBIO TECNICA TRA</div>
+  <div id="cd-num">10</div>
+  <div id="cd-next">—</div>
+  <div id="cd-mani">—</div>
+</div>
+<script>
+const ZC={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
+const ch = new BroadcastChannel('indoor_cycling_proj');
+let cdTO = null;
+
+function applyState(d){
+  if(!d) return;
+  document.getElementById('standby').style.display='none';
+  const zc = ZC[d.zone]||'#00cc70';
+  document.body.style.setProperty('--zc',zc);
+  document.body.style.background = d.zone==='Z5'?'#0d0005':d.zone==='Z4'?'#0d0500':d.zone==='Z3'?'#0d0900':'#000';
+  document.getElementById('zone-bar').style.background=zc;
+  document.getElementById('zone-bar').style.boxShadow='0 0 30px '+zc;
+  document.getElementById('title').textContent=d.title||'—';
+  document.getElementById('artist').textContent=d.artist||'';
+  document.getElementById('p-zone').textContent=d.zone||'—';
+  document.getElementById('p-zone').style.color=zc;
+  document.getElementById('p-rpm').textContent=d.rpm||'—';
+  document.getElementById('p-res').textContent=d.res||'—';
+  document.getElementById('p-bpm').textContent=d.bpm||'—';
+  document.getElementById('tec').textContent=d.tec||'—';
+  document.getElementById('fase').textContent=d.fase||'—';
+  document.getElementById('prog').style.width=(d.pct||0)+'%';
+  document.getElementById('prog').style.background=zc;
+  // Countdown
+  const cd=document.getElementById('countdown');
+  if(d.cdShow){
+    cd.classList.add('show');
+    document.getElementById('cd-num').textContent=d.cdNum||'';
+    document.getElementById('cd-next').textContent=d.cdNext||'';
+    document.getElementById('cd-mani').textContent='Manubrio: '+(d.cdMani||'—');
+  } else {
+    cd.classList.remove('show');
+  }
+}
+
+ch.onmessage = e => applyState(e.data);
+
+// Richiedi stato attuale
+ch.postMessage({type:'request_state'});
+</script>
+</body>
+</html>`;
+}
+
+function openProjection() {
+  // Usa window.screen per identificare dimensioni schermo esterno
+  const w = window.screen.width  || 1920;
+  const h = window.screen.height || 1080;
+
+  if (projWin && !projWin.closed) {
+    projWin.focus();
+    return;
+  }
+
+  const html = buildProjHTML();
+  projWin = window.open('', 'IndoorCyclingProjection',
+    `width=${w},height=${h},left=0,top=0,menubar=no,toolbar=no,location=no,status=no,scrollbars=no`
+  );
+
+  if (!projWin) {
+    alert('Il browser ha bloccato il popup.\nConsenti i popup per questo sito nelle impostazioni del browser, poi riprova.');
+    return;
+  }
+
+  projWin.document.open();
+  projWin.document.write(html);
+  projWin.document.close();
+
+  // Attiva indicatore sul pulsante
+  document.getElementById('proj-btn').style.color = 'var(--cyan)';
+  document.getElementById('proj-btn').style.borderColor = 'var(--cyan)';
+
+  // Polling per rilevare chiusura
+  const checkClosed = setInterval(()=>{
+    if(projWin && projWin.closed){
+      clearInterval(checkClosed);
+      projWin = null;
+      document.getElementById('proj-btn').style.color = '';
+      document.getElementById('proj-btn').style.borderColor = '';
+    }
+  }, 1500);
+}
+
+// ── Broadcast stato corrente al cambio UI ──────────────
+function broadcastProjState(cdShow, cdNum, cdNext, cdMani) {
+  if(!projWin || projWin.closed) return;
+  const t = T[ci];
+  const el = getElapsed();
+  const pct = Math.min((el/TOTAL)*100,100);
+  // Segmento tecnica attivo
+  const posInTrack = el - t.s;
+  const si = getActiveSegIdx(t, posInTrack);
+  const activeSeg = t._segs && t._segs[si] ? t._segs[si].label : t.tec;
+
+  projChannel.postMessage({
+    type:   'state',
+    title:  t.title,
+    artist: t.ar,
+    zone:   t.z,
+    rpm:    t.rpm,
+    res:    t.res,
+    bpm:    t.bpm,
+    tec:    activeSeg,
+    fase:   t.fase,
+    pct:    pct,
+    cdShow: cdShow || false,
+    cdNum:  cdNum  || '',
+    cdNext: cdNext || '',
+    cdMani: cdMani || '',
+  });
+}
+
+// Risposta a richiesta stato dalla finestra proiezione
+projChannel.onmessage = e => {
+  if(e.data && e.data.type === 'request_state') broadcastProjState();
+};
+
+// Hook nei punti chiave dell'UI per aggiornare la proiezione
+const _origUpdateUI = updateUI;
+updateUI = function(){
+  _origUpdateUI.apply(this, arguments);
+  broadcastProjState();
+};
+
+const _origStartTecCountdown = startTecCountdown;
+startTecCountdown = function(fromSec, nextSeg){
+  _origStartTecCountdown.apply(this, arguments);
+  // Aggiorna countdown sulla proiezione ogni secondo
+  let rem = Math.round(fromSec);
+  const projCdInterval = setInterval(()=>{
+    rem--;
+    broadcastProjState(rem > 0, rem > 0 ? rem : '', nextSeg ? nextSeg.label : '', nextSeg ? nextSeg.mani : '');
+    if(rem <= 0) clearInterval(projCdInterval);
+  }, 1000);
+  // Prima chiamata immediata
+  broadcastProjState(true, rem, nextSeg ? nextSeg.label : '', nextSeg ? nextSeg.mani : '');
+};
+
+const _origClearTecCountdown = clearTecCountdown;
+clearTecCountdown = function(){
+  _origClearTecCountdown.apply(this, arguments);
+  broadcastProjState(false);
+};
 </script>
 </body>
 </html>
