@@ -264,14 +264,41 @@ function renderCards(){
   const wrap=document.getElementById("cards");
   if(TRACKS.length===0){wrap.innerHTML='<p style="color:#6666aa;font-size:13px">Nessun brano.</p>';return;}
   wrap.innerHTML="";
-  TRACKS.forEach(t=>{
-    const hasAI=t.z!=="—",zc=hasAI?(ZC[t.z]||"#aaa"):"#aaa";
+  TRACKS.forEach((t,i)=>{
+    const hasAI=t.z!=="—", zc=hasAI?(ZC[t.z]||"#aaa"):"#aaa";
     let segs="";
     if(hasAI&&t.tec&&t.tec!=="—"){
       const parts=t.tec.split("→").map(s=>s.trim()).filter(Boolean);
       segs='<div class="segs-preview">'+parts.map(p=>'<span class="seg-pill '+guessType(p)+'">'+p+'</span>').join("")+'</div>';
     }
-    wrap.innerHTML+='<div class="track-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h3 style="color:'+zc+'">'+t.i+'. '+t.title+'</h3><div class="track-meta">'+(t.ar||"—")+' · BPM '+t.bpm+' · '+fmt(t.d)+' · Inizio '+fmt(t.s)+'</div></div>'+(hasAI?'<span style="color:'+zc+';font-weight:700;font-size:20px;font-family:monospace;padding-top:4px">'+t.z+'</span>':'')+'</div>'+(hasAI?'<div class="params"><div class="param"><div class="v" style="color:'+zc+'">'+t.z+'</div><div class="l">Zona</div></div><div class="param"><div class="v" style="color:#00cc70">'+t.rpm+'</div><div class="l">RPM</div></div><div class="param"><div class="v" style="color:#ffb347">'+t.bpm+'</div><div class="l">BPM</div></div><div class="param"><div class="v" style="color:#ff4466">'+t.res+'</div><div class="l">Resist.</div></div><div class="param"><div class="v" style="color:#4d79ff">'+t.mani+'</div><div class="l">Mani</div></div></div><div class="fase-tag">'+t.fase+'</div><div class="tec-val">🔀 '+t.tec+'</div>'+segs+'<div class="focus-val" style="margin-top:6px">'+t.focus+'</div><div style="margin-top:8px"><button class="edit-btn" onclick="openEditor('+i+')">✏️ Modifica</button></div>':'<div style="color:#6666aa;font-size:12px;margin-top:4px">In attesa di analisi AI</div>')+'</div>';
+    const card = document.createElement('div');
+    card.className='track-card';
+    card.innerHTML=
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px">'
+      +'<div style="flex:1;min-width:0">'
+      +'<h3 style="color:'+zc+'">'+t.i+'. '+t.title+'</h3>'
+      +'<div class="track-meta">'+(t.ar||"—")+' · BPM '+t.bpm+' · '+fmt(t.d)+' · Inizio '+fmt(t.s)+'</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
+      +(hasAI?'<span style="color:'+zc+';font-weight:700;font-size:20px;font-family:monospace">'+t.z+'</span>':'')
+      +'<button class="edit-btn" onclick="openEditor('+i+')">✏️</button>'
+      +'</div>'
+      +'</div>'
+      +(hasAI?
+        '<div class="params">'
+        +'<div class="param"><div class="v" style="color:'+zc+'">'+t.z+'</div><div class="l">Zona</div></div>'
+        +'<div class="param"><div class="v" style="color:#00cc70">'+t.rpm+'</div><div class="l">RPM</div></div>'
+        +'<div class="param"><div class="v" style="color:#ffb347">'+t.bpm+'</div><div class="l">BPM</div></div>'
+        +'<div class="param"><div class="v" style="color:#ff4466">'+t.res+'</div><div class="l">Resist.</div></div>'
+        +'<div class="param"><div class="v" style="color:#4d79ff">'+t.mani+'</div><div class="l">Mani</div></div>'
+        +'</div>'
+        +'<div class="fase-tag">'+t.fase+'</div>'
+        +'<div class="tec-val">'+t.tec+'</div>'
+        +segs
+        +'<div class="focus-val" style="margin-top:6px">'+t.focus+'</div>'
+      :'<div style="color:#6666aa;font-size:12px;margin-top:4px">In attesa di analisi AI</div>')
+      ;
+    wrap.appendChild(card);
   });
 }
 
