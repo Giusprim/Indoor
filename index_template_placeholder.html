@@ -1537,7 +1537,6 @@ setTimeout(()=>updateMetroBpm(T[0].bpm),300);
 //  La finestra di proiezione si auto-adatta alla risoluzione
 // ═══════════════════════════════════════════════════════
 let projWin = null;
-const projChannel = new BroadcastChannel('indoor_cycling_proj');
 
 function buildProjHTML() {
   const ZC_PROJ = {Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
@@ -1599,7 +1598,6 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 </div>
 <scr"+"ipt>
 const ZC={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
-const ch = new BroadcastChannel('indoor_cycling_proj');
 let cdTO = null;
 
 function applyState(d){
@@ -1692,7 +1690,7 @@ function broadcastProjState(cdShow, cdNum, cdNext, cdMani) {
   const si = getActiveSegIdx(t, posInTrack);
   const activeSeg = t._segs && t._segs[si] ? t._segs[si].label : t.tec;
 
-  projChannel.postMessage({
+  projWin.postMessage({
     type:   'state',
     title:  t.title,
     artist: t.ar,
@@ -1707,13 +1705,13 @@ function broadcastProjState(cdShow, cdNum, cdNext, cdMani) {
     cdNum:  cdNum  || '',
     cdNext: cdNext || '',
     cdMani: cdMani || '',
-  });
+  }, '*');
 }
 
 // Risposta a richiesta stato dalla finestra proiezione
-projChannel.onmessage = e => {
+window.addEventListener('message', e => {
   if(e.data && e.data.type === 'request_state') broadcastProjState();
-};
+});
 
 // Hook nei punti chiave dell'UI per aggiornare la proiezione
 const _origUpdateUI = updateUI;
