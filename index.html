@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>🚴 Montagna</title>
+<title>🚴 Italian Power Ride</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -556,13 +556,12 @@ body{display:flex;flex-direction:column}
 <!-- HEADER -->
 <div id="hdr">
   <div>
-    <div id="hdr-title">🚴 Montagna</div>
-    <div id="hdr-sub">Giuseppe Primavera · 16 BRANI · 0:56:04</div>
+    <div id="hdr-title">🚴 Italian Power Ride</div>
+    <div id="hdr-sub">GIUSEPPE PRIMAVERA · AIF 2° LVL · 18 BRANI · 58:15</div>
   </div>
   <div id="hdr-r">
     <span id="wake-ind"></span>
-    <button id="proj-btn" onclick="openProjection()" title="Proietta su schermo esterno" style="background:var(--s3);border:1px solid var(--border2);border-radius:8px;color:var(--muted);padding:6px 12px;cursor:pointer;font-size:16px;margin-right:4px">📺</button>
-    <button id="fs-btn" onclick="toggleFS()">⛶</button>
+    <button id="proj-btn" onclick="openProjection()" title="Proietta su schermo esterno" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);padding:5px 9px;cursor:pointer;font-size:13px;margin-right:4px">📺</button><button id="fs-btn" onclick="toggleFS()">⛶</button>
   </div>
 </div>
 
@@ -654,7 +653,7 @@ body{display:flex;flex-direction:column}
         <div id="time-row">
           <span id="t-cur">0:00:00</span>
           <span id="t-rem">−0:00</span>
-          <span id="t-end">0:56:04</span>
+          <span id="t-end">0:58:15</span>
         </div>
       </div>
     </div>
@@ -764,273 +763,34 @@ body{display:flex;flex-direction:column}
 //  CONFIG
 // ═══════════════════════════════════════════════════════
 const CLIENT_ID = 'fec34f5ffb9a46ca912190a6557e637c';
-const REDIRECT = 'https://giusprim.github.io/Indoor/';
-const PLAYLIST = 'spotify:playlist:7jRZGVN5Nic4IOho6wtkx8';
+const REDIRECT  = 'https://giusprim.github.io/Indoor/';
+const PLAYLIST  = 'spotify:playlist:2YEWQkX2mrFV4qzE6mS0ZF';
 const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
 // ═══════════════════════════════════════════════════════
 //  DATI LEZIONE
 // ═══════════════════════════════════════════════════════
-const T = [
-  {
-    "i": 1,
-    "title": "Adventure of a Lifetime",
-    "ar": "Yotto Remix — Coldplay, YOTTO",
-    "bpm": "122",
-    "d": 180,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
-    "mani": "P1↔P2",
-    "fase": "Warm-up",
-    "focus": "Riscaldamento; prepara le gambe.",
-    "s": 0
-  },
-  {
-    "i": 2,
-    "title": "The Look",
-    "ar": "2015 Remake — Roxette",
-    "bpm": "98",
-    "d": 231,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "35%",
-    "rn": 0.35,
-    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
-    "mani": "P1↔P2",
-    "fase": "Warm-up",
-    "focus": "Riscaldamento; prepara le gambe.",
-    "s": 180
-  },
-  {
-    "i": 3,
-    "title": "Hold My Hand",
-    "ar": "Lady Gaga",
-    "bpm": "148",
-    "d": 225,
-    "z": "Z3",
-    "rpm": "85-100",
-    "res": "45%",
-    "rn": 0.45,
-    "tec": "Seduto carico → In piedi carico",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Inizia la salita; aumenta la resistenza.",
-    "s": 411
-  },
-  {
-    "i": 4,
-    "title": "Mediterranea",
-    "ar": "Irama",
-    "bpm": "150",
-    "d": 178,
-    "z": "Z4",
-    "rpm": "55-70",
-    "res": "70%",
-    "rn": 0.7,
-    "tec": "Salita Z4: Seduto carico → In piedi carico → Seduto carico",
-    "mani": "P3",
-    "fase": "Prima salita",
-    "focus": "Aumenta l'intensità; salita impegnativa.",
-    "s": 636
-  },
-  {
-    "i": 5,
-    "title": "Personal Jesus",
-    "ar": "Depeche Mode",
-    "bpm": "150",
-    "d": 246,
-    "z": "Z3",
-    "rpm": "75-90",
-    "res": "50%",
-    "rn": 0.5,
-    "tec": "Seduto carico → In piedi leggero → Seduto carico",
-    "mani": "P2→P3",
-    "fase": "Salita Z3",
-    "focus": "Continua la salita; mantieni la resistenza.",
-    "s": 814
-  },
-  {
-    "i": 6,
-    "title": "Andromeda",
-    "ar": "Elodie",
-    "bpm": "122",
-    "d": 202,
-    "z": "Z3",
-    "rpm": "80-90",
-    "res": "50%",
-    "rn": 0.5,
-    "tec": "Jump in 8 → Jump in 4 → Seduto carico",
-    "mani": "P3",
-    "fase": "Pausa ritmica",
-    "focus": "Aumenta l'intensità; salita molto impegnativa.",
-    "s": 1060
-  },
-  {
-    "i": 7,
-    "title": "Morirò da Re",
-    "ar": "Måneskin",
-    "bpm": "104",
-    "d": 158,
-    "z": "Z3",
-    "rpm": "75-90",
-    "res": "55%",
-    "rn": 0.55,
-    "tec": "Seduto carico → In piedi carico",
-    "mani": "P2→P3",
-    "fase": "Salita Z3",
-    "focus": "Continua la salita; aumenta la resistenza.",
-    "s": 1262
-  },
-  {
-    "i": 8,
-    "title": "Figli Delle Stelle",
-    "ar": "Alan Sorrenti, Benny Benassi",
-    "bpm": "125",
-    "d": 230,
-    "z": "Z4",
-    "rpm": "55-65",
-    "res": "75%",
-    "rn": 0.75,
-    "tec": "Salita Z4: In piedi carico → Seduto carico → In piedi carico",
-    "mani": "P3",
-    "fase": "Salita intensa",
-    "focus": "Aumenta l'intensità; salita estremamente impegnativa.",
-    "s": 1420
-  },
-  {
-    "i": 9,
-    "title": "Thunderstruck",
-    "ar": "AC/DC",
-    "bpm": "133",
-    "d": 292,
-    "z": "Z3",
-    "rpm": "75-85",
-    "res": "50%",
-    "rn": 0.5,
-    "tec": "Seduto carico → In piedi leggero → Seduto carico",
-    "mani": "P2→P3",
-    "fase": "Salita Z3",
-    "focus": "Continua la salita; mantieni la resistenza.",
-    "s": 1650
-  },
-  {
-    "i": 10,
-    "title": "Cenere",
-    "ar": "Lazza",
-    "bpm": "119",
-    "d": 208,
-    "z": "Z3",
-    "rpm": "80-90",
-    "res": "50%",
-    "rn": 0.5,
-    "tec": "Jump in 4 → Jump in 2 → Seduto carico",
-    "mani": "P3",
-    "fase": "Pausa ritmica",
-    "focus": "Aumenta l'intensità; salita molto impegnativa.",
-    "s": 1942
-  },
-  {
-    "i": 11,
-    "title": "SUPERMODEL",
-    "ar": "Måneskin",
-    "bpm": "121",
-    "d": 148,
-    "z": "Z4",
-    "rpm": "55-70",
-    "res": "70%",
-    "rn": 0.7,
-    "tec": "Seduto carico → In piedi carico → Seduto carico",
-    "mani": "P2→P3",
-    "fase": "Ripresa salita",
-    "focus": "Continua la salita; aumenta la resistenza.",
-    "s": 2150
-  },
-  {
-    "i": 12,
-    "title": "Let's Go (feat. Tom Enzy, Juanny Bravo & Sami Britell) [HUGEL Remix]",
-    "ar": "Jaden Bojsen, David Guetta, HUGEL, Juanny Bravo, Sami Britell, Tom Enzy",
-    "bpm": "123",
-    "d": 148,
-    "z": "Z5",
-    "rpm": "50-65",
-    "res": "80%",
-    "rn": 0.8,
-    "tec": "Vetta: In piedi carico → Seduto carico → In piedi carico",
-    "mani": "P3",
-    "fase": "Vetta - Massimale",
-    "focus": "Aumenta l'intensità; salita estremamente impegnativa.",
-    "s": 2298
-  },
-  {
-    "i": 13,
-    "title": "The Loneliest",
-    "ar": "Remix — Dune Fisher",
-    "bpm": "140",
-    "d": 190,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
-    "mani": "P1↔P2",
-    "fase": "Defaticamento",
-    "focus": "Inizia a defaticare; riduci la resistenza.",
-    "s": 2446
-  },
-  {
-    "i": 14,
-    "title": "L'Italiano",
-    "ar": "TyRo Remix — Toto Cutugno, TyRo",
-    "bpm": "125",
-    "d": 156,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "25%",
-    "rn": 0.25,
-    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
-    "mani": "P1↔P2",
-    "fase": "Defaticamento",
-    "focus": "Continua a defaticare; riduci la resistenza.",
-    "s": 2636
-  },
-  {
-    "i": 15,
-    "title": "Fix You",
-    "ar": "Coldplay",
-    "bpm": "138",
-    "d": 296,
-    "z": "Z1",
-    "rpm": "60-70",
-    "res": "20%",
-    "rn": 0.2,
-    "tec": "Stretching in bici",
-    "mani": "P1",
-    "fase": "Stretching",
-    "focus": "Stretching finale; rilassamento.",
-    "s": 2792
-  },
-  {
-    "i": 16,
-    "title": "Time",
-    "ar": "Hans Zimmer",
-    "bpm": "116",
-    "d": 276,
-    "z": "Z1",
-    "rpm": "55-65",
-    "res": "15%",
-    "rn": 0.15,
-    "tec": "Stretching in bici",
-    "mani": "P1",
-    "fase": "Stretching",
-    "focus": "Stretching finale; rilassamento.",
-    "s": 3088
-  }
+const T=[
+  {i:1, title:"Nell'aria 2021",         ar:"Ben DJ",                          s:0,    d:145, z:"Z2",rpm:"80–90", bpm:"116",res:"25%",tec:"Seduto leggero → In piedi leggero → Seduto leggero",              mani:"P1↔P2",fase:"Warm-up",           focus:"Riscaldamento; prepara le gambe al ritmo."},
+  {i:2, title:"Primavera",              ar:"Ben DJ",                          s:145,  d:202, z:"Z2",rpm:"85–95", bpm:"114",res:"35%",tec:"Seduto veloce → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Warm-up attivo",     focus:"Attiva la cadenza; 90 RPM controllati."},
+  {i:3, title:"Nel blu dipinto di blu", ar:"Domenico Modugno, Jack Sani",     s:347,  d:176, z:"Z3",rpm:"90–98", bpm:"123",res:"45%",tec:"Seduto veloce → Seduto ritmo costante",                           mani:"P2",   fase:"Endurance",          focus:"Mantieni regolarità; respira ogni 4 battiti."},
+  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Seduto ritmo → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Endurance",          focus:"Stabilità di core; niente rollii."},
+  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → In piedi carico → Seduto carico",  mani:"P2→P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
+  {i:6, title:"Con un Deca",            ar:"883, Fargetta",                   s:857,  d:346, z:"Z4",rpm:"70–80", bpm:"124",res:"70%",tec:"Salita progressiva: Seduto carico → In piedi carico",              mani:"P2→P3",fase:"Climb progressivo",  focus:"Ogni minuto +1/10 di carico."},
+  {i:7, title:"Ninna Nanna",            ar:"Loredana Bertè, TWENTY SIX",     s:1203, d:117, z:"Z4",rpm:"85–95", bpm:"130",res:"60%",tec:"Jump in 8 → Jump in 4 → Jump in 2",                              mani:"P2↔P3",fase:"Jump",              focus:"Leggeri in piedi, potenti seduti."},
+  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Jump in 4 → In piedi veloce → Seduto veloce",                    mani:"P2↔P3",fase:"Build‑up",          focus:"Accelera 10–15 alla fine di ogni ritornello."},
+  {i:9, title:"Happy Hour",             ar:"DJ Matrix",                       s:1488, d:218, z:"Z5",rpm:"105–120",bpm:"140",res:"75%",tec:"Sprint 20'' ON (in piedi) → Seduto 20'' OFF",                    mani:"P3",   fase:"Sprint Block #1",    focus:"Sprint pulito: bacino fermo, spinta rotonda."},
+  {i:10,title:"Soldi",                  ar:"Mahmood, Denis First",            s:1706, d:172, z:"Z5",rpm:"100–110",bpm:"100",res:"75%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF",       mani:"P2→P3",fase:"Sprint Block #1",   focus:"30 ON / 45 OFF ×3–4."},
+  {i:11,title:"Mambo Salentino",        ar:"Boomdabash, Alessandra Amoroso",  s:1878, d:147, z:"Z3",rpm:"90–100",bpm:"100",res:"50%",tec:"Tempo ride: Seduto veloce → Seduto leggero",                      mani:"P2",   fase:"Recovery ritmato",   focus:"Respira; sorridi; tieni il tempo."},
+  {i:12,title:"Far l'Amore",            ar:"Bob Sinclar, Raffaella Carrà",    s:2025, d:174, z:"Z5",rpm:"105–115",bpm:"128",res:"80%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF (x4‑6)",              mani:"P3",   fase:"Sprint tecnico",     focus:"4–6 ripetizioni, chiudi in accelerazione."},
+  {i:13,title:"Rumore",                 ar:"Raffaella Carrà, Steve Forest",   s:2199, d:204, z:"Z3",rpm:"95–100",bpm:"125",res:"55%",tec:"Tempo ride controllo (seduto)",                                    mani:"P2",   fase:"Controllo",          focus:"Ricomponi il gesto; respira profondo."},
+  {i:14,title:"Fare l'Amore",           ar:"Loredana Bertè, Evissimax",       s:2403, d:222, z:"Z5",rpm:"85–90", bpm:"174",res:"80%",tec:"Sprint 15'' ON (in piedi) → Seduto 15'' OFF",                      mani:"P3",   fase:"PEAK / Finisher",    focus:"Dai tutto ma resta pulito."},
+  {i:15,title:"Blue (Da Ba Dee)",       ar:"Eiffel 65, Gabry Ponte",          s:2625, d:212, z:"Z4",rpm:"98–102",bpm:"198",res:"65%",tec:"Jump in 4 → Jump in 2 → Sprint breve → Seduto veloce",            mani:"P2↔P3",fase:"Party Decompression",focus:"Ultimo sprint di classe; divertiti."},
+  {i:16,title:"Aserejé",                ar:"Elettra Lamborghini, Los Ketchup",s:2837, d:171, z:"Z3",rpm:"80–90", bpm:"92", res:"50%",tec:"Seduto leggero (party ride)",                                      mani:"P2",   fase:"Party Ride",         focus:"Mantieni la cadenza; focus sul divertimento."},
+  {i:17,title:"Ti Porto Via Con Me",    ar:"Jovanotti",                       s:3008, d:252, z:"Z2",rpm:"80–85", bpm:"132",res:"35%",tec:"Seduto leggero (defaticamento)",                                   mani:"P1↔P2",fase:"Defaticamento",      focus:"Allunga la pedalata, abbassa FC."},
+  {i:18,title:"La Cura",                ar:"Franco Battiato",                 s:3260, d:235, z:"Z1",rpm:"60–65", bpm:"90", res:"20%",tec:"Stretching in bici / off‑bike",                                    mani:"P1",   fase:"Stretching",         focus:"Respira; chiudi con gratitudine."},
 ];
-
-const TOTAL=3364;
+const TOTAL=3495;
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
 // ═══════════════════════════════════════════════════════
@@ -1149,7 +909,7 @@ function getNextTecChange(el){
     }
   }
 
-  // ── Look-ahead: cambio tecnica al passaggio al brano successivo ──
+  // ── Look-ahead: countdown al cambio tecnica tra brani consecutivi ──
   // Scatta 10s prima della fine del brano se il prossimo ha tecnica diversa
   if(ci<T.length-1){
     const nextTrack=T[ci+1];
@@ -1790,13 +1550,10 @@ setTimeout(()=>updateMetroBpm(T[0].bpm),300);
 
 // ═══════════════════════════════════════════════════════
 //  📺 PROIEZIONE SU SCHERMO ESTERNO
-//  Usa BroadcastChannel per sincronizzare in tempo reale
-//  La finestra di proiezione si auto-adatta alla risoluzione
 // ═══════════════════════════════════════════════════════
 let projWin = null;
 
-function buildProjHTML() {
-  const ZC_PROJ = {Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
+function buildProjHTML(){
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -1805,35 +1562,34 @@ function buildProjHTML() {
 <title>📺 Indoor Cycling — Proiezione</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--zc:#00cc70;--bg:#000;--s1:#0a0a12}
-html,body{width:100%;height:100%;background:var(--bg);color:#fff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .5s}
-#zone-bar{position:absolute;top:0;left:0;right:0;height:12px;background:var(--zc);transition:background .5s;box-shadow:0 0 30px var(--zc)}
-#title{font-size:clamp(48px,8vw,120px);font-weight:900;letter-spacing:-1px;line-height:1;text-align:center;padding:0 4vw;word-break:break-word;color:#fff;text-shadow:0 0 40px rgba(255,255,255,.15);max-width:95vw}
-#artist{font-size:clamp(20px,3vw,48px);color:rgba(255,255,255,.5);margin-top:1.5vh;text-align:center;font-weight:400}
-#metrics{display:flex;gap:3vw;margin-top:5vh;align-items:center;justify-content:center;flex-wrap:wrap}
-.met{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:16px;padding:2vh 3vw;text-align:center;min-width:16vw;backdrop-filter:blur(10px)}
+:root{--zc:#00cc70}
+html,body{width:100%;height:100%;background:#000;color:#fff;overflow:hidden;font-family:-apple-system,sans-serif;transition:background .5s}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#zone-bar{position:absolute;top:0;left:0;right:0;height:10px;background:var(--zc);transition:background .5s;box-shadow:0 0 30px var(--zc)}
+#title{font-size:clamp(48px,8vw,120px);font-weight:900;text-align:center;padding:0 4vw;color:#fff;max-width:95vw;line-height:1.1;word-break:break-word}
+#artist{font-size:clamp(18px,2.5vw,40px);color:rgba(255,255,255,.45);margin-top:1.5vh;text-align:center}
+#metrics{display:flex;gap:3vw;margin-top:5vh;justify-content:center;flex-wrap:wrap}
+.met{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:16px;padding:2vh 3vw;text-align:center;min-width:14vw}
 .met .val{font-size:clamp(32px,5.5vw,88px);font-weight:900;font-family:monospace;line-height:1}
-.met .lbl{font-size:clamp(10px,1.4vw,20px);color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:2px;margin-top:.8vh;font-weight:700}
-#tec{font-size:clamp(18px,2.8vw,44px);font-weight:700;color:rgba(255,255,255,.85);margin-top:4vh;text-align:center;padding:0 5vw;min-height:3vw}
-#fase{font-size:clamp(12px,1.6vw,26px);color:rgba(255,255,255,.4);margin-top:1vh;text-align:center;letter-spacing:3px;text-transform:uppercase;font-weight:600}
-#prog{position:absolute;bottom:0;left:0;height:8px;background:var(--zc);transition:width .5s linear,background .5s;box-shadow:0 0 20px var(--zc)}
-#countdown{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:99}
-#countdown.show{display:flex}
-#cd-label{font-size:clamp(16px,2.5vw,36px);font-weight:800;color:#ffbf00;text-transform:uppercase;letter-spacing:4px;margin-bottom:3vh}
-#cd-num{font-size:clamp(120px,20vw,280px);font-weight:900;color:#ffbf00;line-height:1;text-shadow:0 0 80px rgba(255,191,0,.6);animation:pulse 1s ease-in-out infinite}
+.met .lbl{font-size:clamp(10px,1.2vw,18px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.8vh;font-weight:700}
+#tec{font-size:clamp(16px,2.5vw,40px);font-weight:700;color:rgba(255,255,255,.8);margin-top:4vh;text-align:center;padding:0 5vw}
+#fase{font-size:clamp(11px,1.4vw,22px);color:rgba(255,255,255,.35);margin-top:1vh;text-align:center;letter-spacing:3px;text-transform:uppercase}
+#prog{position:absolute;bottom:0;left:0;height:7px;background:var(--zc);transition:width .5s linear,background .5s}
+#cdown{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:99}
+#cdown.show{display:flex}
+#cd-lbl{font-size:clamp(14px,2vw,30px);font-weight:800;color:#ffbf00;text-transform:uppercase;letter-spacing:4px;margin-bottom:2vh}
+#cd-num{font-size:clamp(100px,18vw,240px);font-weight:900;color:#ffbf00;line-height:1;text-shadow:0 0 80px rgba(255,191,0,.6);animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-#cd-next{font-size:clamp(24px,4vw,64px);font-weight:900;color:#fff;margin-top:3vh;text-align:center;padding:0 5vw}
-#cd-mani{font-size:clamp(14px,2vw,30px);color:#4488ff;margin-top:2vh;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:12px;padding:1vh 3vw}
-#standby{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3vh;z-index:50}
-#standby p{font-size:clamp(20px,3vw,40px);color:#333;text-align:center}
-#standby .logo{font-size:clamp(60px,10vw,120px)}
+#cd-next{font-size:clamp(22px,3.5vw,56px);font-weight:900;color:#fff;margin-top:2vh;text-align:center;padding:0 5vw}
+#cd-mani{font-size:clamp(12px,1.6vw,26px);color:#4488ff;margin-top:2vh;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);border-radius:10px;padding:1vh 2vw}
+#standby{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3vh}
+#standby p{font-size:clamp(18px,2.5vw,36px);color:#333;text-align:center}
 </style>
 </head>
 <body>
 <div id="zone-bar"></div>
 <div id="standby">
-  <div class="logo">📺</div>
+  <div style="font-size:clamp(60px,10vw,120px)">📺</div>
   <p>In attesa del player…<br><small style="font-size:.6em;color:#222">giusprim.github.io/Indoor/</small></p>
 </div>
 <div id="title">—</div>
@@ -1847,22 +1603,20 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 <div id="tec">—</div>
 <div id="fase">—</div>
 <div id="prog" style="width:0%"></div>
-<div id="countdown">
-  <div id="cd-label">⚡ CAMBIO TECNICA TRA</div>
+<div id="cdown">
+  <div id="cd-lbl">⚡ CAMBIO TECNICA TRA</div>
   <div id="cd-num">10</div>
   <div id="cd-next">—</div>
   <div id="cd-mani">—</div>
 </div>
-<scr"+"ipt>
+<scr` + `ipt>
 const ZC={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
-let cdTO = null;
-
 function applyState(d){
   if(!d) return;
   document.getElementById('standby').style.display='none';
-  const zc = ZC[d.zone]||'#00cc70';
+  const zc=ZC[d.zone]||'#00cc70';
   document.body.style.setProperty('--zc',zc);
-  document.body.style.background = d.zone==='Z5'?'#0d0005':d.zone==='Z4'?'#0d0500':d.zone==='Z3'?'#0d0900':'#000';
+  document.body.style.background=d.zone==='Z5'?'#0d0005':d.zone==='Z4'?'#0d0500':d.zone==='Z3'?'#0d0900':'#000';
   document.getElementById('zone-bar').style.background=zc;
   document.getElementById('zone-bar').style.boxShadow='0 0 30px '+zc;
   document.getElementById('title').textContent=d.title||'—';
@@ -1876,126 +1630,77 @@ function applyState(d){
   document.getElementById('fase').textContent=d.fase||'—';
   document.getElementById('prog').style.width=(d.pct||0)+'%';
   document.getElementById('prog').style.background=zc;
-  // Countdown
-  const cd=document.getElementById('countdown');
-  if(d.cdShow){
-    cd.classList.add('show');
-    document.getElementById('cd-num').textContent=d.cdNum||'';
-    document.getElementById('cd-next').textContent=d.cdNext||'';
-    document.getElementById('cd-mani').textContent='Manubrio: '+(d.cdMani||'—');
-  } else {
-    cd.classList.remove('show');
-  }
+  const cd=document.getElementById('cdown');
+  if(d.cdShow){cd.classList.add('show');document.getElementById('cd-num').textContent=d.cdNum||'';document.getElementById('cd-next').textContent=d.cdNext||'';document.getElementById('cd-mani').textContent='Manubrio: '+(d.cdMani||'—');}
+  else{cd.classList.remove('show');}
+}
+window.addEventListener('message',e=>applyState(e.data));
+window.opener && window.opener.postMessage({type:'request_state'},'*');
+<\/scr` + `ipt>
+</body>
+</html>`;
 }
 
-window.addEventListener('message', e => applyState(e.data));
-
-// Richiedi stato attuale
-window.opener && window.opener.postMessage({type:'request_state'}, '*');
-<\/script>
-<\/body>
-<\/html>`;
+function openProjection(){
+  if(projWin && !projWin.closed){ projWin.focus(); return; }
+  const w=window.screen.width||1920, h=window.screen.height||1080;
+  projWin=window.open('','IndoorCyclingProjection','width='+w+',height='+h+',left=0,top=0,menubar=no,toolbar=no,location=no,status=no');
+  if(!projWin){ alert('Consenti i popup per questo sito nelle impostazioni del browser.'); return; }
+  projWin.document.open(); projWin.document.write(buildProjHTML()); projWin.document.close();
+  const btn=document.getElementById('proj-btn');
+  if(btn){ btn.style.color='var(--cyan)'; btn.style.borderColor='var(--cyan)'; }
+  setInterval(()=>{ if(projWin&&projWin.closed){ projWin=null; if(btn){btn.style.color='';btn.style.borderColor='';} } },1500);
 }
 
-function openProjection() {
-  // Usa window.screen per identificare dimensioni schermo esterno
-  const w = window.screen.width  || 1920;
-  const h = window.screen.height || 1080;
-
-  if (projWin && !projWin.closed) {
-    projWin.focus();
-    return;
-  }
-
-  const html = buildProjHTML();
-  projWin = window.open('', 'IndoorCyclingProjection',
-    `width=${w},height=${h},left=0,top=0,menubar=no,toolbar=no,location=no,status=no,scrollbars=no`
-  );
-
-  if (!projWin) {
-    alert('Il browser ha bloccato il popup.\nConsenti i popup per questo sito nelle impostazioni del browser, poi riprova.');
-    return;
-  }
-
-  projWin.document.open();
-  projWin.document.write(html);
-  projWin.document.close();
-
-  // Attiva indicatore sul pulsante
-  document.getElementById('proj-btn').style.color = 'var(--cyan)';
-  document.getElementById('proj-btn').style.borderColor = 'var(--cyan)';
-
-  // Polling per rilevare chiusura
-  const checkClosed = setInterval(()=>{
-    if(projWin && projWin.closed){
-      clearInterval(checkClosed);
-      projWin = null;
-      document.getElementById('proj-btn').style.color = '';
-      document.getElementById('proj-btn').style.borderColor = '';
-    }
-  }, 1500);
-}
-
-// ── Broadcast stato corrente al cambio UI ──────────────
-function broadcastProjState(cdShow, cdNum, cdNext, cdMani) {
-  if(!projWin || projWin.closed) return;
-  const t = T[ci];
-  const el = getElapsed();
-  const pct = Math.min((el/TOTAL)*100,100);
-  // Segmento tecnica attivo
-  const posInTrack = el - t.s;
-  const si = getActiveSegIdx(t, posInTrack);
-  const activeSeg = t._segs && t._segs[si] ? t._segs[si].label : t.tec;
-
+function broadcastProjState(cdShow,cdNum,cdNext,cdMani){
+  if(!projWin||projWin.closed) return;
+  const t=T[ci];
+  const el=elapsed;
+  const pct=Math.min((el/TOTAL)*100,100);
+  const posInTrack=el-t.s;
+  const si=getActiveSegIdx(t,posInTrack);
+  const activeSeg=t._segs&&t._segs[si]?t._segs[si].label:t.tec;
   projWin.postMessage({
-    type:   'state',
-    title:  t.title,
-    artist: t.ar,
-    zone:   t.z,
-    rpm:    t.rpm,
-    res:    t.res,
-    bpm:    t.bpm,
-    tec:    activeSeg,
-    fase:   t.fase,
-    pct:    pct,
-    cdShow: cdShow || false,
-    cdNum:  cdNum  || '',
-    cdNext: cdNext || '',
-    cdMani: cdMani || '',
-  }, '*');
+    type:'state',title:t.title,artist:t.ar,zone:t.z,rpm:t.rpm,res:t.res,bpm:t.bpm,
+    tec:activeSeg,fase:t.fase,pct:pct,
+    cdShow:cdShow||false,cdNum:cdNum||'',cdNext:cdNext||'',cdMani:cdMani||''
+  },'*');
 }
 
-// Risposta a richiesta stato dalla finestra proiezione
-window.addEventListener('message', e => {
-  if(e.data && e.data.type === 'request_state') broadcastProjState();
+window.addEventListener('message',e=>{
+  if(e.data&&e.data.type==='request_state') broadcastProjState();
 });
 
-// Hook nei punti chiave dell'UI per aggiornare la proiezione
-const _origUpdateUI = updateUI;
-updateUI = function(){
-  _origUpdateUI.apply(this, arguments);
+// Hook updateUI per broadcast automatico
+const _origUpdateUI=updateUI;
+updateUI=function(){
+  _origUpdateUI.apply(this,arguments);
   broadcastProjState();
 };
 
-const _origStartTecCountdown = startTecCountdown;
-startTecCountdown = function(fromSec, nextSeg){
-  _origStartTecCountdown.apply(this, arguments);
-  // Aggiorna countdown sulla proiezione ogni secondo
-  let rem = Math.round(fromSec);
-  const projCdInterval = setInterval(()=>{
-    rem--;
-    broadcastProjState(rem > 0, rem > 0 ? rem : '', nextSeg ? nextSeg.label : '', nextSeg ? nextSeg.mani : '');
-    if(rem <= 0) clearInterval(projCdInterval);
-  }, 1000);
-  // Prima chiamata immediata
-  broadcastProjState(true, rem, nextSeg ? nextSeg.label : '', nextSeg ? nextSeg.mani : '');
-};
+const _origStartTec=startTecCountdown||null;
+if(typeof startTecCountdown!=='undefined'){
+  const _origStartTecCountdown=startTecCountdown;
+  startTecCountdown=function(fromSec,nextSeg){
+    _origStartTecCountdown.apply(this,arguments);
+    let rem=Math.round(fromSec);
+    const iv=setInterval(()=>{
+      rem--;
+      broadcastProjState(rem>0,rem>0?rem:'',nextSeg?nextSeg.label:'',nextSeg?nextSeg.mani:'');
+      if(rem<=0) clearInterval(iv);
+    },1000);
+    broadcastProjState(true,rem,nextSeg?nextSeg.label:'',nextSeg?nextSeg.mani:'');
+  };
+  const _origClearTec=clearTecCountdown;
+  clearTecCountdown=function(){
+    _origClearTec.apply(this,arguments);
+    broadcastProjState(false);
+  };
+}
 
-const _origClearTecCountdown = clearTecCountdown;
-clearTecCountdown = function(){
-  _origClearTecCountdown.apply(this, arguments);
-  broadcastProjState(false);
-};
 </script>
+</body>
+</html>
+
 </body>
 </html>
