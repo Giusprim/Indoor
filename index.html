@@ -61,30 +61,16 @@ body{display:flex;flex-direction:column}
 }
 /* Mobile: 1 colonna */
 @media(max-width:700px){
-  #main{grid-template-columns:1fr;grid-template-rows:auto;overflow-y:auto;padding:6px;gap:6px}
-  #np-title{font-size:28px!important}
-  #metrics{grid-template-columns:repeat(5,1fr);gap:3px}
-  .mv{font-size:20px!important}
-  #info-row{grid-template-columns:1fr!important}
-  #fase-box{display:none}
-  .tec-seg-time{display:none}
-  #sj-tracker{padding:8px 10px}
-  #sj-label{font-size:20px}
-  #sj-countdown{font-size:28px}
-  #metro-beats{gap:10px}
-  .beat-dot.b1{width:44px;height:44px}
-  .beat-dot.b234{width:34px;height:34px}
-  #tl-head,#tl-body .tr{grid-template-columns:24px 1fr 55px 38px 45px 36px}
-  .tt{font-size:12px}
-  #ctrl-section{padding:8px 10px}
-  #login-btn{font-size:18px;padding:13px}
-  #big-play{font-size:20px;padding:13px}
+  #main{grid-template-columns:1fr!important;grid-template-rows:auto!important;overflow-y:auto!important;overflow-x:hidden!important}
+  #col-right{display:none}
+  body{overflow-x:hidden}
 }
-@media(max-width:400px){
-  #metrics{grid-template-columns:repeat(5,1fr);gap:2px}
-  .mv{font-size:17px!important}
-  .ml{font-size:9px}
-  #np-title{font-size:22px!important}
+@media(max-width:420px){
+  .mv{font-size:16px!important}
+  .ml{font-size:8px!important}
+  #np-title{font-size:20px!important}
+  #metrics{gap:2px!important}
+  .metric{padding:5px 2px!important}
 }
 
 /* ══════════════════════════════════════
@@ -662,7 +648,7 @@ body{display:flex;flex-direction:column}
           <div id="sj-countdown">0:20</div>
         </div>
         <div id="sj-bar-wrap"><div id="sj-bar-fill"></div></div>
-        <div id="sj-info">
+        <div id="sj-mani-badge" style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px">—</div><div id="sj-info">
           <span id="sj-start">Inizio: 0:00</span>
           <span id="sj-end">Fine: 0:00</span>
         </div>
@@ -796,24 +782,25 @@ const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read
 const T=[
   {i:1, title:"Nell'aria 2021",         ar:"Ben DJ",                          s:0,    d:145, z:"Z2",rpm:"80–90", bpm:"116",res:"25%",tec:"Seduto leggero → In piedi leggero → Seduto leggero",              mani:"P1↔P2",fase:"Warm-up",           focus:"Riscaldamento; prepara le gambe al ritmo."},
   {i:2, title:"Primavera",              ar:"Ben DJ",                          s:145,  d:202, z:"Z2",rpm:"85–95", bpm:"114",res:"35%",tec:"Seduto veloce → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Warm-up attivo",     focus:"Attiva la cadenza; 90 RPM controllati."},
-  {i:3, title:"Nel blu dipinto di blu", ar:"Domenico Modugno, Jack Sani",     s:347,  d:176, z:"Z3",rpm:"90–98", bpm:"123",res:"45%",tec:"Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante",                           mani:"P2",   fase:"Running aerobico",          focus:"Cadenza fluida; immagina di correre leggero sul pianoro."},
-  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Crono: Seduto aero → In piedi leggero → Seduto aero",                mani:"P2→P3",   fase:"Time Trial",          focus:"Posizione aerodinamica; mantieni la potenza costante."},
-  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → In piedi carico → Seduto carico",  mani:"P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
-  {i:6, title:"Con un Deca",            ar:"883, Fargetta",                   s:857,  d:346, z:"Z4",rpm:"70–80", bpm:"124",res:"70%",tec:"Salita progressiva: Seduto carico → In piedi carico",              mani:"P3",fase:"Climb progressivo",  focus:"Ogni minuto +1/10 di carico."},
+  {i:3, title:"Nel blu dipinto di blu", ar:"Domenico Modugno, Jack Sani",     s:347,  d:176, z:"Z3",rpm:"90–98", bpm:"123",res:"45%",tec:"Seduto veloce → Seduto ritmo costante",                           mani:"P1",   fase:"Endurance",          focus:"Mantieni regolarità; respira ogni 4 battiti."},
+  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Seduto ritmo → In piedi leggero → Seduto veloce",                mani:"P4",   fase:"Endurance",          focus:"Stabilità di core; niente rollii."},
+  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → Jump in 8 → In piedi carico",  mani:"P2→P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
+  {i:6, title:"Con un Deca",            ar:"883, Fargetta",                   s:857,  d:346, z:"Z4",rpm:"70–80", bpm:"124",res:"70%",tec:"Salita progressiva: Seduto carico → In piedi carico",              mani:"P2→P3",fase:"Climb progressivo",  focus:"Ogni minuto +1/10 di carico."},
   {i:7, title:"Ninna Nanna",            ar:"Loredana Bertè, TWENTY SIX",     s:1203, d:117, z:"Z4",rpm:"85–95", bpm:"130",res:"60%",tec:"Jump in 8 → Jump in 4 → Jump in 2",                              mani:"P2↔P3",fase:"Jump",              focus:"Leggeri in piedi, potenti seduti."},
-  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Crono Attack: Seduto aero veloce → In piedi carico → Seduto aero",                    mani:"P2→P3",fase:"Crono Attack",          focus:"Accelera gradualmente; posizione bassa, spinta potente."},
-  {i:9, title:"Happy Hour",             ar:"DJ Matrix",                       s:1488, d:218, z:"Z5",rpm:"105–120",bpm:"140",res:"75%",tec:"Sprint 20'' ON (in piedi) → Seduto 20'' OFF",                    mani:"P3",   fase:"Sprint Block #1",    focus:"Sprint pulito: bacino fermo, spinta rotonda."},
-  {i:10,title:"Soldi",                  ar:"Mahmood, Denis First",            s:1706, d:172, z:"Z5",rpm:"100–110",bpm:"100",res:"75%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF",       mani:"P3",fase:"Sprint Block #1",   focus:"30 ON / 45 OFF ×3–4."},
+  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Jump in 4 → In piedi veloce → Seduto veloce",                    mani:"P4→P4Atk",fase:"Build‑up",          focus:"Accelera 10–15 alla fine di ogni ritornello."},
+  {i:9, title:"Happy Hour",             ar:"DJ Matrix",                       s:1488, d:218, z:"Z5",rpm:"105–120",bpm:"140",res:"75%",tec:"Sprint 20'' ON (in piedi) → Seduto 20'' OFF",                    mani:"P4Atk",   fase:"Sprint Block #1",    focus:"Sprint pulito: bacino fermo, spinta rotonda."},
+  {i:10,title:"Soldi",                  ar:"Mahmood, Denis First",            s:1706, d:172, z:"Z5",rpm:"100–110",bpm:"100",res:"75%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF",       mani:"P4Atk",fase:"Sprint Block #1",   focus:"30 ON / 45 OFF ×3–4."},
   {i:11,title:"Mambo Salentino",        ar:"Boomdabash, Alessandra Amoroso",  s:1878, d:147, z:"Z3",rpm:"90–100",bpm:"100",res:"50%",tec:"Tempo ride: Seduto veloce → Seduto leggero",                      mani:"P2",   fase:"Recovery ritmato",   focus:"Respira; sorridi; tieni il tempo."},
   {i:12,title:"Far l'Amore",            ar:"Bob Sinclar, Raffaella Carrà",    s:2025, d:174, z:"Z5",rpm:"105–115",bpm:"128",res:"80%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF (x4‑6)",              mani:"P3",   fase:"Sprint tecnico",     focus:"4–6 ripetizioni, chiudi in accelerazione."},
   {i:13,title:"Rumore",                 ar:"Raffaella Carrà, Steve Forest",   s:2199, d:204, z:"Z3",rpm:"95–100",bpm:"125",res:"55%",tec:"Tempo ride controllo (seduto)",                                    mani:"P2",   fase:"Controllo",          focus:"Ricomponi il gesto; respira profondo."},
-  {i:14,title:"Fare l'Amore",           ar:"Loredana Bertè, Evissimax",       s:2403, d:222, z:"Z5",rpm:"85–90", bpm:"174",res:"80%",tec:"Sprint 15'' ON (in piedi) → Seduto 15'' OFF",                      mani:"P3",   fase:"PEAK / Finisher",    focus:"Dai tutto ma resta pulito."},
+  {i:14,title:"Fare l'Amore",           ar:"Loredana Bertè, Evissimax",       s:2403, d:222, z:"Z5",rpm:"85–90", bpm:"174",res:"80%",tec:"Sprint 15'' ON (in piedi) → Seduto 15'' OFF",                      mani:"P4Atk",   fase:"PEAK / Finisher",    focus:"Dai tutto ma resta pulito."},
   {i:15,title:"Blue (Da Ba Dee)",       ar:"Eiffel 65, Gabry Ponte",          s:2625, d:212, z:"Z4",rpm:"98–102",bpm:"198",res:"65%",tec:"Jump in 4 → Jump in 2 → Sprint breve → Seduto veloce",            mani:"P2↔P3",fase:"Party Decompression",focus:"Ultimo sprint di classe; divertiti."},
   {i:16,title:"Aserejé",                ar:"Elettra Lamborghini, Los Ketchup",s:2837, d:171, z:"Z3",rpm:"80–90", bpm:"92", res:"50%",tec:"Seduto leggero (party ride)",                                      mani:"P2",   fase:"Party Ride",         focus:"Mantieni la cadenza; focus sul divertimento."},
   {i:17,title:"Ti Porto Via Con Me",    ar:"Jovanotti",                       s:3008, d:252, z:"Z2",rpm:"80–85", bpm:"132",res:"35%",tec:"Seduto leggero (defaticamento)",                                   mani:"P1↔P2",fase:"Defaticamento",      focus:"Allunga la pedalata, abbassa FC."},
   {i:18,title:"La Cura",                ar:"Franco Battiato",                 s:3260, d:235, z:"Z1",rpm:"60–65", bpm:"90", res:"20%",tec:"Stretching in bici / off‑bike",                                    mani:"P1",   fase:"Stretching",         focus:"Respira; chiudi con gratitudine."},
 ];
 const TOTAL=3495;
+const CROSSFADE=4; // secondi di crossfade Spotify
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
 // ═══════════════════════════════════════════════════════
@@ -834,15 +821,22 @@ function parseTecSegments(t){
   const sprintM = tec.match(sprintRx);
   if(sprintM){
     const on=parseInt(sprintM[1]), off=parseInt(sprintM[3]||sprintM[2])||on;
+    // Mani per segmento: ON usa mani del brano, OFF va a P1/P2 per recupero
+    const maniOn = t.mani||'P4Atk';
+    const maniOff = (t.z==='Z5') ? 'P1' : 'P2';
     const segs=[];
     let cur=0;
+    // Allinea l'inizio al beat più vicino (evita anticipo percepito)
+    const beatLen=60/(parseInt(t.bpm)||120);
+    const alignedStart=Math.round(cur/beatLen)*beatLen;
+    cur=alignedStart;
     while(cur<dur-2){
       const segOn=Math.min(on,dur-cur);
-      segs.push({label:'In piedi — SPRINT ON',mani:t.mani,from:cur,to:cur+segOn,type:'sprint_on'});
+      segs.push({label:'In piedi — SPRINT ON',mani:maniOn,from:cur,to:cur+segOn,type:'sprint_on'});
       cur+=segOn;
       if(cur>=dur)break;
       const segOff=Math.min(off,dur-cur);
-      segs.push({label:'Seduto — Recupero OFF',mani:t.mani,from:cur,to:cur+segOff,type:'sprint_off'});
+      segs.push({label:'Seduto — Recupero OFF',mani:maniOff,from:cur,to:cur+segOff,type:'sprint_off'});
       cur+=segOff;
     }
     return segs;
@@ -854,17 +848,24 @@ function parseTecSegments(t){
   if(jumpMatches.length>0){
     const segs=[];
     const labels=tec.split('→').map(s=>s.trim()).filter(Boolean);
-    const segDur=Math.floor(dur/labels.length);
+    // Allinea durata segmenti ai battiti per sincronizzazione musicale
+    const beatLen=60/(parseInt(t.bpm)||120);
+    const beatsPerSeg=Math.max(2, Math.round((dur/labels.length)/beatLen));
+    const actualSegDur=beatsPerSeg*beatLen;
+    let cur=0;
     labels.forEach((label,i)=>{
-      const from=i*segDur;
-      const to=i===labels.length-1?dur:(i+1)*segDur;
+      const from=Math.round(cur);
+      const to=i===labels.length-1?dur:Math.round(Math.min(cur+actualSegDur,dur));
       const ll=label.toLowerCase();
       let type='jump';
-      if(ll.includes('sprint')&&(ll.includes('on')||ll.includes('piedi')||ll.includes('breve'))) type='sprint_on';
-      else if(ll.includes('sprint')&&(ll.includes('off')||ll.includes('seduto'))) type='sprint_off';
-      else if(!ll.includes('jump')&&(ll.includes('seduto')||ll.includes('veloce'))) type='seated';
-      segs.push({label,mani:t.mani,from,to,type});
+      let maniSeg=t.mani;
+      if(ll.includes('sprint')&&(ll.includes('on')||ll.includes('piedi')||ll.includes('breve'))){type='sprint_on';maniSeg='P4Atk';}
+      else if(ll.includes('sprint')&&(ll.includes('off')||ll.includes('seduto'))){type='sprint_off';maniSeg='P1';}
+      else if(!ll.includes('jump')&&(ll.includes('seduto')||ll.includes('veloce'))){type='seated';maniSeg='P2';}
+      segs.push({label,mani:maniSeg,from,to,type});
+      cur+=actualSegDur;
     });
+    if(segs.length>0) segs[segs.length-1].to=dur;
     return segs;
   }
 
@@ -937,12 +938,10 @@ function getNextTecChange(el){
   }
 
   // ── Look-ahead: countdown al cambio tecnica tra brani consecutivi ──
-  // Non scattare se siamo in sprint/jump (sj-tracker gestisce già il display)
-  const _la_si=getActiveSegIdx(t,el-t.s),_la_seg=t._segs&&t._segs[_la_si];
-  if(_la_seg&&(_la_seg.type==='sprint_on'||_la_seg.type==='sprint_off'||_la_seg.type==='jump')) return null;
+  // Scatta 10s prima della fine del brano se il prossimo ha tecnica diversa
   if(ci<T.length-1){
     const nextTrack=T[ci+1];
-    const secToNextTrack=(t.s+t.d)-el;
+    const secToNextTrack=(t.s+t.d)-el-(typeof CROSSFADE!=="undefined"?CROSSFADE:0);
     if(secToNextTrack>0&&nextTrack._segs&&nextTrack._segs.length>0){
       const nextFirstSeg=nextTrack._segs[0];
       const curLastSeg=t._segs&&t._segs.length>0?t._segs[t._segs.length-1]:null;
@@ -979,7 +978,7 @@ let accessToken=null,tokenExpiry=0;
 function rnd(n){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',a=new Uint8Array(n);crypto.getRandomValues(a);return Array.from(a,b=>c[b%c.length]).join('');}
 async function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));}
 function b64url(b){return btoa(String.fromCharCode(...new Uint8Array(b))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');}
-async function spotifyLogin(){const ver=rnd(128),st=rnd(16),ch=b64url(await sha256(ver));localStorage.setItem('sp_ver',ver);localStorage.setItem('sp_st',st);location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams({response_type:'code',client_id:CLIENT_ID,scope:SCOPES,redirect_uri:REDIRECT,state:st,code_challenge_method:'S256',code_challenge:ch});}
+async function spotifyLogin(){const ver=rnd(128),st=rnd(16),ch=b64url(await sha256(ver));localStorage.setItem('sp_ver',ver);localStorage.setItem('sp_st',st);const _u='https://accounts.spotify.com/authorize?'+new URLSearchParams({response_type:'code',client_id:CLIENT_ID,scope:SCOPES,redirect_uri:REDIRECT,state:st,code_challenge_method:'S256',code_challenge:ch}).toString();window.location.assign(_u);}
 async function exchangeCode(code){const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:REDIRECT,client_id:CLIENT_ID,code_verifier:localStorage.getItem('sp_ver')}).toString()});if(!r.ok)return false;saveTokens(await r.json());return true;}
 async function doRefresh(){const rt=localStorage.getItem('sp_rt');if(!rt)return false;const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:rt,client_id:CLIENT_ID}).toString()});if(!r.ok)return false;saveTokens(await r.json());return true;}
 function saveTokens(d){accessToken=d.access_token;tokenExpiry=Date.now()+(d.expires_in-60)*1000;if(d.refresh_token)localStorage.setItem('sp_rt',d.refresh_token);localStorage.setItem('sp_at',accessToken);localStorage.setItem('sp_exp',String(tokenExpiry));}
@@ -1055,7 +1054,9 @@ async function togglePlayback(){
 
 function tick(){
   const el=getElapsed();
-  const ni=trackAt(el);
+  // Con crossfade Spotify, anticipa cambio traccia di CROSSFADE secondi
+  const elAdj=el+(typeof CROSSFADE!=='undefined'?CROSSFADE:0);
+  const ni=trackAt(Math.min(elAdj,TOTAL-0.1));
   if(ni!==lastCi){
     ci=ni;lastCi=ni;lastSegIdx=-1;
     const t=T[ci];
@@ -1118,8 +1119,6 @@ async function prevTrack(){
 function scheduleTecCountdown(){
   clearTecCountdown();
   if(!isPlaying) return;
-  const _t=T[ci],_pos=getElapsed()-_t.s,_si=getActiveSegIdx(_t,_pos),_cs=_t._segs&&_t._segs[_si];
-  if(_cs&&(_cs.type==='sprint_on'||_cs.type==='sprint_off'||_cs.type==='jump')) return;
   const change=getNextTecChange(getElapsed());
   if(!change) return;
   const {secToChange,nextSeg}=change;
@@ -1312,6 +1311,9 @@ function renderSjTracker(t,posInTrack,el){
   document.getElementById('sj-phase').textContent=isOn?'ON':'OFF';
   document.getElementById('sj-countdown').textContent=fmt(remaining);
   document.getElementById('sj-countdown').style.color=color;
+  // Mostra mani specifici del segmento (ON vs OFF hanno mani diversi)
+  const sjManiEl=document.getElementById('sj-mani-badge');
+  if(sjManiEl) sjManiEl.textContent='Man: '+(seg.mani||t.mani||'—');
 
   const pct=Math.min((elapsed/Math.max(dur,1))*100,100);
   document.getElementById('sj-bar-fill').style.width=pct+'%';
@@ -1538,6 +1540,17 @@ setInterval(()=>{
   });
 })();
 
+// ── MOBILE CHART FIX ──────────────────────────────────
+// Su alcuni smartphone il canvas ha offsetWidth=0 al primo render
+function ensureChartDraw(){
+  const cv=document.getElementById('chart-canvas');
+  if(cv && cv.offsetWidth===0){
+    setTimeout(()=>{drawChart();ensureChartDraw();},300);
+  } else {
+    drawChart();
+  }
+}
+
 // ── INIT ──────────────────────────────────────────────
 (async function(){
   const params=new URLSearchParams(location.search);
@@ -1575,9 +1588,11 @@ async function showSession(){
 
 updateUI();
 window.addEventListener('resize',()=>{drawChart();updateUI();});
-setTimeout(()=>drawChart(),200);
-setTimeout(()=>drawChart(),600);
+setTimeout(()=>ensureChartDraw(),200);
+setTimeout(()=>ensureChartDraw(),800);
 setTimeout(()=>updateMetroBpm(T[0].bpm),300);
+// Extra retry for slow mobile renders
+setTimeout(()=>drawChart(),2000);
 
 // ═══════════════════════════════════════════════════════
 //  📺 PROIEZIONE SU SCHERMO ESTERNO
@@ -1673,79 +1688,14 @@ window.opener && window.opener.postMessage({type:'request_state'},'*');
 }
 
 function openProjection(){
-  // Su mobile window.open è spesso bloccato → usa overlay inline
-  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if(isMobile){
-    showProjOverlay(); return;
-  }
   if(projWin && !projWin.closed){ projWin.focus(); return; }
   const w=window.screen.width||1920, h=window.screen.height||1080;
   projWin=window.open('','IndoorCyclingProjection','width='+w+',height='+h+',left=0,top=0,menubar=no,toolbar=no,location=no,status=no');
-  if(!projWin){
-    // Popup bloccato anche su desktop → fallback overlay
-    showProjOverlay(); return;
-  }
+  if(!projWin){ alert('Consenti i popup per questo sito nelle impostazioni del browser.'); return; }
   projWin.document.open(); projWin.document.write(buildProjHTML()); projWin.document.close();
   const btn=document.getElementById('proj-btn');
   if(btn){ btn.style.color='var(--cyan)'; btn.style.borderColor='var(--cyan)'; }
-  const chk=setInterval(()=>{ if(projWin&&projWin.closed){ clearInterval(chk); projWin=null; if(btn){btn.style.color='';btn.style.borderColor='';} } },1500);
-}
-
-let projOverlayOpen=false;
-function showProjOverlay(){
-  let ov=document.getElementById('proj-overlay');
-  if(!ov){
-    ov=document.createElement('div');
-    ov.id='proj-overlay';
-    ov.style.cssText='position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:inherit;color:#fff;touch-action:manipulation';
-    ov.innerHTML=`
-      <div id="pov-bar" style="position:absolute;top:0;left:0;right:0;height:8px;background:#00cc70;transition:background .5s"></div>
-      <button onclick="document.getElementById('proj-overlay').style.display='none';projOverlayOpen=false"
-        style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:13px;padding:6px 14px;cursor:pointer">✕ Chiudi</button>
-      <div id="pov-title" style="font-size:clamp(36px,8vw,100px);font-weight:900;text-align:center;padding:0 4vw;line-height:1.1;max-width:95vw">—</div>
-      <div id="pov-artist" style="font-size:clamp(14px,2.5vw,36px);color:rgba(255,255,255,.4);margin-top:1.5vh;text-align:center"></div>
-      <div style="display:flex;gap:3vw;margin-top:4vh;flex-wrap:wrap;justify-content:center">
-        <div style="text-align:center;background:rgba(255,255,255,.06);border-radius:14px;padding:2vh 3vw;min-width:14vw">
-          <div id="pov-zone" style="font-size:clamp(28px,5vw,80px);font-weight:900;font-family:monospace">—</div>
-          <div style="font-size:clamp(10px,1.2vw,16px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.5vh">Zona FC</div>
-        </div>
-        <div style="text-align:center;background:rgba(255,255,255,.06);border-radius:14px;padding:2vh 3vw;min-width:14vw">
-          <div id="pov-rpm" style="font-size:clamp(28px,5vw,80px);font-weight:900;font-family:monospace;color:#00cc70">—</div>
-          <div style="font-size:clamp(10px,1.2vw,16px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.5vh">RPM</div>
-        </div>
-        <div style="text-align:center;background:rgba(255,255,255,.06);border-radius:14px;padding:2vh 3vw;min-width:14vw">
-          <div id="pov-res" style="font-size:clamp(28px,5vw,80px);font-weight:900;font-family:monospace;color:#ff1f42">—</div>
-          <div style="font-size:clamp(10px,1.2vw,16px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.5vh">Resist.</div>
-        </div>
-      </div>
-      <div id="pov-tec" style="font-size:clamp(16px,2.5vw,38px);font-weight:700;color:rgba(255,255,255,.8);margin-top:4vh;text-align:center;padding:0 5vw">—</div>
-      <div id="pov-fase" style="font-size:clamp(11px,1.4vw,20px);color:rgba(255,255,255,.3);margin-top:1vh;text-align:center;letter-spacing:3px;text-transform:uppercase">—</div>
-      <div id="pov-prog" style="position:absolute;bottom:0;left:0;height:6px;background:#00cc70;width:0%;transition:width .5s linear,background .5s"></div>
-    `;
-    document.body.appendChild(ov);
-  } else { ov.style.display='flex'; }
-  projOverlayOpen=true;
-  const btn=document.getElementById('proj-btn');
-  if(btn){ btn.style.color='var(--cyan)'; btn.style.borderColor='var(--cyan)'; }
-  updateProjOverlay();
-}
-
-function updateProjOverlay(){
-  if(!projOverlayOpen) return;
-  const t=T[ci];
-  const el=elapsed,pct=Math.min((el/TOTAL)*100,100);
-  const ZCO={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
-  const zc=ZCO[t.z]||'#00cc70';
-  const posInTrack=el-t.s,si=getActiveSegIdx(t,posInTrack);
-  const activeSeg=t._segs&&t._segs[si]?t._segs[si].label:t.tec;
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  const setStyle=(id,s,v)=>{const e=document.getElementById(id);if(e)e.style[s]=v;};
-  set('pov-title',t.title); set('pov-artist',t.ar); set('pov-zone',t.z);
-  set('pov-rpm',t.rpm); set('pov-res',t.res); set('pov-tec',activeSeg); set('pov-fase',t.fase);
-  setStyle('pov-zone','color',zc); setStyle('pov-bar','background',zc);
-  setStyle('pov-prog','background',zc); setStyle('pov-prog','width',pct+'%');
-  const ov=document.getElementById('proj-overlay');
-  if(ov) ov.style.background=t.z==='Z5'?'#0d0005':t.z==='Z4'?'#0d0500':t.z==='Z3'?'#0d0900':'#000';
+  setInterval(()=>{ if(projWin&&projWin.closed){ projWin=null; if(btn){btn.style.color='';btn.style.borderColor='';} } },1500);
 }
 
 function broadcastProjState(cdShow,cdNum,cdNext,cdMani){
