@@ -61,7 +61,30 @@ body{display:flex;flex-direction:column}
 }
 /* Mobile: 1 colonna */
 @media(max-width:700px){
-  #main{grid-template-columns:1fr;grid-template-rows:auto;overflow-y:auto}
+  #main{grid-template-columns:1fr;grid-template-rows:auto;overflow-y:auto;padding:6px;gap:6px}
+  #np-title{font-size:28px!important}
+  #metrics{grid-template-columns:repeat(5,1fr);gap:3px}
+  .mv{font-size:20px!important}
+  #info-row{grid-template-columns:1fr!important}
+  #fase-box{display:none}
+  .tec-seg-time{display:none}
+  #sj-tracker{padding:8px 10px}
+  #sj-label{font-size:20px}
+  #sj-countdown{font-size:28px}
+  #metro-beats{gap:10px}
+  .beat-dot.b1{width:44px;height:44px}
+  .beat-dot.b234{width:34px;height:34px}
+  #tl-head,#tl-body .tr{grid-template-columns:24px 1fr 55px 38px 45px 36px}
+  .tt{font-size:12px}
+  #ctrl-section{padding:8px 10px}
+  #login-btn{font-size:18px;padding:13px}
+  #big-play{font-size:20px;padding:13px}
+}
+@media(max-width:400px){
+  #metrics{grid-template-columns:repeat(5,1fr);gap:2px}
+  .mv{font-size:17px!important}
+  .ml{font-size:9px}
+  #np-title{font-size:22px!important}
 }
 
 /* ══════════════════════════════════════
@@ -773,14 +796,14 @@ const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read
 const T=[
   {i:1, title:"Nell'aria 2021",         ar:"Ben DJ",                          s:0,    d:145, z:"Z2",rpm:"80–90", bpm:"116",res:"25%",tec:"Seduto leggero → In piedi leggero → Seduto leggero",              mani:"P1↔P2",fase:"Warm-up",           focus:"Riscaldamento; prepara le gambe al ritmo."},
   {i:2, title:"Primavera",              ar:"Ben DJ",                          s:145,  d:202, z:"Z2",rpm:"85–95", bpm:"114",res:"35%",tec:"Seduto veloce → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Warm-up attivo",     focus:"Attiva la cadenza; 90 RPM controllati."},
-  {i:3, title:"Nel blu dipinto di blu", ar:"Domenico Modugno, Jack Sani",     s:347,  d:176, z:"Z3",rpm:"90–98", bpm:"123",res:"45%",tec:"Seduto veloce → Seduto ritmo costante",                           mani:"P2",   fase:"Endurance",          focus:"Mantieni regolarità; respira ogni 4 battiti."},
-  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Seduto ritmo → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Endurance",          focus:"Stabilità di core; niente rollii."},
-  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → In piedi carico → Seduto carico",  mani:"P2→P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
-  {i:6, title:"Con un Deca",            ar:"883, Fargetta",                   s:857,  d:346, z:"Z4",rpm:"70–80", bpm:"124",res:"70%",tec:"Salita progressiva: Seduto carico → In piedi carico",              mani:"P2→P3",fase:"Climb progressivo",  focus:"Ogni minuto +1/10 di carico."},
+  {i:3, title:"Nel blu dipinto di blu", ar:"Domenico Modugno, Jack Sani",     s:347,  d:176, z:"Z3",rpm:"90–98", bpm:"123",res:"45%",tec:"Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante",                           mani:"P2",   fase:"Running aerobico",          focus:"Cadenza fluida; immagina di correre leggero sul pianoro."},
+  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Crono: Seduto aero → In piedi leggero → Seduto aero",                mani:"P2→P3",   fase:"Time Trial",          focus:"Posizione aerodinamica; mantieni la potenza costante."},
+  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → In piedi carico → Seduto carico",  mani:"P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
+  {i:6, title:"Con un Deca",            ar:"883, Fargetta",                   s:857,  d:346, z:"Z4",rpm:"70–80", bpm:"124",res:"70%",tec:"Salita progressiva: Seduto carico → In piedi carico",              mani:"P3",fase:"Climb progressivo",  focus:"Ogni minuto +1/10 di carico."},
   {i:7, title:"Ninna Nanna",            ar:"Loredana Bertè, TWENTY SIX",     s:1203, d:117, z:"Z4",rpm:"85–95", bpm:"130",res:"60%",tec:"Jump in 8 → Jump in 4 → Jump in 2",                              mani:"P2↔P3",fase:"Jump",              focus:"Leggeri in piedi, potenti seduti."},
-  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Jump in 4 → In piedi veloce → Seduto veloce",                    mani:"P2↔P3",fase:"Build‑up",          focus:"Accelera 10–15 alla fine di ogni ritornello."},
+  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Crono Attack: Seduto aero veloce → In piedi carico → Seduto aero",                    mani:"P2→P3",fase:"Crono Attack",          focus:"Accelera gradualmente; posizione bassa, spinta potente."},
   {i:9, title:"Happy Hour",             ar:"DJ Matrix",                       s:1488, d:218, z:"Z5",rpm:"105–120",bpm:"140",res:"75%",tec:"Sprint 20'' ON (in piedi) → Seduto 20'' OFF",                    mani:"P3",   fase:"Sprint Block #1",    focus:"Sprint pulito: bacino fermo, spinta rotonda."},
-  {i:10,title:"Soldi",                  ar:"Mahmood, Denis First",            s:1706, d:172, z:"Z5",rpm:"100–110",bpm:"100",res:"75%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF",       mani:"P2→P3",fase:"Sprint Block #1",   focus:"30 ON / 45 OFF ×3–4."},
+  {i:10,title:"Soldi",                  ar:"Mahmood, Denis First",            s:1706, d:172, z:"Z5",rpm:"100–110",bpm:"100",res:"75%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF",       mani:"P3",fase:"Sprint Block #1",   focus:"30 ON / 45 OFF ×3–4."},
   {i:11,title:"Mambo Salentino",        ar:"Boomdabash, Alessandra Amoroso",  s:1878, d:147, z:"Z3",rpm:"90–100",bpm:"100",res:"50%",tec:"Tempo ride: Seduto veloce → Seduto leggero",                      mani:"P2",   fase:"Recovery ritmato",   focus:"Respira; sorridi; tieni il tempo."},
   {i:12,title:"Far l'Amore",            ar:"Bob Sinclar, Raffaella Carrà",    s:2025, d:174, z:"Z5",rpm:"105–115",bpm:"128",res:"80%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF (x4‑6)",              mani:"P3",   fase:"Sprint tecnico",     focus:"4–6 ripetizioni, chiudi in accelerazione."},
   {i:13,title:"Rumore",                 ar:"Raffaella Carrà, Steve Forest",   s:2199, d:204, z:"Z3",rpm:"95–100",bpm:"125",res:"55%",tec:"Tempo ride controllo (seduto)",                                    mani:"P2",   fase:"Controllo",          focus:"Ricomponi il gesto; respira profondo."},
@@ -830,13 +853,17 @@ function parseTecSegments(t){
   const jumpMatches=[...tec.matchAll(jumpRx)];
   if(jumpMatches.length>0){
     const segs=[];
-    // Ogni pattern jump dura un segmento proporzionale
     const labels=tec.split('→').map(s=>s.trim()).filter(Boolean);
     const segDur=Math.floor(dur/labels.length);
     labels.forEach((label,i)=>{
       const from=i*segDur;
       const to=i===labels.length-1?dur:(i+1)*segDur;
-      segs.push({label,mani:t.mani,from,to,type:'jump'});
+      const ll=label.toLowerCase();
+      let type='jump';
+      if(ll.includes('sprint')&&(ll.includes('on')||ll.includes('piedi')||ll.includes('breve'))) type='sprint_on';
+      else if(ll.includes('sprint')&&(ll.includes('off')||ll.includes('seduto'))) type='sprint_off';
+      else if(!ll.includes('jump')&&(ll.includes('seduto')||ll.includes('veloce'))) type='seated';
+      segs.push({label,mani:t.mani,from,to,type});
     });
     return segs;
   }
@@ -910,7 +937,9 @@ function getNextTecChange(el){
   }
 
   // ── Look-ahead: countdown al cambio tecnica tra brani consecutivi ──
-  // Scatta 10s prima della fine del brano se il prossimo ha tecnica diversa
+  // Non scattare se siamo in sprint/jump (sj-tracker gestisce già il display)
+  const _la_si=getActiveSegIdx(t,el-t.s),_la_seg=t._segs&&t._segs[_la_si];
+  if(_la_seg&&(_la_seg.type==='sprint_on'||_la_seg.type==='sprint_off'||_la_seg.type==='jump')) return null;
   if(ci<T.length-1){
     const nextTrack=T[ci+1];
     const secToNextTrack=(t.s+t.d)-el;
@@ -1089,6 +1118,8 @@ async function prevTrack(){
 function scheduleTecCountdown(){
   clearTecCountdown();
   if(!isPlaying) return;
+  const _t=T[ci],_pos=getElapsed()-_t.s,_si=getActiveSegIdx(_t,_pos),_cs=_t._segs&&_t._segs[_si];
+  if(_cs&&(_cs.type==='sprint_on'||_cs.type==='sprint_off'||_cs.type==='jump')) return;
   const change=getNextTecChange(getElapsed());
   if(!change) return;
   const {secToChange,nextSeg}=change;
@@ -1642,14 +1673,79 @@ window.opener && window.opener.postMessage({type:'request_state'},'*');
 }
 
 function openProjection(){
+  // Su mobile window.open è spesso bloccato → usa overlay inline
+  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(isMobile){
+    showProjOverlay(); return;
+  }
   if(projWin && !projWin.closed){ projWin.focus(); return; }
   const w=window.screen.width||1920, h=window.screen.height||1080;
   projWin=window.open('','IndoorCyclingProjection','width='+w+',height='+h+',left=0,top=0,menubar=no,toolbar=no,location=no,status=no');
-  if(!projWin){ alert('Consenti i popup per questo sito nelle impostazioni del browser.'); return; }
+  if(!projWin){
+    // Popup bloccato anche su desktop → fallback overlay
+    showProjOverlay(); return;
+  }
   projWin.document.open(); projWin.document.write(buildProjHTML()); projWin.document.close();
   const btn=document.getElementById('proj-btn');
   if(btn){ btn.style.color='var(--cyan)'; btn.style.borderColor='var(--cyan)'; }
-  setInterval(()=>{ if(projWin&&projWin.closed){ projWin=null; if(btn){btn.style.color='';btn.style.borderColor='';} } },1500);
+  const chk=setInterval(()=>{ if(projWin&&projWin.closed){ clearInterval(chk); projWin=null; if(btn){btn.style.color='';btn.style.borderColor='';} } },1500);
+}
+
+let projOverlayOpen=false;
+function showProjOverlay(){
+  let ov=document.getElementById('proj-overlay');
+  if(!ov){
+    ov=document.createElement('div');
+    ov.id='proj-overlay';
+    ov.style.cssText='position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:inherit;color:#fff;touch-action:manipulation';
+    ov.innerHTML=`
+      <div id="pov-bar" style="position:absolute;top:0;left:0;right:0;height:8px;background:#00cc70;transition:background .5s"></div>
+      <button onclick="document.getElementById('proj-overlay').style.display='none';projOverlayOpen=false"
+        style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:13px;padding:6px 14px;cursor:pointer">✕ Chiudi</button>
+      <div id="pov-title" style="font-size:clamp(36px,8vw,100px);font-weight:900;text-align:center;padding:0 4vw;line-height:1.1;max-width:95vw">—</div>
+      <div id="pov-artist" style="font-size:clamp(14px,2.5vw,36px);color:rgba(255,255,255,.4);margin-top:1.5vh;text-align:center"></div>
+      <div style="display:flex;gap:3vw;margin-top:4vh;flex-wrap:wrap;justify-content:center">
+        <div style="text-align:center;background:rgba(255,255,255,.06);border-radius:14px;padding:2vh 3vw;min-width:14vw">
+          <div id="pov-zone" style="font-size:clamp(28px,5vw,80px);font-weight:900;font-family:monospace">—</div>
+          <div style="font-size:clamp(10px,1.2vw,16px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.5vh">Zona FC</div>
+        </div>
+        <div style="text-align:center;background:rgba(255,255,255,.06);border-radius:14px;padding:2vh 3vw;min-width:14vw">
+          <div id="pov-rpm" style="font-size:clamp(28px,5vw,80px);font-weight:900;font-family:monospace;color:#00cc70">—</div>
+          <div style="font-size:clamp(10px,1.2vw,16px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.5vh">RPM</div>
+        </div>
+        <div style="text-align:center;background:rgba(255,255,255,.06);border-radius:14px;padding:2vh 3vw;min-width:14vw">
+          <div id="pov-res" style="font-size:clamp(28px,5vw,80px);font-weight:900;font-family:monospace;color:#ff1f42">—</div>
+          <div style="font-size:clamp(10px,1.2vw,16px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.5vh">Resist.</div>
+        </div>
+      </div>
+      <div id="pov-tec" style="font-size:clamp(16px,2.5vw,38px);font-weight:700;color:rgba(255,255,255,.8);margin-top:4vh;text-align:center;padding:0 5vw">—</div>
+      <div id="pov-fase" style="font-size:clamp(11px,1.4vw,20px);color:rgba(255,255,255,.3);margin-top:1vh;text-align:center;letter-spacing:3px;text-transform:uppercase">—</div>
+      <div id="pov-prog" style="position:absolute;bottom:0;left:0;height:6px;background:#00cc70;width:0%;transition:width .5s linear,background .5s"></div>
+    `;
+    document.body.appendChild(ov);
+  } else { ov.style.display='flex'; }
+  projOverlayOpen=true;
+  const btn=document.getElementById('proj-btn');
+  if(btn){ btn.style.color='var(--cyan)'; btn.style.borderColor='var(--cyan)'; }
+  updateProjOverlay();
+}
+
+function updateProjOverlay(){
+  if(!projOverlayOpen) return;
+  const t=T[ci];
+  const el=elapsed,pct=Math.min((el/TOTAL)*100,100);
+  const ZCO={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
+  const zc=ZCO[t.z]||'#00cc70';
+  const posInTrack=el-t.s,si=getActiveSegIdx(t,posInTrack);
+  const activeSeg=t._segs&&t._segs[si]?t._segs[si].label:t.tec;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  const setStyle=(id,s,v)=>{const e=document.getElementById(id);if(e)e.style[s]=v;};
+  set('pov-title',t.title); set('pov-artist',t.ar); set('pov-zone',t.z);
+  set('pov-rpm',t.rpm); set('pov-res',t.res); set('pov-tec',activeSeg); set('pov-fase',t.fase);
+  setStyle('pov-zone','color',zc); setStyle('pov-bar','background',zc);
+  setStyle('pov-prog','background',zc); setStyle('pov-prog','width',pct+'%');
+  const ov=document.getElementById('proj-overlay');
+  if(ov) ov.style.background=t.z==='Z5'?'#0d0005':t.z==='Z4'?'#0d0500':t.z==='Z3'?'#0d0900':'#000';
 }
 
 function broadcastProjState(cdShow,cdNum,cdNext,cdMani){
