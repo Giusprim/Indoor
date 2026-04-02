@@ -59,7 +59,7 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 <body>
 <header>
   <div><h1>🚴 Indoor Cycling Planner</h1><p>Power Ride Coach · Giuseppe Primavera · AIF 2° Livello</p></div>
-  <span class="badge">v3.5</span>
+  <span class="badge">v3.6</span>
 </header>
 <main>
 
@@ -322,20 +322,42 @@ ${list}
 
 Rispondi SOLO con array JSON valido, nessun testo, nessun markdown, nessun backtick.
 Un oggetto per brano nell'ORDINE ORIGINALE:
-[{"zona":"Z2","rpm_label":"80-90","res_label":"30%","res_num":0.30,"mani":"P1","fase":"Warm-up","tec":"Seduto leggero → In piedi leggero → Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]
+[{"zona":"Z2","rpm_label":"80-90","res_label":"30%","res_num":0.30,"mani":"P1↔P2","fase":"Warm-up","tec":"Seduto leggero → In piedi leggero → Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]
 
 REGOLE ZONE: Z1=recovery Z2=aerobico Z3=soglia Z4=hard Z5=sprint
-RPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:70-105 Z5:100-120
+RPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:50-105 (vedi zona) Z5:100-120
 RESISTENZA: Z1:15-25% Z2:30-40% Z3:40-55% Z4:55-75% Z5:65-80%
-MANUBRIO: P1=recovery P2=standard P3=sprint/salita. Usa ↔ per alternanza, → per progressione.
 
-FORMATO tec — USA ESATTAMENTE UNO DI QUESTI TRE:
-1. SPRINT (Z5/HIIT): Sprint 20'' ON (in piedi) → Seduto 20'' OFF
-   oppure: Sprint 30'' ON (in piedi) → Seduto 30'' OFF
-   oppure: Sprint 15'' ON (in piedi) → Seduto 15'' OFF
-   IMPORTANTE: usa '' (due apici) per indicare i secondi, NON la parola "secondi"
+SCHEMA MANUBRIO — segui SEMPRE queste regole:
+P1  = Centro / Seated Flat → Z1-Z2 recovery, running, OFF sprint Z5, stretching, defaticamento
+P2  = Angoli / Seated Climb → Z2-Z3 endurance, warm-up, tempo ride, seduto leggero/veloce/carico
+P3  = Punte / Standing Climb → in piedi carico Z3-Z4 salita. MAI da seduto. Sprint tecnico Z5.
+P4  = Aero / Crono seduto → crono seduto Z4 (Aero/Time Trial). MAI in piedi.
+P4Atk = Standing Attack → Sprint ON Z5 in piedi, Crono Attack in piedi. SOLO in piedi Z5.
+Per alternanza usa ↔ (es. P2↔P3 per jump), per progressione usa → (es. P2→P3 per salita).
+Regole rapide:
+  Warm-up / Defaticamento: P1↔P2
+  Running seduto: P1
+  Endurance / Tempo ride seduto: P2
+  Salita seduto carico: P2 (poi P3 se in piedi)
+  Jump standard: P2↔P3
+  Crono seduto: P4
+  Sprint ON Z5: P4Atk   Sprint OFF Z5: P1
+  Sprint ON Z4: P3       Sprint OFF Z4: P2
+  Stretching: P1
+
+FORMATO tec — USA ESATTAMENTE UNO DI QUESTI:
+1. SPRINT: Sprint 20'' ON (in piedi) → Seduto 20'' OFF
+   oppure Sprint 30'' ON (in piedi) → Seduto 30'' OFF
+   oppure Sprint 15'' ON (in piedi) → Seduto 15'' OFF
+   IMPORTANTE: usa '' (due apici) per i secondi, NON la parola "secondi"
 2. JUMP (Z3-Z4 ritmici): Jump in 8 → Jump in 4 → Jump in 2
-3. GENERICO (max 3 segmenti con →): Seduto leggero → In piedi leggero → Seduto leggero
+   oppure: Jump in 4 → Jump in 2
+3. RUNNING (Z2-Z3 cadenza elevata): Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante
+4. CRONO (Z4 aerodinamico seduto): Crono: Seduto aero → In piedi leggero → Seduto aero
+5. CRONO ATTACK (Z4-Z5 in accelerazione): Crono Attack: Seduto aero veloce → In piedi carico → Seduto aero
+6. GENERICO (max 3 segmenti con →): Seduto leggero → In piedi leggero → Seduto leggero
+   oppure: Salita progressiva: Seduto carico → In piedi carico
 
 STRUTTURA OBBLIGATORIA PER QUALSIASI PROTOCOLLO:
 FASE 1 - WARM-UP (primi 1-2 brani): Z2, RPM 75-90, res 25-35%, Seduto leggero, mani P1↔P2
@@ -344,9 +366,11 @@ FASE 3 - DEFATICAMENTO (penultimo brano): Z2, RPM 75-85, res 25-35%, Seduto legg
 FASE 4 - STRETCHING (SEMPRE ultimo brano): Z1, RPM 55-65, res 15-20%, Stretching in bici, mani P1
 
 REGOLE AGGIUNTIVE:
-- NON saltare nessuna delle 4 fasi — è obbligatorio per tutti i protocolli AIF
-- Sprint/Jump solo se BPM>110 e la fase è nel corpo lezione (non in warm-up/defaticamento/stretching)
-- Montagna: usa RPM 50-75, Seduto carico → In piedi carico nella fase centrale`;
+- NON saltare nessuna delle 4 fasi — obbligatorio per tutti i protocolli AIF
+- Sprint/Jump solo se BPM>110 e siamo nel corpo lezione (non in warm-up/defaticamento/stretching)
+- Non mettere due brani jump consecutivi — alterna sempre con altra tecnica
+- Montagna: RPM 50-75, Seduto carico → In piedi carico, P2→P3. MAI sprint in Montagna.
+- HIIT: sprint Z5 con Sprint Xs ON → Seduto Xs OFF. P4Atk per ON, P1 per OFF.`;
 
   clearLog();
   log("→ Analisi "+TRACKS.length+" brani con Groq LLaMA 3 (gratuito)...");
