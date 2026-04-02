@@ -58,20 +58,10 @@ body{display:flex;flex-direction:column}
   grid-template-columns:1fr 380px;
   grid-template-rows:1fr;
   gap:8px;padding:8px;
+  min-height:0;
 }
 /* Mobile: 1 colonna */
-@media(max-width:700px){
-  #main{grid-template-columns:1fr!important;grid-template-rows:auto!important;overflow-y:auto!important;overflow-x:hidden!important}
-  #col-right{display:none}
-  body{overflow-x:hidden}
-}
-@media(max-width:420px){
-  .mv{font-size:16px!important}
-  .ml{font-size:8px!important}
-  #np-title{font-size:20px!important}
-  #metrics{gap:2px!important}
-  .metric{padding:5px 2px!important}
-}
+
 
 /* ══════════════════════════════════════
    COL LEFT
@@ -130,7 +120,7 @@ body{display:flex;flex-direction:column}
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   color:#fff;
 }
-@media(max-width:900px){#np-title{font-size:40px}}
+
 #np-badge{
   font-family:var(--fm);font-size:16px;
   color:var(--muted);white-space:nowrap;padding-top:6px;flex-shrink:0;
@@ -158,7 +148,7 @@ body{display:flex;flex-direction:column}
   font-weight:900;font-family:var(--fd);
   line-height:1;letter-spacing:-.5px;
 }
-@media(max-width:900px){.mv{font-size:26px}}
+
 .ml{
   font-size:11px;color:var(--muted);margin-top:4px;
   text-transform:uppercase;letter-spacing:.8px;
@@ -169,7 +159,7 @@ body{display:flex;flex-direction:column}
    FASE + TECNICA
 ══════════════════════════════════════ */
 #info-row{display:grid;grid-template-columns:160px 1fr;gap:8px;align-items:stretch}
-@media(max-width:900px){#info-row{grid-template-columns:130px 1fr}}
+
 #fase-box{
   background:var(--s3);border:1px solid var(--border);
   border-radius:10px;padding:10px 12px;
@@ -236,7 +226,7 @@ body{display:flex;flex-direction:column}
   font-size:18px;font-weight:700;color:#fff;
   line-height:1.4;font-style:italic;
 }
-@media(max-width:900px){#focus-val{font-size:16px}}
+
 
 /* ══════════════════════════════════════
    SPRINT/JUMP TRACKER
@@ -558,6 +548,87 @@ body{display:flex;flex-direction:column}
   position:relative;font-family:var(--fm);
   font-size:70px;font-weight:700;z-index:1;color:#fff;
 }
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — Tablet & Mobile
+   Breakpoints:
+     >1024px  → desktop: layout fisso 2 col
+     600-1024 → tablet:  2 col scrollabile
+     <600px   → mobile:  1 col, scroll
+══════════════════════════════════════════════ */
+
+/* ─── TABLET (600-1024px) ─────────────────── */
+@media(max-width:1024px){
+  html,body{height:auto;overflow-y:auto;overflow-x:hidden}
+  #app{height:auto;min-height:100vh;display:flex;flex-direction:column}
+  #main{
+    flex:1;overflow:visible;
+    display:grid;
+    grid-template-columns:1fr 320px;
+    grid-template-rows:auto;
+    gap:6px;padding:6px;
+  }
+  #col-left{overflow:visible;height:auto}
+  #col-right{display:flex!important;width:320px}
+  #now{overflow:visible;flex:none}
+  #chart-canvas{height:90px}
+  #np-title{font-size:36px!important}
+  .mv{font-size:22px}
+  .ml{font-size:9px}
+  #tec-segs-wrap{max-height:180px;overflow-y:auto}
+  #focus-box{display:block!important}
+  #ctrl-section{flex-shrink:0}
+}
+
+/* ─── TABLET PORTRAIT (600-820px) ─────────── */
+@media(max-width:820px){
+  #main{
+    grid-template-columns:1fr 280px;
+  }
+  #col-right{width:280px}
+  .tec-seg-time{display:none}
+  #tec-segs-wrap{max-height:140px}
+}
+
+/* ─── MOBILE (<600px) ─────────────────────── */
+@media(max-width:600px){
+  html,body{height:auto;overflow-y:auto;overflow-x:hidden}
+  #app{height:auto;min-height:100vh}
+  #main{
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto!important;
+    overflow:visible!important;
+    padding:5px;gap:5px;
+  }
+  #col-right{display:none!important}
+  #col-left{overflow:visible;height:auto}
+  #now{overflow:visible;flex:none}
+  #chart-canvas{height:75px}
+  #np-title{font-size:28px!important}
+  .mv{font-size:19px!important}
+  .ml{font-size:8px}
+  .tec-seg-time{display:none}
+  #tec-segs-wrap{max-height:120px;overflow-y:auto}
+  #info-row{grid-template-columns:1fr!important}
+  #fase-box{display:none}
+  #sj-tracker{padding:8px 10px}
+  #sj-label{font-size:18px}
+  #sj-countdown{font-size:26px}
+  .beat-dot{width:38px!important;height:38px!important}
+  #ctrl-section{padding:8px 10px}
+  #login-screen{padding:20px 16px}
+  #login-btn{font-size:17px;padding:13px}
+  #big-play{font-size:18px;padding:13px}
+}
+
+/* ─── SMALL PHONE (<420px) ────────────────── */
+@media(max-width:420px){
+  .mv{font-size:16px!important}
+  #np-title{font-size:23px!important}
+  #metrics{gap:2px!important}
+  .metric{padding:5px 2px!important}
+}
+
 </style>
 </head>
 <body>
@@ -648,7 +719,7 @@ body{display:flex;flex-direction:column}
           <div id="sj-countdown">0:20</div>
         </div>
         <div id="sj-bar-wrap"><div id="sj-bar-fill"></div></div>
-        <div id="sj-mani-badge" style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px">—</div><div id="sj-info">
+        <div id="sj-info">
           <span id="sj-start">Inizio: 0:00</span>
           <span id="sj-end">Fine: 0:00</span>
         </div>
@@ -783,11 +854,11 @@ const T=[
   {i:1, title:"Nell'aria 2021",         ar:"Ben DJ",                          s:0,    d:145, z:"Z2",rpm:"80–90", bpm:"116",res:"25%",tec:"Seduto leggero → In piedi leggero → Seduto leggero",              mani:"P1↔P2",fase:"Warm-up",           focus:"Riscaldamento; prepara le gambe al ritmo."},
   {i:2, title:"Primavera",              ar:"Ben DJ",                          s:145,  d:202, z:"Z2",rpm:"85–95", bpm:"114",res:"35%",tec:"Seduto veloce → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Warm-up attivo",     focus:"Attiva la cadenza; 90 RPM controllati."},
   {i:3, title:"Nel blu dipinto di blu", ar:"Domenico Modugno, Jack Sani",     s:347,  d:176, z:"Z3",rpm:"90–98", bpm:"123",res:"45%",tec:"Seduto veloce → Seduto ritmo costante",                           mani:"P1",   fase:"Endurance",          focus:"Mantieni regolarità; respira ogni 4 battiti."},
-  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Seduto ritmo → In piedi leggero → Seduto veloce",                mani:"P4",   fase:"Endurance",          focus:"Stabilità di core; niente rollii."},
-  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → Jump in 8 → In piedi carico",  mani:"P2→P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
+  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Seduto ritmo → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Endurance",          focus:"Stabilità di core; niente rollii."},
+  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → In piedi carico → Seduto carico",  mani:"P2→P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
   {i:6, title:"Con un Deca",            ar:"883, Fargetta",                   s:857,  d:346, z:"Z4",rpm:"70–80", bpm:"124",res:"70%",tec:"Salita progressiva: Seduto carico → In piedi carico",              mani:"P2→P3",fase:"Climb progressivo",  focus:"Ogni minuto +1/10 di carico."},
   {i:7, title:"Ninna Nanna",            ar:"Loredana Bertè, TWENTY SIX",     s:1203, d:117, z:"Z4",rpm:"85–95", bpm:"130",res:"60%",tec:"Jump in 8 → Jump in 4 → Jump in 2",                              mani:"P2↔P3",fase:"Jump",              focus:"Leggeri in piedi, potenti seduti."},
-  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Jump in 4 → In piedi veloce → Seduto veloce",                    mani:"P4→P4Atk",fase:"Build‑up",          focus:"Accelera 10–15 alla fine di ogni ritornello."},
+  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Jump in 4 → In piedi veloce → Seduto veloce",                    mani:"P2↔P3",fase:"Build‑up",          focus:"Accelera 10–15 alla fine di ogni ritornello."},
   {i:9, title:"Happy Hour",             ar:"DJ Matrix",                       s:1488, d:218, z:"Z5",rpm:"105–120",bpm:"140",res:"75%",tec:"Sprint 20'' ON (in piedi) → Seduto 20'' OFF",                    mani:"P4Atk",   fase:"Sprint Block #1",    focus:"Sprint pulito: bacino fermo, spinta rotonda."},
   {i:10,title:"Soldi",                  ar:"Mahmood, Denis First",            s:1706, d:172, z:"Z5",rpm:"100–110",bpm:"100",res:"75%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF",       mani:"P4Atk",fase:"Sprint Block #1",   focus:"30 ON / 45 OFF ×3–4."},
   {i:11,title:"Mambo Salentino",        ar:"Boomdabash, Alessandra Amoroso",  s:1878, d:147, z:"Z3",rpm:"90–100",bpm:"100",res:"50%",tec:"Tempo ride: Seduto veloce → Seduto leggero",                      mani:"P2",   fase:"Recovery ritmato",   focus:"Respira; sorridi; tieni il tempo."},
@@ -799,8 +870,8 @@ const T=[
   {i:17,title:"Ti Porto Via Con Me",    ar:"Jovanotti",                       s:3008, d:252, z:"Z2",rpm:"80–85", bpm:"132",res:"35%",tec:"Seduto leggero (defaticamento)",                                   mani:"P1↔P2",fase:"Defaticamento",      focus:"Allunga la pedalata, abbassa FC."},
   {i:18,title:"La Cura",                ar:"Franco Battiato",                 s:3260, d:235, z:"Z1",rpm:"60–65", bpm:"90", res:"20%",tec:"Stretching in bici / off‑bike",                                    mani:"P1",   fase:"Stretching",         focus:"Respira; chiudi con gratitudine."},
 ];
+const CROSSFADE=4;
 const TOTAL=3495;
-const CROSSFADE=4; // secondi di crossfade Spotify
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
 // ═══════════════════════════════════════════════════════
@@ -812,99 +883,113 @@ const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 //  3. Calcola il timing di ogni segmento su base 32 battiti
 // ═══════════════════════════════════════════════════════
 function parseTecSegments(t){
-  const tec = t.tec;
-  const bpm = parseInt(t.bpm) || 120;
-  const dur = t.d;
+  const tec=t.tec, bpm=parseInt(t.bpm)||120, dur=t.d;
+  const beatLen=60/bpm;
 
-  // ── Sprint con secondi espliciti (es. "Sprint 20'' ON → Seduto 20'' OFF") ──
-  const sprintRx = /(\d+)[''s]+\s*on[^→]*(→|$).*?(\d+)[''s]+\s*off/i;
-  const sprintM = tec.match(sprintRx);
+  // ── Inferisce tipo e mani da una label testuale ──
+  function inferSeg(label, trackMani, trackZ){
+    const ll=label.toLowerCase();
+    let type='steady', mani=trackMani;
+    if(ll.includes('sprint')&&(ll.includes(' on')||ll.includes('piedi')||ll.includes('breve'))){
+      type='sprint_on';
+      mani=(trackZ==='Z5')?'P4Atk':'P3';
+    } else if(ll.includes('sprint')&&(ll.includes(' off')||ll.includes('recupero'))){
+      type='sprint_off';
+      mani=(trackZ==='Z5')?'P1':'P2';
+    } else if(ll.includes('jump')){
+      type='jump';
+      // mani invariato dal track
+    } else if(ll.includes('in piedi')&&(ll.includes('carico')||ll.includes('veloce')||ll.includes('leggero'))){
+      type='standing';
+      if(ll.includes('carico')) mani='P3';
+      else if(ll.includes('veloce')) mani=trackZ==='Z4'?'P4Atk':'P3';
+      else mani='P2';
+    } else if(ll.includes('seduto')||ll.includes('recupero')||ll.includes('defaticamento')||ll.includes('stretching')){
+      type='seated';
+      if(ll.includes('carico')) mani='P2';
+      else if(ll.includes('aero')) mani='P4';
+      else if(ll.includes('veloce')) mani='P2';
+      else mani=trackZ==='Z1'?'P1':'P2';
+    } else if(ll.includes('running')){
+      type='steady'; mani='P1';
+    } else if(ll.includes('crono')&&ll.includes('in piedi')){
+      type='standing'; mani='P4Atk';
+    } else if(ll.includes('crono')){
+      type='seated'; mani='P4';
+    } else if(ll.includes('vetta')||ll.includes('salita')){
+      type='standing'; mani='P3';
+    }
+    return {type, mani};
+  }
+
+  // ── 1. SPRINT: pattern "Xs ON ... Xs OFF" ──
+  const sprintRx=/(\d+)[''s]+\s*on[^→]*(→|$).*?(\d+)[''s]+\s*off/i;
+  const sprintM=tec.match(sprintRx);
   if(sprintM){
-    const on=parseInt(sprintM[1]), off=parseInt(sprintM[3]||sprintM[2])||on;
-    // Mani per segmento: ON usa mani del brano, OFF va a P1/P2 per recupero
-    const maniOn = t.mani||'P4Atk';
-    const maniOff = (t.z==='Z5') ? 'P1' : 'P2';
+    const on=parseInt(sprintM[1]), off=parseInt(sprintM[3]||on);
+    const maniOn=(t.z==='Z5')?'P4Atk':'P3';
+    const maniOff=(t.z==='Z5')?'P1':'P2';
+    // Allinea inizio a multiplo del beat (evita anticipo percepito)
+    const onBeats=Math.max(1,Math.round(on/beatLen));
+    const offBeats=Math.max(1,Math.round(off/beatLen));
+    const onSec=onBeats*beatLen, offSec=offBeats*beatLen;
     const segs=[];
     let cur=0;
-    // Allinea l'inizio al beat più vicino (evita anticipo percepito)
-    const beatLen=60/(parseInt(t.bpm)||120);
-    const alignedStart=Math.round(cur/beatLen)*beatLen;
-    cur=alignedStart;
-    while(cur<dur-2){
-      const segOn=Math.min(on,dur-cur);
-      segs.push({label:'In piedi — SPRINT ON',mani:maniOn,from:cur,to:cur+segOn,type:'sprint_on'});
+    while(cur<dur-1){
+      const segOn=Math.min(onSec,dur-cur);
+      segs.push({label:'In piedi — SPRINT ON',mani:maniOn,from:parseFloat(cur.toFixed(2)),to:parseFloat((cur+segOn).toFixed(2)),type:'sprint_on'});
       cur+=segOn;
-      if(cur>=dur)break;
-      const segOff=Math.min(off,dur-cur);
-      segs.push({label:'Seduto — Recupero OFF',mani:maniOff,from:cur,to:cur+segOff,type:'sprint_off'});
+      if(cur>=dur-0.1) break;
+      const segOff=Math.min(offSec,dur-cur);
+      segs.push({label:'Seduto — Recupero OFF',mani:maniOff,from:parseFloat(cur.toFixed(2)),to:parseFloat((cur+segOff).toFixed(2)),type:'sprint_off'});
       cur+=segOff;
     }
+    if(segs.length>0) segs[segs.length-1].to=dur;
     return segs;
   }
 
-  // ── Jump con "in N battiti" ──
-  const jumpRx = /jump\s+in\s+(\d+)/gi;
-  const jumpMatches=[...tec.matchAll(jumpRx)];
-  if(jumpMatches.length>0){
-    const segs=[];
+  // ── 2. JUMP: almeno un "jump in N" nella tec ──
+  const jumpRx=/jump\s+in\s+(\d+)/gi;
+  if([...tec.matchAll(jumpRx)].length>0){
     const labels=tec.split('→').map(s=>s.trim()).filter(Boolean);
-    // Allinea durata segmenti ai battiti per sincronizzazione musicale
-    const beatLen=60/(parseInt(t.bpm)||120);
-    const beatsPerSeg=Math.max(2, Math.round((dur/labels.length)/beatLen));
-    const actualSegDur=beatsPerSeg*beatLen;
+    // Ogni segmento dura un numero intero di "phrase" musicali (8 battiti)
+    const phraseLen=8*beatLen;
+    const phrasesPerSeg=Math.max(1,Math.round((dur/labels.length)/phraseLen));
+    const segDur=phrasesPerSeg*phraseLen;
+    const segs=[];
     let cur=0;
     labels.forEach((label,i)=>{
-      const from=Math.round(cur);
-      const to=i===labels.length-1?dur:Math.round(Math.min(cur+actualSegDur,dur));
-      const ll=label.toLowerCase();
-      let type='jump';
-      let maniSeg=t.mani;
-      if(ll.includes('sprint')&&(ll.includes('on')||ll.includes('piedi')||ll.includes('breve'))){type='sprint_on';maniSeg='P4Atk';}
-      else if(ll.includes('sprint')&&(ll.includes('off')||ll.includes('seduto'))){type='sprint_off';maniSeg='P1';}
-      else if(!ll.includes('jump')&&(ll.includes('seduto')||ll.includes('veloce'))){type='seated';maniSeg='P2';}
-      segs.push({label,mani:maniSeg,from,to,type});
-      cur+=actualSegDur;
+      const from=parseFloat(cur.toFixed(2));
+      const to=i===labels.length-1?dur:parseFloat(Math.min(cur+segDur,dur).toFixed(2));
+      const {type,mani}=inferSeg(label,t.mani,t.z);
+      segs.push({label,mani,from,to,type});
+      cur+=segDur;
     });
     if(segs.length>0) segs[segs.length-1].to=dur;
     return segs;
   }
 
-  // ── Tecniche generiche separate da → ──
-  const parts = tec.split('→').map(s=>s.trim()).filter(Boolean);
+  // ── 3. GENERICO: segmenti separati da → ──
+  const parts=tec.split('→').map(s=>s.trim()).filter(Boolean);
   if(parts.length===1){
-    // Unica tecnica: nessun cambio
-    return [{label:parts[0],mani:t.mani,from:0,to:dur,type:'steady'}];
+    const {type,mani}=inferSeg(parts[0],t.mani,t.z);
+    return [{label:parts[0],mani,from:0,to:dur,type}];
   }
-
-  // Dividi il brano in N segmenti basati su 32 battiti come unità minima
-  const beatDur = 60/bpm; // secondi per battito
-  const blockDur = 32*beatDur; // durata di 32 battiti
-
-  // Calcola il numero di blocchi da 32 battiti per ogni segmento
-  // Distribuisci i blocchi il più equamente possibile
-  const totalBlocks = Math.round(dur/blockDur);
-  const blocksPerSeg = Math.max(1, Math.floor(totalBlocks/parts.length));
-
+  // Distribuisci equamente a multipli di 32 battiti
+  const block32=32*beatLen;
+  const totalBlocks=Math.round(dur/block32);
+  const bPerSeg=Math.max(1,Math.floor(totalBlocks/parts.length));
   const segs=[];
   let cur=0;
   parts.forEach((label,i)=>{
-    let segBlocks=blocksPerSeg;
-    if(i===parts.length-1) segBlocks=Math.round((dur-cur)/blockDur)||1;
-    const segDur=Math.round(segBlocks*blockDur);
-    const from=cur;
-    const to=Math.min(cur+segDur,dur);
-    // Inferisci il tipo dalla label del segmento
-    const ll=label.toLowerCase();
-    let type='steady';
-    if(ll.includes('sprint') && (ll.includes('on')||ll.includes('piedi'))) type='sprint_on';
-    else if(ll.includes('sprint') && (ll.includes('off')||ll.includes('recupero')||ll.includes('seduto'))) type='sprint_off';
-    else if(ll.includes('sprint')) type='sprint_on';
-    else if(ll.includes('jump')) type='jump';
-    else if(ll.includes('in piedi') && !ll.includes('leggero')) type='standing';
-    else if(ll.includes('seduto') || ll.includes('recupero') || ll.includes('defaticamento')) type='seated';
-    segs.push({label,mani:t.mani,from,to,type});
-    cur=to;
-    if(cur>=dur)return;
+    const blocks=i===parts.length-1?Math.round((dur-cur)/block32)||1:bPerSeg;
+    const segDur=Math.round(blocks*block32*100)/100;
+    const from=parseFloat(cur.toFixed(2));
+    const to=parseFloat(Math.min(cur+segDur,dur).toFixed(2));
+    const {type,mani}=inferSeg(label,t.mani,t.z);
+    segs.push({label,mani,from,to,type});
+    cur+=segDur;
+    if(cur>=dur) return;
   });
   if(segs.length>0) segs[segs.length-1].to=dur;
   return segs;
@@ -926,41 +1011,47 @@ function getActiveSegIdx(t, posInTrack){
 function getNextTecChange(el){
   const t=T[ci];
   const posInTrack=el-t.s;
+  const si=getActiveSegIdx(t,posInTrack);
+  const curSeg=t._segs&&t._segs[si];
+
+  // Non attivare se sprint o jump attivi (sj-tracker gestisce già)
+  if(curSeg&&(curSeg.type==='sprint_on'||curSeg.type==='sprint_off'||curSeg.type==='jump')){
+    return null;
+  }
 
   // ── Cambio tecnica DENTRO il brano corrente ──
   if(t._segs&&t._segs.length>1){
-    const si=getActiveSegIdx(t,posInTrack);
     if(si<t._segs.length-1){
       const nextSeg=t._segs[si+1];
+      // Salta cambi verso altri sprint/jump (gestiti dal tracker)
+      if(nextSeg.type==='sprint_on'||nextSeg.type==='sprint_off'||nextSeg.type==='jump'){
+        return null;
+      }
       const secToChange=(t.s+nextSeg.from)-el;
-      if(secToChange>0) return {secToChange,nextSeg};
+      if(secToChange>0&&secToChange<=_CD_WINDOW+1) return {secToChange,nextSeg};
+      if(secToChange>0) return {secToChange,nextSeg}; // per scheduling futuro
     }
   }
 
-  // ── Look-ahead: countdown al cambio tecnica tra brani consecutivi ──
-  // Scatta 10s prima della fine del brano se il prossimo ha tecnica diversa
+  // ── Look-ahead inter-brano (compensa crossfade 4s) ──
   if(ci<T.length-1){
     const nextTrack=T[ci+1];
-    const secToNextTrack=(t.s+t.d)-el-(typeof CROSSFADE!=="undefined"?CROSSFADE:0);
+    const CF=typeof CROSSFADE!=='undefined'?CROSSFADE:0;
+    const secToNextTrack=(t.s+t.d)-el-CF;
     if(secToNextTrack>0&&nextTrack._segs&&nextTrack._segs.length>0){
       const nextFirstSeg=nextTrack._segs[0];
+      // Non segnalare se il prossimo brano inizia con sprint/jump
+      if(nextFirstSeg.type==='sprint_on'||nextFirstSeg.type==='jump') return null;
       const curLastSeg=t._segs&&t._segs.length>0?t._segs[t._segs.length-1]:null;
-      const tecCambia=!curLastSeg||curLastSeg.label!==nextFirstSeg.label;
+      const tecCambia=!curLastSeg||curLastSeg.type!==nextFirstSeg.type||curLastSeg.label!==nextFirstSeg.label;
       if(tecCambia){
         return {
           secToChange:secToNextTrack,
-          nextSeg:{
-            label:nextFirstSeg.label,
-            mani:nextTrack.mani,
-            from:0,
-            to:nextFirstSeg.to,
-            type:nextFirstSeg.type
-          }
+          nextSeg:{label:nextFirstSeg.label,mani:nextTrack.mani,from:0,to:nextFirstSeg.to,type:nextFirstSeg.type}
         };
       }
     }
   }
-
   return null;
 }
 
@@ -978,7 +1069,7 @@ let accessToken=null,tokenExpiry=0;
 function rnd(n){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',a=new Uint8Array(n);crypto.getRandomValues(a);return Array.from(a,b=>c[b%c.length]).join('');}
 async function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));}
 function b64url(b){return btoa(String.fromCharCode(...new Uint8Array(b))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');}
-async function spotifyLogin(){const ver=rnd(128),st=rnd(16),ch=b64url(await sha256(ver));localStorage.setItem('sp_ver',ver);localStorage.setItem('sp_st',st);const _u='https://accounts.spotify.com/authorize?'+new URLSearchParams({response_type:'code',client_id:CLIENT_ID,scope:SCOPES,redirect_uri:REDIRECT,state:st,code_challenge_method:'S256',code_challenge:ch}).toString();window.location.assign(_u);}
+async function spotifyLogin(){const ver=rnd(128),st=rnd(16),ch=b64url(await sha256(ver));localStorage.setItem('sp_ver',ver);localStorage.setItem('sp_st',st);window.location.assign('https://accounts.spotify.com/authorize?'+new URLSearchParams({response_type:'code',client_id:CLIENT_ID,scope:SCOPES,redirect_uri:REDIRECT,state:st,code_challenge_method:'S256',code_challenge:ch}).toString());}
 async function exchangeCode(code){const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:REDIRECT,client_id:CLIENT_ID,code_verifier:localStorage.getItem('sp_ver')}).toString()});if(!r.ok)return false;saveTokens(await r.json());return true;}
 async function doRefresh(){const rt=localStorage.getItem('sp_rt');if(!rt)return false;const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:rt,client_id:CLIENT_ID}).toString()});if(!r.ok)return false;saveTokens(await r.json());return true;}
 function saveTokens(d){accessToken=d.access_token;tokenExpiry=Date.now()+(d.expires_in-60)*1000;if(d.refresh_token)localStorage.setItem('sp_rt',d.refresh_token);localStorage.setItem('sp_at',accessToken);localStorage.setItem('sp_exp',String(tokenExpiry));}
@@ -1054,8 +1145,7 @@ async function togglePlayback(){
 
 function tick(){
   const el=getElapsed();
-  // Con crossfade Spotify, anticipa cambio traccia di CROSSFADE secondi
-  const elAdj=el+(typeof CROSSFADE!=='undefined'?CROSSFADE:0);
+  const elAdj=el+(CROSSFADE||0);
   const ni=trackAt(Math.min(elAdj,TOTAL-0.1));
   if(ni!==lastCi){
     ci=ni;lastCi=ni;lastSegIdx=-1;
@@ -1116,63 +1206,57 @@ async function prevTrack(){
 //  ★ TECNICA COUNTDOWN — scatta 10s prima di OGNI
 //    cambio di segmento DENTRO il brano corrente
 // ═══════════════════════════════════════════════════════
-function scheduleTecCountdown(){
-  clearTecCountdown();
-  if(!isPlaying) return;
-  const change=getNextTecChange(getElapsed());
-  if(!change) return;
-  const {secToChange,nextSeg}=change;
-  if(secToChange<=0) return;
+// ── COUNTDOWN TECNICA ─ gestito frame-by-frame in renderUI ─────────
+// Nessun setTimeout: la logica è tutta in renderCountdown(el)
+// chiamata da renderUI() ad ogni frame → sincronizzazione perfetta
+let _cdLastShown = false; // traccia se overlay era visibile
+let _cdLastLabel = '';    // evita re-render inutili
+const _CD_WINDOW = 10;    // secondi prima del cambio
 
-  if(secToChange<=10){
-    // Siamo già dentro la finestra di 10s
-    startTecCountdown(Math.round(secToChange),nextSeg);
+function renderCountdown(el, curSeg){
+  const overlay = document.getElementById('tec-change-overlay');
+  if(!overlay) return;
+
+  // Non mostrare se siamo in sprint_on o jump (sj-tracker gestisce già)
+  if(curSeg && (curSeg.type==='sprint_on' || curSeg.type==='jump')){
+    if(_cdLastShown){ overlay.classList.remove('show'); _cdLastShown=false; }
     return;
   }
-  // Schedula per 10s prima del cambio
-  tecCdTO=setTimeout(()=>{
-    if(isPlaying) startTecCountdown(10,nextSeg);
-  },(secToChange-10)*1000);
+
+  const change = getNextTecChange(el);
+  if(!change || change.secToChange <= 0 || change.secToChange > _CD_WINDOW){
+    if(_cdLastShown){ overlay.classList.remove('show'); _cdLastShown=false; _cdLastLabel=''; }
+    return;
+  }
+
+  const {secToChange, nextSeg} = change;
+  const rem = Math.max(0, secToChange);
+
+  // Aggiorna testo solo se cambiato (riduce reflow)
+  if(nextSeg.label !== _cdLastLabel){
+    _cdLastLabel = nextSeg.label;
+    document.getElementById('tco-next').textContent = nextSeg.label;
+    document.getElementById('tco-mani').textContent = 'Manubrio: '+(nextSeg.mani||'—');
+  }
+  document.getElementById('tco-num').textContent = Math.ceil(rem);
+  // Ring SVG progress
+  const C = 2*Math.PI*95;
+  const progress = Math.min(1, (_CD_WINDOW-rem)/_CD_WINDOW);
+  document.getElementById('tco-circle').style.strokeDasharray = C;
+  document.getElementById('tco-circle').style.strokeDashoffset = C*progress;
+
+  if(!_cdLastShown){ overlay.classList.add('show'); _cdLastShown=true; }
 }
 
-function startTecCountdown(fromSec,nextSeg){
-  let remaining=Math.round(fromSec);
-  const circumference=2*Math.PI*95; // raggio=95 del cerchio SVG
-
-  document.getElementById('tco-next').textContent=nextSeg.label;
-  document.getElementById('tco-mani').textContent='Manubrio: '+(nextSeg.mani||'—');
-  document.getElementById('tco-num').textContent=remaining;
-  document.getElementById('tco-circle').style.strokeDasharray=circumference;
-  document.getElementById('tco-circle').style.strokeDashoffset=0;
-
-  document.getElementById('tec-change-overlay').classList.add('show');
-
-  const totalSec=remaining;
-  tecCdInterval=setInterval(()=>{
-    remaining--;
-    document.getElementById('tco-num').textContent=remaining;
-    // Ring progress
-    const progress=(totalSec-remaining)/totalSec;
-    document.getElementById('tco-circle').style.strokeDashoffset=circumference*progress;
-    if(remaining<=0){
-      clearTecCountdown();
-      // Dopo il cambio, schedula il prossimo
-      setTimeout(()=>scheduleTecCountdown(),800);
-    }
-  },1000);
-
-  // Auto-hide dopo 12s
-  tecCdTO=setTimeout(()=>{
-    document.getElementById('tec-change-overlay').classList.remove('show');
-    setTimeout(()=>scheduleTecCountdown(),800);
-  },12000);
-}
-
+// Stub vuoti — la logica è in renderCountdown
+function scheduleTecCountdown(){}
+function startTecCountdown(){}
 function clearTecCountdown(){
-  clearTimeout(tecCdTO);
-  clearInterval(tecCdInterval);
-  document.getElementById('tec-change-overlay').classList.remove('show');
+  const overlay=document.getElementById('tec-change-overlay');
+  if(overlay) overlay.classList.remove('show');
+  _cdLastShown=false; _cdLastLabel='';
 }
+
 
 // ═══════════════════════════════════════════════════════
 //  SPRINT/JUMP FULLSCREEN — per sprint show for 2s
@@ -1237,8 +1321,10 @@ function renderUI(el){
     lastSegIdx=si;
     renderTecSegs(t,si,zc);
     // Schedula prossimo countdown quando cambia segmento
-    if(isPlaying) setTimeout(()=>scheduleTecCountdown(),200);
   }
+
+  // ── Countdown tecnica (frame-synced, no setTimeout) ──
+  renderCountdown(el, t._segs ? t._segs[si] : null);
 
   // ── Sprint/Jump tracker ──
   renderSjTracker(t,posInTrack,el);
@@ -1311,9 +1397,6 @@ function renderSjTracker(t,posInTrack,el){
   document.getElementById('sj-phase').textContent=isOn?'ON':'OFF';
   document.getElementById('sj-countdown').textContent=fmt(remaining);
   document.getElementById('sj-countdown').style.color=color;
-  // Mostra mani specifici del segmento (ON vs OFF hanno mani diversi)
-  const sjManiEl=document.getElementById('sj-mani-badge');
-  if(sjManiEl) sjManiEl.textContent='Man: '+(seg.mani||t.mani||'—');
 
   const pct=Math.min((elapsed/Math.max(dur,1))*100,100);
   document.getElementById('sj-bar-fill').style.width=pct+'%';
@@ -1540,17 +1623,11 @@ setInterval(()=>{
   });
 })();
 
-// ── MOBILE CHART FIX ──────────────────────────────────
-// Su alcuni smartphone il canvas ha offsetWidth=0 al primo render
 function ensureChartDraw(){
   const cv=document.getElementById('chart-canvas');
-  if(cv && cv.offsetWidth===0){
-    setTimeout(()=>{drawChart();ensureChartDraw();},300);
-  } else {
-    drawChart();
-  }
+  if(!cv||cv.offsetWidth===0){setTimeout(ensureChartDraw,300);}
+  else{drawChart();}
 }
-
 // ── INIT ──────────────────────────────────────────────
 (async function(){
   const params=new URLSearchParams(location.search);
@@ -1590,9 +1667,8 @@ updateUI();
 window.addEventListener('resize',()=>{drawChart();updateUI();});
 setTimeout(()=>ensureChartDraw(),200);
 setTimeout(()=>ensureChartDraw(),800);
+setTimeout(()=>drawChart(),2500);
 setTimeout(()=>updateMetroBpm(T[0].bpm),300);
-// Extra retry for slow mobile renders
-setTimeout(()=>drawChart(),2000);
 
 // ═══════════════════════════════════════════════════════
 //  📺 PROIEZIONE SU SCHERMO ESTERNO
