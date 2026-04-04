@@ -882,8 +882,19 @@ function parseTecSegments(t){
     const onBeats=Math.max(1,Math.round(on/beatLen));
     const offBeats=Math.max(1,Math.round(off/beatLen));
     const onSec=onBeats*beatLen, offSec=offBeats*beatLen;
+    // ── Buffer stabilizzazione inizio traccia (≥15s seduto) ──
+    // Allinea il buffer a multiplo di 8 battiti per rispettare la frase musicale
+    const phrase8=8*beatLen;
+    const stabBeats=Math.max(8,Math.round(15/beatLen/8)*8); // almeno 1 frase da 8 battiti
+    const stabSec=stabBeats*beatLen;
     const segs=[];
-    let cur=0;
+    // Inserisci intro seduto se c'è spazio sufficiente per almeno 1 ciclo ON+OFF dopo
+    let startOffset=0;
+    if(dur>stabSec+onSec+offSec){
+      segs.push({label:'Seduto — Stabilizzazione ritmo',mani:maniOff,from:0,to:parseFloat(stabSec.toFixed(2)),type:'sprint_off'});
+      startOffset=stabSec;
+    }
+    let cur=startOffset;
     while(cur<dur-1){
       const segOn=Math.min(onSec,dur-cur);
       segs.push({label:'In piedi — SPRINT ON',mani:maniOn,from:parseFloat(cur.toFixed(2)),to:parseFloat((cur+segOn).toFixed(2)),type:'sprint_on'});
@@ -905,8 +916,16 @@ function parseTecSegments(t){
     const phraseLen=8*beatLen;
     const phrasesPerSeg=Math.max(1,Math.round((dur/labels.length)/phraseLen));
     const segDur=phrasesPerSeg*phraseLen;
+    // ── Buffer stabilizzazione inizio traccia (≥15s, allineato a frase da 8 battiti) ──
+    const stabBeats=Math.max(8,Math.round(15/beatLen/8)*8);
+    const stabSec=stabBeats*beatLen;
     const segs=[];
-    let cur=0;
+    let startOffset=0;
+    if(dur>stabSec+segDur*labels.length*0.7){
+      segs.push({label:'Seduto — Trova il ritmo',mani:labels[0]?labels[0].toLowerCase().includes('piedi')?'P2':'P2':'P2',from:0,to:parseFloat(stabSec.toFixed(2)),type:'seated'});
+      startOffset=stabSec;
+    }
+    let cur=startOffset;
     labels.forEach((label,i)=>{
       const from=parseFloat(cur.toFixed(2));
       const to=i===labels.length-1?dur:parseFloat(Math.min(cur+segDur,dur).toFixed(2));
@@ -1044,6 +1063,7 @@ async function spGetDevices(){const d=await api('GET','/me/player/devices');retu
 let ci=0,lastCi=-1,lastSegIdx=-1,isPlaying=false,wallStart=null,pausedAt=0;
 let rafId=null,alertTO=null,warnTO=null,wakeLock=null,syncInt=null;
 let tecCdTO=null,tecCdInterval=null,sjFsTO=null;
+let _warned30=false; // tick-based warning flag, reset on track change or seek
 
 function getElapsed(){const raw=isPlaying&&wallStart?pausedAt+(Date.now()-wallStart):pausedAt;return Math.max(0,Math.min(raw/1000,TOTAL));}
 
@@ -1055,7 +1075,7 @@ async function autoSync(){
   else if(diff<4){badge.textContent='Δ '+diff.toFixed(1)+'s';badge.className='warn';}
   else{badge.textContent='Δ '+diff.toFixed(1)+'s';badge.className='bad';}
   if(diff>0.3){pausedAt=sp.absSec*1000;if(isPlaying)wallStart=Date.now();}
-  if(sp.trackIdx>=0&&sp.trackIdx!==ci){ci=sp.trackIdx;lastCi=ci;lastSegIdx=-1;scheduleWarning();scheduleTecCountdown();}
+  if(sp.trackIdx>=0&&sp.trackIdx!==ci){ci=sp.trackIdx;lastCi=ci;lastSegIdx=-1;_warned30=false;scheduleTecCountdown();}
 }
 
 async function togglePlayback(){
@@ -1066,7 +1086,7 @@ async function togglePlayback(){
     else{await spResume();await new Promise(r=>setTimeout(r,400));}
     isPlaying=true;wallStart=Date.now();
     rafId=requestAnimationFrame(tick);
-    requestWakeLock();scheduleWarning();scheduleTecCountdown();
+    requestWakeLock();_warned30=false;scheduleTecCountdown();
     startMetro(); // ← auto-start
     await autoSync();
     syncInt=setInterval(autoSync,3000);
@@ -1097,10 +1117,10 @@ function tick(){
   const elAdj=el+(CROSSFADE||0);
   const ni=trackAt(Math.min(elAdj,TOTAL-0.1));
   if(ni!==lastCi){
-    ci=ni;lastCi=ni;lastSegIdx=-1;
+    ci=ni;lastCi=ni;lastSegIdx=-1;_warned30=false;
     const t=T[ci];
     showAlert('▶',`${t.i}/18  ${t.title}`,`${t.fase} · ${t.rpm} RPM · Res ${t.res}`,ZC[t.z]);
-    scheduleWarning();scheduleTecCountdown();
+    scheduleTecCountdown();
   }
   renderUI(el);
   if(el<TOTAL&&isPlaying)rafId=requestAnimationFrame(tick);
@@ -1114,24 +1134,22 @@ function tick(){
 
 async function seekTo(sec){
   const newCi=trackAt(sec);
-  const posInTrack=sec-T[newCi].s; // posizione dentro il brano in secondi
+  const posInTrack=sec-T[newCi].s;
   pausedAt=sec*1000;if(isPlaying)wallStart=Date.now();
-  ci=newCi;lastCi=ci;lastSegIdx=-1;
+  ci=newCi;lastCi=ci;lastSegIdx=-1;_warned30=false;
   clearTecCountdown();hideSjFullscreen();
-  scheduleWarning();scheduleTecCountdown();updateUI();
-  // Comanda Spotify solo se è in riproduzione
+  scheduleTecCountdown();updateUI();
   if(isPlaying){
     await spPlayTrack(ci, Math.round(posInTrack*1000));
-    // Risincronizza dopo 1s per conferma
     setTimeout(()=>autoSync(),1200);
   }
 }
 async function nextTrack(){
   if(ci<T.length-1){
-    ci++;lastCi=ci;lastSegIdx=-1;
+    ci++;lastCi=ci;lastSegIdx=-1;_warned30=false;
     pausedAt=T[ci].s*1000;if(isPlaying)wallStart=Date.now();
     clearTecCountdown();hideSjFullscreen();
-    scheduleWarning();scheduleTecCountdown();updateUI();
+    scheduleTecCountdown();updateUI();
     if(isPlaying){
       await spPlayTrack(ci,0);
       setTimeout(()=>autoSync(),1200);
@@ -1140,10 +1158,10 @@ async function nextTrack(){
 }
 async function prevTrack(){
   if(ci>0){
-    ci--;lastCi=ci;lastSegIdx=-1;
+    ci--;lastCi=ci;lastSegIdx=-1;_warned30=false;
     pausedAt=T[ci].s*1000;if(isPlaying)wallStart=Date.now();
     clearTecCountdown();hideSjFullscreen();
-    scheduleWarning();scheduleTecCountdown();updateUI();
+    scheduleTecCountdown();updateUI();
     if(isPlaying){
       await spPlayTrack(ci,0);
       setTimeout(()=>autoSync(),1200);
@@ -1216,19 +1234,31 @@ function maybeShowSjFullscreen(slot){
   if(key===_lastSjType) return;
   _lastSjType=key;
   const isOn=slot.phase==='ON'||slot.type==='JUMP';
-  if(!isOn) return; // solo per ON
-  const color=slot.type==='SPRINT'?'rgba(255,31,66,.2)':'rgba(255,191,0,.15)';
-  const fsc=slot.type==='SPRINT'?'var(--red)':'var(--amber)';
-  document.getElementById('sj-fs-bg').style.background=color;
-  document.getElementById('sj-fs-label').textContent=slot.type;
+  // Flash ON: rosso (sprint) o ambra (jump)
+  // Flash OFF: cyan — "RECUPERO" visibile solo all'istruttore
+  let bgColor, fsc, labelText, phaseText;
+  if(isOn){
+    bgColor=slot.type==='SPRINT'?'rgba(255,31,66,.22)':'rgba(255,191,0,.18)';
+    fsc=slot.type==='SPRINT'?'var(--red)':'var(--amber)';
+    labelText=slot.type==='SPRINT'?'SPRINT':'JUMP';
+    phaseText='ON';
+  } else {
+    bgColor='rgba(0,223,192,.15)';
+    fsc='var(--cyan)';
+    labelText='RECUPERO';
+    phaseText='OFF';
+  }
+  document.getElementById('sj-fs-bg').style.background=bgColor;
+  document.getElementById('sj-fs-label').textContent=labelText;
   document.getElementById('sj-fs-label').style.color=fsc;
-  document.getElementById('sj-fs-phase').textContent=slot.phase;
+  document.getElementById('sj-fs-phase').textContent=phaseText;
   document.getElementById('sj-fs-phase').style.color=fsc;
   document.getElementById('sj-fs-time').textContent=fmt(slot.dur);
   document.getElementById('sj-fs-time').style.color='#fff';
   document.getElementById('sj-fullscreen').classList.add('show');
   clearTimeout(sjFsTO);
-  sjFsTO=setTimeout(hideSjFullscreen,1800);
+  // ON dura più a lungo sullo schermo (1800ms), OFF è più breve (1200ms — solo segnale)
+  sjFsTO=setTimeout(hideSjFullscreen,isOn?1800:1200);
 }
 function hideSjFullscreen(){document.getElementById('sj-fullscreen').classList.remove('show');}
 
@@ -1280,6 +1310,16 @@ function renderUI(el){
   document.getElementById('prog-fill').style.width=pct+'%';
   document.getElementById('t-cur').textContent=fmt3(el);
   document.getElementById('t-rem').textContent='−'+fmt(Math.max(t.s+t.d-el,0));
+
+  // ── Warning 30s prima del prossimo brano (tick-based, seek-safe) ──
+  if(!_warned30 && ci<T.length-1){
+    const timeToNext=T[ci].s+T[ci].d-el;
+    if(timeToNext>0 && timeToNext<=30){
+      _warned30=true;
+      const nt=T[ci+1];
+      showAlert('⚡',`Prossimo: ${nt.title}`,`${nt.fase} · ${nt.rpm} RPM · Res ${nt.res}`,ZC[nt.z]);
+    }
+  }
 
   // List highlight
   document.querySelectorAll('.tr').forEach((r,i)=>r.classList.toggle('active',i===ci));
@@ -1351,8 +1391,8 @@ function renderSjTracker(t,posInTrack,el){
   document.getElementById('sj-start').textContent='Inizio: '+fmt3(t.s+seg.from);
   document.getElementById('sj-end').textContent='Fine: '+fmt3(t.s+seg.to);
 
-  // Flash fullscreen solo all'inizio di un ON
-  if(isOn) maybeShowSjFullscreen({...seg,start:t.s+seg.from,dur,type:isSprint?'SPRINT':'JUMP',phase:'ON'});
+  // Flash fullscreen: ON e OFF (con colori distinti per dare segnale all'istruttore)
+  maybeShowSjFullscreen({...seg,start:t.s+seg.from,dur,type:isSprint?'SPRINT':'JUMP',phase:isOn?'ON':'OFF'});
 }
 
 // ── Alert ──────────────────────────────────────────────
@@ -1367,13 +1407,9 @@ function showAlert(icon,title,sub,zc){
 }
 
 // ── Warn 30s before next track ─────────────────────────
-function scheduleWarning(){
-  clearTimeout(warnTO);if(ci>=T.length-1)return;
-  const rem=T[ci].s+T[ci].d-getElapsed()-30;
-  if(rem>0)warnTO=setTimeout(()=>{
-    if(isPlaying&&ci<T.length-1){const nt=T[ci+1];showAlert('⚡',`Prossimo: ${nt.title}`,`${nt.fase} · ${nt.rpm} RPM · Res ${nt.res}`,ZC[nt.z]);}
-  },rem*1000);
-}
+// Warning 30s: logica spostata in renderUI (tick-based, seek-safe)
+// La funzione rimane come stub per compatibilità con chiamate esistenti
+function scheduleWarning(){ /* no-op — gestito in renderUI() */ }
 
 // ═══════════════════════════════════════════════════════
 //  CHART — grande, leggibile, con etichette brani
@@ -1624,7 +1660,6 @@ setTimeout(()=>updateMetroBpm(T[0].bpm),300);
 let projWin = null;
 
 function buildProjHTML() {
-  const ZC_PROJ = {Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -1633,96 +1668,78 @@ function buildProjHTML() {
 <title>📺 Indoor Cycling — Proiezione</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--zc:#00cc70;--bg:#000;--s1:#0a0a12}
-html,body{width:100%;height:100%;background:var(--bg);color:#fff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .5s}
-#zone-bar{position:absolute;top:0;left:0;right:0;height:12px;background:var(--zc);transition:background .5s;box-shadow:0 0 30px var(--zc)}
-#title{font-size:clamp(48px,8vw,120px);font-weight:900;letter-spacing:-1px;line-height:1;text-align:center;padding:0 4vw;word-break:break-word;color:#fff;text-shadow:0 0 40px rgba(255,255,255,.15);max-width:95vw}
-#artist{font-size:clamp(20px,3vw,48px);color:rgba(255,255,255,.5);margin-top:1.5vh;text-align:center;font-weight:400}
-#metrics{display:flex;gap:3vw;margin-top:5vh;align-items:center;justify-content:center;flex-wrap:wrap}
-.met{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:16px;padding:2vh 3vw;text-align:center;min-width:16vw;backdrop-filter:blur(10px)}
-.met .val{font-size:clamp(32px,5.5vw,88px);font-weight:900;font-family:monospace;line-height:1}
-.met .lbl{font-size:clamp(10px,1.4vw,20px);color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:2px;margin-top:.8vh;font-weight:700}
-#tec{font-size:clamp(18px,2.8vw,44px);font-weight:700;color:rgba(255,255,255,.85);margin-top:4vh;text-align:center;padding:0 5vw;min-height:3vw}
-#fase{font-size:clamp(12px,1.6vw,26px);color:rgba(255,255,255,.4);margin-top:1vh;text-align:center;letter-spacing:3px;text-transform:uppercase;font-weight:600}
-#prog{position:absolute;bottom:0;left:0;height:8px;background:var(--zc);transition:width .5s linear,background .5s;box-shadow:0 0 20px var(--zc)}
-#countdown{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:99}
-#countdown.show{display:flex}
-#cd-label{font-size:clamp(16px,2.5vw,36px);font-weight:800;color:#ffbf00;text-transform:uppercase;letter-spacing:4px;margin-bottom:3vh}
-#cd-num{font-size:clamp(120px,20vw,280px);font-weight:900;color:#ffbf00;line-height:1;text-shadow:0 0 80px rgba(255,191,0,.6);animation:pulse 1s ease-in-out infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-#cd-next{font-size:clamp(24px,4vw,64px);font-weight:900;color:#fff;margin-top:3vh;text-align:center;padding:0 5vw}
-#cd-mani{font-size:clamp(14px,2vw,30px);color:#4488ff;margin-top:2vh;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:12px;padding:1vh 3vw}
-#standby{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3vh;z-index:50}
-#standby p{font-size:clamp(20px,3vw,40px);color:#333;text-align:center}
-#standby .logo{font-size:clamp(60px,10vw,120px)}
+:root{--zc:#00cc70}
+html,body{width:100%;height:100%;background:#000;color:#fff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background .6s}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#zone-bar{position:absolute;top:0;left:0;right:0;height:14px;background:var(--zc);transition:background .6s;box-shadow:0 0 40px var(--zc)}
+#pj-tracknum{position:absolute;top:22px;right:3vw;font-size:clamp(14px,1.8vw,24px);color:rgba(255,255,255,.25);font-family:monospace;font-weight:700}
+#pj-title{font-size:clamp(52px,9vw,130px);font-weight:900;letter-spacing:-1px;line-height:1;text-align:center;padding:0 4vw;max-width:95vw;word-break:break-word;color:#fff;text-shadow:0 2px 40px rgba(255,255,255,.12)}
+#pj-artist{font-size:clamp(18px,2.8vw,44px);color:rgba(255,255,255,.45);margin-top:1.5vh;text-align:center;font-weight:400}
+#pj-context{display:flex;align-items:center;gap:2.5vw;margin-top:3.5vh;justify-content:center}
+#pj-zone{font-size:clamp(36px,6.5vw,100px);font-weight:900;font-family:monospace;padding:.4vh 2vw;border-radius:10px;color:var(--zc);background:rgba(255,255,255,.06);border:2px solid var(--zc);transition:color .5s,border-color .5s;line-height:1}
+#pj-fase{font-size:clamp(14px,2vw,30px);color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:3px;font-weight:700}
+#pj-metrics{display:flex;gap:2.5vw;margin-top:4vh;justify-content:center;flex-wrap:wrap}
+.pjm{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:2vh 2.5vw;text-align:center;min-width:14vw}
+.pjm .val{font-size:clamp(30px,5vw,80px);font-weight:900;font-family:monospace;line-height:1}
+.pjm .lbl{font-size:clamp(10px,1.3vw,18px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.6vh;font-weight:700}
+#pj-tec{font-size:clamp(20px,3.2vw,50px);font-weight:700;color:rgba(255,255,255,.9);margin-top:4vh;text-align:center;padding:1.5vh 5vw;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.1);max-width:90vw;min-height:4vw}
+#pj-prog{position:absolute;bottom:0;left:0;height:10px;background:var(--zc);transition:width .5s linear,background .6s;box-shadow:0 0 20px var(--zc)}
+#pj-standby{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3vh;z-index:50}
+#pj-standby p{font-size:clamp(18px,2.5vw,36px);color:#333;text-align:center}
 </style>
 </head>
 <body>
 <div id="zone-bar"></div>
-<div id="standby">
-  <div class="logo">📺</div>
+<div id="pj-standby">
+  <div style="font-size:clamp(60px,10vw,100px)">📺</div>
   <p>In attesa del player…<br><small style="font-size:.6em;color:#222">giusprim.github.io/Indoor/</small></p>
 </div>
-<div id="title">—</div>
-<div id="artist"></div>
-<div id="metrics">
-  <div class="met"><div class="val" id="p-zone" style="color:var(--zc)">—</div><div class="lbl">Zona FC</div></div>
-  <div class="met"><div class="val" id="p-rpm" style="color:#00cc70">—</div><div class="lbl">RPM</div></div>
-  <div class="met"><div class="val" id="p-res" style="color:#ff1f42">—</div><div class="lbl">Resist.</div></div>
-  <div class="met"><div class="val" id="p-bpm" style="color:#ffbf00">—</div><div class="lbl">BPM</div></div>
+<div id="pj-tracknum">— / —</div>
+<div id="pj-title">—</div>
+<div id="pj-artist"></div>
+<div id="pj-context">
+  <div id="pj-zone">Z—</div>
+  <div id="pj-fase">—</div>
 </div>
-<div id="tec">—</div>
-<div id="fase">—</div>
-<div id="prog" style="width:0%"></div>
-<div id="countdown">
-  <div id="cd-label">⚡ CAMBIO TECNICA TRA</div>
-  <div id="cd-num">10</div>
-  <div id="cd-next">—</div>
-  <div id="cd-mani">—</div>
+<div id="pj-metrics">
+  <div class="pjm"><div class="val" id="pj-rpm" style="color:#00cc70">—</div><div class="lbl">RPM</div></div>
+  <div class="pjm"><div class="val" id="pj-res" style="color:#ff1f42">—</div><div class="lbl">Resist.</div></div>
+  <div class="pjm"><div class="val" id="pj-bpm" style="color:#ffbf00">—</div><div class="lbl">BPM</div></div>
+  <div class="pjm"><div class="val" id="pj-mani" style="color:#4488ff">—</div><div class="lbl">Manubrio</div></div>
 </div>
-<scr"+"ipt>
+<div id="pj-tec">—</div>
+<div id="pj-prog" style="width:0%"></div>
+` + '<scr' + 'ipt>' + `
 const ZC={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
-let cdTO = null;
-
+const ch = new BroadcastChannel('cycling_coach_proj');
+ch.onmessage = function(e){ applyState(e.data); };
 function applyState(d){
   if(!d) return;
-  document.getElementById('standby').style.display='none';
-  const zc = ZC[d.zone]||'#00cc70';
+  document.getElementById('pj-standby').style.display='none';
+  const zc=ZC[d.zone]||'#00cc70';
   document.body.style.setProperty('--zc',zc);
-  document.body.style.background = d.zone==='Z5'?'#0d0005':d.zone==='Z4'?'#0d0500':d.zone==='Z3'?'#0d0900':'#000';
+  const zoneBg={Z5:'#0a0003',Z4:'#080400',Z3:'#080600'};
+  document.body.style.background=zoneBg[d.zone]||'#000';
   document.getElementById('zone-bar').style.background=zc;
-  document.getElementById('zone-bar').style.boxShadow='0 0 30px '+zc;
-  document.getElementById('title').textContent=d.title||'—';
-  document.getElementById('artist').textContent=d.artist||'';
-  document.getElementById('p-zone').textContent=d.zone||'—';
-  document.getElementById('p-zone').style.color=zc;
-  document.getElementById('p-rpm').textContent=d.rpm||'—';
-  document.getElementById('p-res').textContent=d.res||'—';
-  document.getElementById('p-bpm').textContent=d.bpm||'—';
-  document.getElementById('tec').textContent=d.tec||'—';
-  document.getElementById('fase').textContent=d.fase||'—';
-  document.getElementById('prog').style.width=(d.pct||0)+'%';
-  document.getElementById('prog').style.background=zc;
-  // Countdown
-  const cd=document.getElementById('countdown');
-  if(d.cdShow){
-    cd.classList.add('show');
-    document.getElementById('cd-num').textContent=d.cdNum||'';
-    document.getElementById('cd-next').textContent=d.cdNext||'';
-    document.getElementById('cd-mani').textContent='Manubrio: '+(d.cdMani||'—');
-  } else {
-    cd.classList.remove('show');
-  }
+  document.getElementById('zone-bar').style.boxShadow='0 0 40px '+zc;
+  document.getElementById('pj-title').textContent=d.title||'—';
+  document.getElementById('pj-artist').textContent=d.artist||'';
+  document.getElementById('pj-zone').textContent=d.zone||'—';
+  document.getElementById('pj-zone').style.color=zc;
+  document.getElementById('pj-zone').style.borderColor=zc;
+  document.getElementById('pj-fase').textContent=d.fase||'—';
+  document.getElementById('pj-rpm').textContent=d.rpm||'—';
+  document.getElementById('pj-res').textContent=d.res||'—';
+  document.getElementById('pj-bpm').textContent=d.bpm||'—';
+  document.getElementById('pj-mani').textContent=d.mani||'—';
+  document.getElementById('pj-tec').textContent=d.tec||'—';
+  document.getElementById('pj-prog').style.width=(d.pct||0)+'%';
+  document.getElementById('pj-prog').style.background=zc;
+  document.getElementById('pj-tracknum').textContent=(d.trackNum||'—')+' / '+(d.trackTotal||'—');
 }
-
-ch.onmessage = e => applyState(e.data);
-
-// Richiedi stato attuale
-ch.postMessage({type:'request_state'});
-<\/script>
-<\/body>
-<\/html>`;
+` + '<\/scr' + 'ipt>' + `
+</body>
+</html>`;
 }
 
 function openProjection() {
@@ -1764,65 +1781,42 @@ function openProjection() {
   }, 1500);
 }
 
-// ── Broadcast stato corrente al cambio UI ──────────────
-function broadcastProjState(cdShow, cdNum, cdNext, cdMani) {
-  if(!projWin || projWin.closed) return;
+// ── BroadcastChannel verso la finestra di proiezione ──
+// Il canale è unidirezionale: player → proiezione.
+// I countdown e gli alert rimangono SOLO sul tablet del coach.
+let _projCh = null;
+try { _projCh = new BroadcastChannel('cycling_coach_proj'); } catch(e){}
+
+function broadcastProjState() {
+  if(!_projCh) return;
   const t = T[ci];
   const el = getElapsed();
   const pct = Math.min((el/TOTAL)*100,100);
-  // Segmento tecnica attivo
   const posInTrack = el - t.s;
   const si = getActiveSegIdx(t, posInTrack);
+  // Invia solo il segmento tecnica ATTIVO — niente anticipi, niente countdown
   const activeSeg = t._segs && t._segs[si] ? t._segs[si].label : t.tec;
-
-  projWin.postMessage({
-    type:   'state',
+  _projCh.postMessage({
     title:  t.title,
     artist: t.ar,
     zone:   t.z,
     rpm:    t.rpm,
     res:    t.res,
     bpm:    t.bpm,
+    mani:   t._segs && t._segs[si] ? t._segs[si].mani : t.mani,
     tec:    activeSeg,
     fase:   t.fase,
     pct:    pct,
-    cdShow: cdShow || false,
-    cdNum:  cdNum  || '',
-    cdNext: cdNext || '',
-    cdMani: cdMani || '',
-  }, '*');
+    trackNum: t.i,
+    trackTotal: T.length,
+  });
 }
 
-// Risposta a richiesta stato dalla finestra proiezione
-window.addEventListener('message', e => {
-  if(e.data && e.data.type === 'request_state') broadcastProjState();
-});
-
-// Hook nei punti chiave dell'UI per aggiornare la proiezione
+// Hook updateUI per broadcast automatico ad ogni frame
 const _origUpdateUI = updateUI;
 updateUI = function(){
   _origUpdateUI.apply(this, arguments);
   broadcastProjState();
-};
-
-const _origStartTecCountdown = startTecCountdown;
-startTecCountdown = function(fromSec, nextSeg){
-  _origStartTecCountdown.apply(this, arguments);
-  // Aggiorna countdown sulla proiezione ogni secondo
-  let rem = Math.round(fromSec);
-  const projCdInterval = setInterval(()=>{
-    rem--;
-    broadcastProjState(rem > 0, rem > 0 ? rem : '', nextSeg ? nextSeg.label : '', nextSeg ? nextSeg.mani : '');
-    if(rem <= 0) clearInterval(projCdInterval);
-  }, 1000);
-  // Prima chiamata immediata
-  broadcastProjState(true, rem, nextSeg ? nextSeg.label : '', nextSeg ? nextSeg.mani : '');
-};
-
-const _origClearTecCountdown = clearTecCountdown;
-clearTecCountdown = function(){
-  _origClearTecCountdown.apply(this, arguments);
-  broadcastProjState(false);
 };
 </script>
 </body>
