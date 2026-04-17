@@ -892,10 +892,10 @@ const T = [
     "rpm": "90-100",
     "res": "45%",
     "rn": 0.45,
-    "tec": "Jump in 8 → Jump in 4 → Jump in 2",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Salita; aumenta la potenza.",
+    "tec": "Seduto veloce → In piedi leggero → Seduto veloce",
+    "mani": "P2↔P3",
+    "fase": "Onda 1 — Surge",
+    "focus": "Prima spinta fartlek; cadenza alta e controllata, non mollare la tecnica.",
     "s": 743
   },
   {
@@ -904,14 +904,14 @@ const T = [
     "ar": "Bangkok (feat. Giusy Ferreri) — Baby K, Giusy Ferreri",
     "bpm": "100",
     "d": 175,
-    "z": "Z1",
-    "rpm": "60-70",
-    "res": "20%",
-    "rn": 0.2,
+    "z": "Z2",
+    "rpm": "75-85",
+    "res": "25%",
+    "rn": 0.25,
     "tec": "Seduto leggero",
     "mani": "P1",
-    "fase": "Recupero",
-    "focus": "Recupero; riduci la resistenza.",
+    "fase": "Recupero attivo",
+    "focus": "Recupero fartlek; gambe leggere ma sempre in movimento, abbassa il respiro.",
     "s": 912
   },
   {
@@ -940,10 +940,10 @@ const T = [
     "rpm": "90-100",
     "res": "45%",
     "rn": 0.45,
-    "tec": "Jump in 4 → Jump in 2",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Salita; aumenta la potenza.",
+    "tec": "Crono: Seduto aero → In piedi leggero → Seduto aero",
+    "mani": "P4",
+    "fase": "Onda 2 — Build",
+    "focus": "Potenza sostenuta Z3; pedalata fluida in aero, core stabile, non oscillare.",
     "s": 1354
   },
   {
@@ -952,14 +952,14 @@ const T = [
     "ar": "Tony Effe, Gaia",
     "bpm": "108",
     "d": 167,
-    "z": "Z1",
-    "rpm": "60-70",
-    "res": "20%",
-    "rn": 0.2,
-    "tec": "Seduto leggero",
-    "mani": "P1",
-    "fase": "Recupero",
-    "focus": "Recupero; riduci la resistenza.",
+    "z": "Z2",
+    "rpm": "75-85",
+    "res": "30%",
+    "rn": 0.3,
+    "tec": "Jump in 8 → Jump in 4",
+    "mani": "P2↔P3",
+    "fase": "Recupero ritmato",
+    "focus": "Jump sul ritmo samba; tecnica di rimbalzo a tempo, recupera il fiato ballando.",
     "s": 1588
   },
   {
@@ -1002,12 +1002,12 @@ const T = [
     "d": 164,
     "z": "Z3",
     "rpm": "90-100",
-    "res": "45%",
-    "rn": 0.45,
-    "tec": "Jump in 8 → Jump in 4 → Jump in 2",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Salita; aumenta la potenza.",
+    "res": "50%",
+    "rn": 0.5,
+    "tec": "Salita: Seduto carico → In piedi leggero → Seduto carico",
+    "mani": "P2→P3→P2",
+    "fase": "Onda 3 — Salita",
+    "focus": "Salita ritmica su Einaudi; visualizza la vetta, respira sulla melodia.",
     "s": 2287
   },
   {
@@ -1136,8 +1136,10 @@ function parseTecSegments(t){
     const maniOn=(t.z==='Z5')?'P4Atk':'P3';
     const maniOff=(t.z==='Z5')?'P1':'P2';
     // Allinea inizio a multiplo del beat (evita anticipo percepito)
-    const onBeats=Math.max(1,Math.round(on/beatLen));
-    const offBeats=Math.max(1,Math.round(off/beatLen));
+    // Arrotonda ON e OFF al multiplo di 8 battiti più vicino
+    // → lo sprint parte e finisce sempre su una frase musicale, non a metà
+    const onBeats=Math.max(8,Math.round(on/beatLen/8)*8);
+    const offBeats=Math.max(8,Math.round(off/beatLen/8)*8);
     const onSec=onBeats*beatLen, offSec=offBeats*beatLen;
     // ── Buffer stabilizzazione inizio traccia (≥15s seduto) ──
     // Allinea il buffer a multiplo di 8 battiti per rispettare la frase musicale
@@ -1376,7 +1378,7 @@ function tick(){
   if(ni!==lastCi){
     ci=ni;lastCi=ni;lastSegIdx=-1;_warned30=false;
     const t=T[ci];
-    showAlert('▶',`${t.i}/18  ${t.title}`,`${t.fase} · ${t.rpm} RPM · Res ${t.res}`,ZC[t.z]);
+    showAlert('▶',`${t.i}/${T.length}  ${t.title}`,`${t.fase} · ${t.rpm} RPM · Res ${t.res}`,ZC[t.z]);
     scheduleTecCountdown();
   }
   renderUI(el);
@@ -1536,7 +1538,7 @@ function renderUI(el){
   // Basic info
   document.getElementById('np-title').textContent=t.title;
   document.getElementById('np-artist').textContent=t.ar;
-  document.getElementById('np-badge').textContent=`${t.i}/18`;
+  document.getElementById('np-badge').textContent=`${t.i}/${T.length}`;
   document.getElementById('m-zone').textContent=t.z;
   document.getElementById('m-zone').style.color=zc;
   document.getElementById('m-rpm').textContent=t.rpm;
@@ -1737,6 +1739,53 @@ function drawChart(el){
 
   // Elapsed overlay
   ctx.fillStyle='rgba(255,31,66,.08)';ctx.fillRect(0,0,(el/TOTAL)*W,H);
+
+  // ── Linea profilo intensità (stile BestCycling) ──────────────────
+  // Calcola i punti chiave: bordo sinistro e destro di ogni brano al top della barra
+  const pts=[];
+  T.forEach(t=>{
+    const zn=parseInt(t.z[1]);
+    const barH=(zn/5)*H*.88;
+    const y=H-barH-1;
+    const xL=(t.s/TOTAL)*W;
+    const xR=((t.s+t.d)/TOTAL)*W;
+    pts.push({x:xL,y});
+    pts.push({x:xR,y});
+  });
+  // Aggiungi punti all'estremità per chiudere la curva a fondo grafico
+  if(pts.length){
+    pts.unshift({x:0,y:pts[0].y});
+    pts.push({x:W,y:pts[pts.length-1].y});
+  }
+  // Fill area sotto la curva con gradiente verticale semitrasparente
+  const lineGrad=ctx.createLinearGradient(0,0,0,H);
+  lineGrad.addColorStop(0,'rgba(255,255,255,.18)');
+  lineGrad.addColorStop(1,'rgba(255,255,255,.03)');
+  ctx.beginPath();
+  pts.forEach((p,i)=>{
+    if(i===0){ctx.moveTo(p.x,p.y);}
+    else{
+      // Step-line: ogni cambiamento è a gradino (riflette realtà degli intervalli)
+      const prev=pts[i-1];
+      ctx.lineTo(p.x,prev.y); // orizzontale al vecchio livello
+      ctx.lineTo(p.x,p.y);    // verticale al nuovo livello
+    }
+  });
+  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();
+  ctx.fillStyle=lineGrad;ctx.fill();
+  // Linea bianca sopra
+  ctx.beginPath();
+  pts.forEach((p,i)=>{
+    if(i===0){ctx.moveTo(p.x,p.y);}
+    else{
+      const prev=pts[i-1];
+      ctx.lineTo(p.x,prev.y);
+      ctx.lineTo(p.x,p.y);
+    }
+  });
+  ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=1.5;
+  ctx.lineJoin='miter';ctx.stroke();
+  // ── Fine linea profilo ────────────────────────────────────────────
 
   // Cursor line
   const cx=(el/TOTAL)*W;
