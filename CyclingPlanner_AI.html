@@ -347,12 +347,16 @@ Regole rapide:
   Stretching: P1
 
 FORMATO tec — USA ESATTAMENTE UNO DI QUESTI:
-1. SPRINT: Sprint 20'' ON (in piedi) → Seduto 20'' OFF
+1. SPRINT (Z4-Z5, BPM>110): Sprint 20'' ON (in piedi) → Seduto 20'' OFF
    oppure Sprint 30'' ON (in piedi) → Seduto 30'' OFF
    oppure Sprint 15'' ON (in piedi) → Seduto 15'' OFF
    IMPORTANTE: usa '' (due apici) per i secondi, NON la parola "secondi"
-2. JUMP (Z3-Z4 ritmici): Jump in 8 → Jump in 4 → Jump in 2
+   Il tempo ON e OFF deve essere lo stesso o multiplo/divisore del BPM del brano.
+   VINCOLO: Sprint SOLO se BPM > 110. MAI sprint se BPM ≤ 110.
+2. JUMP (Z2-Z3, BPM 80-115): Jump in 8 → Jump in 4 → Jump in 2
    oppure: Jump in 4 → Jump in 2
+   VINCOLO CRITICO: Jump SOLO se 80 ≤ BPM ≤ 115. MAI jump se BPM > 115 (fisicamente impossibile in sicurezza).
+   BPM > 115 con zona Z3-Z4: usa Crono o Generico con Seduto veloce → In piedi leggero.
 3. RUNNING (Z2-Z3 cadenza elevata): Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante
 4. CRONO (Z4 aerodinamico seduto): Crono: Seduto aero → In piedi leggero → Seduto aero
 5. CRONO ATTACK (Z4-Z5 in accelerazione): Crono Attack: Seduto aero veloce → In piedi carico → Seduto aero
@@ -367,10 +371,13 @@ FASE 4 - STRETCHING (SEMPRE ultimo brano): Z1, RPM 55-65, res 15-20%, Stretching
 
 REGOLE AGGIUNTIVE:
 - NON saltare nessuna delle 4 fasi — obbligatorio per tutti i protocolli AIF
-- Sprint/Jump solo se BPM>110 e siamo nel corpo lezione (non in warm-up/defaticamento/stretching)
-- Non mettere due brani jump consecutivi — alterna sempre con altra tecnica
+- Sprint/Jump solo nel corpo lezione (non in warm-up/defaticamento/stretching)
+- SPRINT: solo se BPM > 110. Per fartlek usa blocchi sprint alternati a recupero attivo Z2.
+- JUMP: SOLO se 80 ≤ BPM ≤ 115. Per BPM > 115 usa Crono/Salita/Generico, MAI jump.
+- Non mettere due brani jump consecutivi — alterna sempre con altra tecnica.
 - Montagna: RPM 50-75, Seduto carico → In piedi carico, P2→P3. MAI sprint in Montagna.
-- HIIT: sprint Z5 con Sprint Xs ON → Seduto Xs OFF. P4Atk per ON, P1 per OFF.`;
+- HIIT: sprint Z5 con Sprint Xs ON → Seduto Xs OFF. P4Atk per ON, P1 per OFF.
+- FARTLEK: brani di surge (Z3-Z4 sprint/crono) alternati a brani di recupero attivo (Z2 seduto leggero/running). Il recupero fartlek è sempre Z2, NON Z1.`;
 
   clearLog();
   log("→ Analisi "+TRACKS.length+" brani con Groq LLaMA 3 (gratuito)...");

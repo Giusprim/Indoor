@@ -175,20 +175,36 @@ body{display:flex;flex-direction:column}
 }
 #tec-box{
   background:var(--s3);border:1px solid var(--border);
-  border-radius:10px;padding:10px 12px;
+  border-radius:10px;padding:8px 10px;
+  max-height:200px;overflow:hidden;position:relative;
 }
-#tec-segs-wrap{display:flex;flex-direction:column;gap:4px}
+/* Indicatore scroll gradiente in basso */
+#tec-box::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:24px;
+  background:linear-gradient(transparent,var(--s3));
+  pointer-events:none;border-radius:0 0 10px 10px;
+}
+#tec-segs-wrap{
+  display:flex;flex-direction:column;gap:3px;
+  overflow-y:auto;max-height:192px;
+  scroll-behavior:smooth;
+  scrollbar-width:thin;scrollbar-color:var(--border2) transparent;
+}
+#tec-segs-wrap::-webkit-scrollbar{width:3px}
+#tec-segs-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 .tec-seg-item{
   display:flex;align-items:center;gap:8px;
-  padding:5px 10px;border-radius:7px;
-  font-size:15px;font-weight:600;
-  opacity:.35;transition:opacity .3s,background .3s;
+  padding:6px 10px;border-radius:7px;
+  font-size:16px;font-weight:600;
+  opacity:.32;transition:opacity .3s,background .3s,font-size .2s;
+  flex-shrink:0;
 }
 .tec-seg-item.active{
-  opacity:1;background:rgba(255,255,255,.08);
-  font-size:17px; /* più grande quando attivo */
+  opacity:1;background:rgba(255,255,255,.10);
+  font-size:19px;border-left:3px solid var(--zc,var(--cyan));
+  padding-left:8px;
 }
-.tec-seg-item.done{opacity:.2;text-decoration:line-through}
+.tec-seg-item.done{opacity:.18;text-decoration:line-through}
 .tec-seg-dot{
   width:10px;height:10px;border-radius:50%;
   flex-shrink:0;background:var(--muted);transition:background .3s,box-shadow .3s;
@@ -202,7 +218,7 @@ body{display:flex;flex-direction:column}
   color:var(--muted);white-space:nowrap;margin-left:auto;
 }
 .tec-seg-mani{
-  font-family:var(--fd);font-size:11px;font-weight:800;
+  font-family:var(--fd);font-size:12px;font-weight:800;
   color:var(--blue);background:var(--s2);
   border:1px solid var(--border2);border-radius:4px;
   padding:2px 7px;flex-shrink:0;white-space:nowrap;
@@ -216,13 +232,14 @@ body{display:flex;flex-direction:column}
   border:1px solid rgba(200,130,255,.25);
   border-left:5px solid var(--purple);
   border-radius:10px;padding:10px 14px;
+  flex-shrink:0;
 }
 #focus-lbl{
   font-size:10px;color:#7a3aaa;text-transform:uppercase;
   letter-spacing:.8px;font-weight:700;font-family:var(--fd);margin-bottom:4px;
 }
 #focus-val{
-  font-size:18px;font-weight:700;color:#fff;
+  font-size:16px;font-weight:700;color:#fff;
   line-height:1.4;font-style:italic;
 }
 
@@ -561,14 +578,25 @@ body{display:flex;flex-direction:column}
   #chart-canvas{height:90px}
   #np-title{font-size:36px!important}
   .mv{font-size:22px}.ml{font-size:9px}
-  #tec-segs-wrap{max-height:180px;overflow-y:auto}
+  /* Tecnica: altezza adeguata, scroll visibile */
+  #tec-box{max-height:220px}
+  #tec-segs-wrap{max-height:212px}
+  .tec-seg-item{font-size:15px}
+  .tec-seg-item.active{font-size:18px}
+  /* Focus: leggermente più piccolo per stare nel layout */
+  #focus-val{font-size:14px}
+  #focus-box{padding:8px 12px}
   #ctrl-section{flex-shrink:0}
 }
 @media(max-width:820px){
   #main{grid-template-columns:1fr 280px}
   #col-right{width:280px}
   .tec-seg-time{display:none}
-  #tec-segs-wrap{max-height:140px}
+  #tec-box{max-height:180px}
+  #tec-segs-wrap{max-height:172px}
+  .tec-seg-item{font-size:14px}
+  .tec-seg-item.active{font-size:16px}
+  #focus-val{font-size:13px}
 }
 @media(max-width:600px){
   html,body{height:auto;overflow-y:auto;overflow-x:hidden}
@@ -581,9 +609,13 @@ body{display:flex;flex-direction:column}
   #np-title{font-size:28px!important}
   .mv{font-size:19px!important}.ml{font-size:8px}
   .tec-seg-time{display:none}
-  #tec-segs-wrap{max-height:120px;overflow-y:auto}
+  #tec-box{max-height:160px}
+  #tec-segs-wrap{max-height:152px}
+  .tec-seg-item{font-size:14px}
+  .tec-seg-item.active{font-size:16px}
   #info-row{grid-template-columns:1fr!important}
   #fase-box{display:none}
+  #focus-val{font-size:13px}
   #ctrl-section{padding:8px 10px}
   #login-btn{font-size:17px;padding:13px}
   #big-play{font-size:18px;padding:13px}
@@ -879,8 +911,10 @@ function parseTecSegments(t){
     const maniOn=(t.z==='Z5')?'P4Atk':'P3';
     const maniOff=(t.z==='Z5')?'P1':'P2';
     // Allinea inizio a multiplo del beat (evita anticipo percepito)
-    const onBeats=Math.max(1,Math.round(on/beatLen));
-    const offBeats=Math.max(1,Math.round(off/beatLen));
+    // Arrotonda ON e OFF al multiplo di 8 battiti più vicino
+    // Sprint che inizia e finisce SEMPRE su una frase musicale completa (8 beat)
+    const onBeats =Math.max(8,Math.round(on /beatLen/8)*8);
+    const offBeats=Math.max(8,Math.round(off/beatLen/8)*8);
     const onSec=onBeats*beatLen, offSec=offBeats*beatLen;
     // ── Buffer stabilizzazione inizio traccia (≥15s seduto) ──
     // Allinea il buffer a multiplo di 8 battiti per rispettare la frase musicale
@@ -912,26 +946,37 @@ function parseTecSegments(t){
   const jumpRx=/jump\s+in\s+(\d+)/gi;
   if([...tec.matchAll(jumpRx)].length>0){
     const labels=tec.split('→').map(s=>s.trim()).filter(Boolean);
-    // Ogni segmento dura un numero intero di "phrase" musicali (8 battiti)
     const phraseLen=8*beatLen;
-    const phrasesPerSeg=Math.max(1,Math.round((dur/labels.length)/phraseLen));
-    const segDur=phrasesPerSeg*phraseLen;
-    // ── Buffer stabilizzazione inizio traccia (≥15s, allineato a frase da 8 battiti) ──
+    // Transizione seduta tra fasi jump diverse (1 frase musicale = 8 beat)
+    // Permette di "respirare" e cambiare ritmo senza tagliare la musica a metà
+    const transSec=phraseLen;
+    const nTrans=Math.max(0,labels.length-1);
+    // ── Buffer stabilizzazione inizio traccia ──
     const stabBeats=Math.max(8,Math.round(15/beatLen/8)*8);
     const stabSec=stabBeats*beatLen;
+    // Calcola durata per ogni segmento jump al netto di stab + transizioni
+    const availForJumps=dur-stabSec-nTrans*transSec;
+    const phrasesPerSeg=Math.max(1,Math.round((availForJumps/labels.length)/phraseLen));
+    const segDur=phrasesPerSeg*phraseLen;
     const segs=[];
     let startOffset=0;
-    if(dur>stabSec+segDur*labels.length*0.7){
-      segs.push({label:'Seduto — Trova il ritmo',mani:labels[0]?labels[0].toLowerCase().includes('piedi')?'P2':'P2':'P2',from:0,to:parseFloat(stabSec.toFixed(2)),type:'seated'});
+    if(dur>stabSec+segDur*labels.length*0.6){
+      segs.push({label:'Seduto — Trova il ritmo',mani:'P2',from:0,to:parseFloat(stabSec.toFixed(2)),type:'seated'});
       startOffset=stabSec;
     }
     let cur=startOffset;
     labels.forEach((label,i)=>{
       const from=parseFloat(cur.toFixed(2));
-      const to=i===labels.length-1?dur:parseFloat(Math.min(cur+segDur,dur).toFixed(2));
+      const to=parseFloat(Math.min(cur+segDur,dur).toFixed(2));
       const {type,mani}=inferSeg(label,t.mani,t.z);
       segs.push({label,mani,from,to,type});
       cur+=segDur;
+      // Inserisci "Seduto — Cambia ritmo" tra fasi jump diverse (non dopo l'ultima)
+      if(i<labels.length-1 && cur+transSec<dur-phraseLen){
+        segs.push({label:'Seduto — Cambia ritmo',mani:t.mani||'P2',
+          from:parseFloat(cur.toFixed(2)),to:parseFloat((cur+transSec).toFixed(2)),type:'seated'});
+        cur+=transSec;
+      }
     });
     if(segs.length>0) segs[segs.length-1].to=dur;
     return segs;
@@ -1337,6 +1382,7 @@ function renderTecSegs(t,activeSi,zc){
     wrap.innerHTML=`<div class="tec-seg-item active"><span class="tec-seg-dot"></span>${t.tec}</div>`;
     return;
   }
+  let activeEl=null;
   t._segs.forEach((seg,i)=>{
     const el=document.createElement('div');
     el.className='tec-seg-item'+(i===activeSi?' active':i<activeSi?' done':'');
@@ -1346,8 +1392,15 @@ function renderTecSegs(t,activeSi,zc){
       <span>${seg.label}</span>
       <span class="tec-seg-mani">${seg.mani}</span>
       <span class="tec-seg-time">${fmt(seg.from)}–${fmt(seg.to)}</span>`;
+    if(i===activeSi) activeEl=el;
     wrap.appendChild(el);
   });
+  // Auto-scroll: porta il segmento attivo sempre visibile
+  if(activeEl){
+    requestAnimationFrame(()=>{
+      activeEl.scrollIntoView({block:'nearest',behavior:'smooth'});
+    });
+  }
 }
 
 // ── Sprint/Jump tracker ──
@@ -1430,18 +1483,39 @@ function drawChart(el){
   const ctx=cv.getContext('2d');
   ctx.scale(devicePixelRatio||1,devicePixelRatio||1);
 
-  // Background
+  // ── Background ──────────────────────────────────────
   ctx.fillStyle='#0d0d12';ctx.fillRect(0,0,W,H);
 
-  // Zone grid lines (faint)
-  const zones=[1,2,3,4,5];
-  zones.forEach(z=>{
-    const y=H-(z/5)*H*.88-1;
-    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+  // ── Bande di zona orizzontali (sfondo) ──────────────
+  // Z5→Z4→Z3→Z2→Z1: ogni banda colorata nella propria fascia
+  const zoneBands=[
+    {zn:5,color:'rgba(255,31,66,.10)'},
+    {zn:4,color:'rgba(255,109,24,.09)'},
+    {zn:3,color:'rgba(255,191,0,.07)'},
+    {zn:2,color:'rgba(0,204,112,.06)'},
+    {zn:1,color:'rgba(68,119,255,.05)'},
+  ];
+  zoneBands.forEach(({zn,color})=>{
+    const top=H-(zn/5)*H*.88-1;
+    const prev=zn<5?H-(( zn+1)/5)*H*.88-1:0;
+    ctx.fillStyle=color;
+    ctx.fillRect(0,top,W,prev-top);
   });
 
-  // Bars
+  // ── Linee griglia zone (faint) ───────────────────────
+  [1,2,3,4,5].forEach(z=>{
+    const y=H-(z/5)*H*.88-1;
+    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+    ctx.setLineDash([3,4]);
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+    ctx.setLineDash([]);
+    // Label zona a destra
+    ctx.fillStyle='rgba(255,255,255,.18)';
+    ctx.font='bold 8px monospace';ctx.textAlign='right';
+    ctx.fillText('Z'+z,W-2,y-2);
+  });
+
+  // ── Barre brani (colorate per zona) ─────────────────
   T.forEach((t,idx)=>{
     const x=(t.s/TOTAL)*W;
     const w=Math.max((t.d/TOTAL)*W-1.5,2);
@@ -1450,48 +1524,118 @@ function drawChart(el){
     const y=H-bh-1;
     const isActive=idx===ci;
 
-    // Bar fill
-    ctx.fillStyle=ZC[t.z]+(isActive?'ff':idx<ci?'55':'88');
+    ctx.fillStyle=ZC[t.z]+(isActive?'28':idx<ci?'18':'20');
     ctx.beginPath();
     ctx.roundRect?ctx.roundRect(x,y,w,bh,3):ctx.rect(x,y,w,bh);
     ctx.fill();
 
-    // Active highlight
     if(isActive){
-      ctx.strokeStyle=ZC[t.z];ctx.lineWidth=2.5;
+      ctx.strokeStyle=ZC[t.z]+'88';ctx.lineWidth=1.5;
       ctx.beginPath();
       ctx.roundRect?ctx.roundRect(x,y,w,bh,3):ctx.rect(x,y,w,bh);
       ctx.stroke();
-      // Glow effect
-      ctx.strokeStyle=ZC[t.z]+'44';ctx.lineWidth=6;
-      ctx.beginPath();
-      ctx.roundRect?ctx.roundRect(x-2,y-2,w+4,bh+4,5):ctx.rect(x-2,y-2,w+4,bh+4);
-      ctx.stroke();
     }
 
-    // Track number label (only if bar wide enough)
     if(w>18){
-      ctx.fillStyle=isActive?'#fff':'rgba(255,255,255,.5)';
+      ctx.fillStyle=isActive?'rgba(255,255,255,.7)':'rgba(255,255,255,.25)';
       ctx.font=`bold ${Math.min(10,w/3)}px monospace`;
       ctx.textAlign='center';
       ctx.fillText(t.i,x+w/2,H-3);
     }
   });
 
-  // Elapsed overlay
-  ctx.fillStyle='rgba(255,31,66,.08)';ctx.fillRect(0,0,(el/TOTAL)*W,H);
+  // ── Calcola intensità di ogni segmento ───────────────
+  // sprint_on → zona piena; sprint_off → Z1 recovery;
+  // jump → zona -0.5; standing → zona; seated → zona-1; steady → zona
+  function segZn(seg,trackZn){
+    switch(seg.type){
+      case 'sprint_on':  return trackZn;
+      case 'sprint_off': return 1;
+      case 'jump':       return Math.max(1,trackZn-0.5);
+      case 'standing':   return Math.min(5,trackZn+0.3);
+      case 'seated':     return Math.max(1,trackZn-1);
+      default:           return trackZn;
+    }
+  }
 
-  // Cursor line
+  // ── Costruisci array punti intensità da tutti i segmenti ──
+  const segPts=[];
+  T.forEach(t=>{
+    const trackZn=parseInt(t.z[1]);
+    const segs=t._segs&&t._segs.length?t._segs:[{from:0,to:t.d,type:'steady'}];
+    segs.forEach(seg=>{
+      const zn=segZn(seg,trackZn);
+      const bh=(zn/5)*H*.88;
+      const y=H-bh-1;
+      const xL=((t.s+seg.from)/TOTAL)*W;
+      const xR=((t.s+seg.to)/TOTAL)*W;
+      segPts.push({xL,xR,y,zn,type:seg.type,trackZ:t.z});
+    });
+  });
+
+  if(segPts.length){
+    // Fill area sotto la curva: gradiente colorato per zona
+    ctx.save();
+    ctx.beginPath();
+    segPts.forEach((p,i)=>{
+      if(i===0){ctx.moveTo(p.xL,p.y);}
+      else{
+        const prev=segPts[i-1];
+        ctx.lineTo(p.xL,prev.y);
+        ctx.lineTo(p.xL,p.y);
+      }
+      ctx.lineTo(p.xR,p.y);
+    });
+    const last=segPts[segPts.length-1];
+    ctx.lineTo(last.xR,H);ctx.lineTo(0,H);ctx.closePath();
+    const fillGrad=ctx.createLinearGradient(0,0,0,H);
+    fillGrad.addColorStop(0,'rgba(255,255,255,.20)');
+    fillGrad.addColorStop(0.5,'rgba(255,255,255,.10)');
+    fillGrad.addColorStop(1,'rgba(255,255,255,.02)');
+    ctx.fillStyle=fillGrad;ctx.fill();
+    ctx.restore();
+
+    // Linea profilo bianca (step) — la curva vera
+    ctx.save();
+    ctx.beginPath();
+    segPts.forEach((p,i)=>{
+      if(i===0){ctx.moveTo(p.xL,p.y);}
+      else{
+        const prev=segPts[i-1];
+        ctx.lineTo(p.xL,prev.y);
+        ctx.lineTo(p.xL,p.y);
+      }
+      ctx.lineTo(p.xR,p.y);
+    });
+    ctx.strokeStyle='rgba(255,255,255,.65)';ctx.lineWidth=1.5;
+    ctx.lineJoin='miter';ctx.stroke();
+    ctx.restore();
+
+    // Colorazione segmenti sprint ON/jump: evidenzia la cima
+    segPts.forEach((p,i)=>{
+      if(p.type==='sprint_on'||p.type==='jump'){
+        const c=ZC[p.trackZ]||'#ff1f42';
+        ctx.save();
+        ctx.strokeStyle=c;ctx.lineWidth=2.5;
+        ctx.globalAlpha=.8;
+        ctx.beginPath();ctx.moveTo(p.xL,p.y);ctx.lineTo(p.xR,p.y);ctx.stroke();
+        ctx.restore();
+      }
+    });
+  }
+
+  // ── Overlay elapsed (area già percorsa) ─────────────
+  ctx.fillStyle='rgba(255,31,66,.07)';ctx.fillRect(0,0,(el/TOTAL)*W,H);
+
+  // ── Cursore posizione attuale ────────────────────────
   const cx=(el/TOTAL)*W;
   ctx.strokeStyle='#ff1f42';ctx.lineWidth=2.5;
   ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
-  // Cursor arrow
   ctx.fillStyle='#ff1f42';
   ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx-5,8);ctx.lineTo(cx+5,8);ctx.closePath();ctx.fill();
 
-  // Time ticks ogni 5 minuti
-  ctx.font='bold 9px monospace';
-  ctx.textAlign='left';
+  // ── Tick temporali ogni 5 min ────────────────────────
+  ctx.font='bold 9px monospace';ctx.textAlign='left';
   for(let s=300;s<TOTAL;s+=300){
     const tx=(s/TOTAL)*W;
     ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
@@ -1500,7 +1644,7 @@ function drawChart(el){
     ctx.fillText(fmt(s),tx+2,10);
   }
 
-  // Segment markers on progress bar
+  // ── Marker segmenti sulla progress bar ───────────────
   buildProgMarkers();
 }
 
