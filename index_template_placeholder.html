@@ -1652,8 +1652,50 @@ function drawChart(el){
     }
   });
 
-  // ── Overlay area percorsa ──────────────────────────────────────
-  ctx.fillStyle='rgba(255,31,66,.07)';ctx.fillRect(0,0,(el/TOTAL)*W,H);
+  // ── Area percorsa: colore pieno di zona per ogni segmento ────────
+  const elX=(el/TOTAL)*W;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0,0,elX,H);
+  ctx.clip();
+
+  const bandFull=[
+    {zn:5,col:'rgba(255,31,66,.55)'},
+    {zn:4,col:'rgba(255,109,24,.50)'},
+    {zn:3,col:'rgba(255,191,0,.42)'},
+    {zn:2,col:'rgba(0,204,112,.38)'},
+    {zn:1,col:'rgba(68,119,255,.34)'},
+  ];
+  bandFull.forEach(({zn,col})=>{
+    const y0=H-Math.round((zn/5)*MAXBH)-1;
+    const y1=zn<5?H-Math.round(((zn-1)/5)*MAXBH)-1:H;
+    ctx.fillStyle=col;
+    ctx.fillRect(0,y0,elX,y1-y0);
+  });
+
+  if(pts.length){
+    T.forEach(t=>{
+      const segs=t._segs&&t._segs.length?t._segs:[{from:0,to:t.d,type:'steady'}];
+      segs.forEach(seg=>{
+        const xL=((t.s+seg.from)/TOTAL)*W;
+        const xR=Math.min(((t.s+seg.to)/TOTAL)*W, elX);
+        if(xR<=xL) return;
+        const znF=segZnFloat(seg,parseFloat(t.z[1]));
+        const segH=(znF/5)*MAXBH;
+        const segY=H-segH-1;
+        const g=ctx.createLinearGradient(0,segY,0,H);
+        const zc=ZC[t.z]||'#fff';
+        g.addColorStop(0,zc+'cc');
+        g.addColorStop(0.6,zc+'55');
+        g.addColorStop(1,zc+'11');
+        ctx.fillStyle=g;
+        ctx.fillRect(xL,segY,xR-xL,H-segY);
+      });
+    });
+  }
+
+  ctx.restore();
 
   // ── Cursore posizione ─────────────────────────────────────────
   const cx2=(el/TOTAL)*W;
