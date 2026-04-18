@@ -98,8 +98,8 @@ body{display:flex;flex-direction:column}
 ══════════════════════════════════════ */
 #now{
   background:var(--s1);border:1px solid var(--border2);
-  border-radius:12px;padding:12px 14px;
-  flex:1;overflow:hidden;display:flex;flex-direction:column;gap:7px;
+  border-radius:12px;padding:8px 12px;
+  flex:1;overflow:hidden;display:flex;flex-direction:column;gap:5px;
   position:relative;
 }
 /* Barra sinistra zona colore */
@@ -113,7 +113,7 @@ body{display:flex;flex-direction:column}
 #np-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 #np-title{
   font-family:var(--fd);
-  font-size:52px; /* GRANDE — leggibile dalla bike */
+  font-size:34px;
   font-weight:900;letter-spacing:-.5px;line-height:1;
   text-transform:uppercase;flex:1;min-width:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
@@ -121,12 +121,12 @@ body{display:flex;flex-direction:column}
 }
 
 #np-badge{
-  font-family:var(--fm);font-size:16px;
-  color:var(--muted);white-space:nowrap;padding-top:6px;flex-shrink:0;
+  font-family:var(--fm);font-size:12px;
+  color:var(--muted);white-space:nowrap;padding-top:2px;flex-shrink:0;
 }
 #np-artist{
-  font-size:16px;color:var(--muted);font-weight:500;
-  margin-top:-6px;
+  font-size:12px;color:var(--muted);font-weight:500;
+  margin-top:-2px;
 }
 
 /* ══════════════════════════════════════
@@ -135,7 +135,7 @@ body{display:flex;flex-direction:column}
 #metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .metric{
   background:var(--s3);border:1px solid var(--border);
-  border-radius:10px;padding:10px 4px;text-align:center;
+  border-radius:10px;padding:7px 4px;text-align:center;
   position:relative;overflow:hidden;
 }
 .metric::after{
@@ -143,13 +143,13 @@ body{display:flex;flex-direction:column}
   background:var(--mc,transparent);
 }
 .mv{
-  font-size:32px; /* GRANDE */
+  font-size:22px;
   font-weight:900;font-family:var(--fd);
   line-height:1;letter-spacing:-.5px;
 }
 
 .ml{
-  font-size:11px;color:var(--muted);margin-top:4px;
+  font-size:9px;color:var(--muted);margin-top:2px;
   text-transform:uppercase;letter-spacing:.8px;
   font-weight:700;font-family:var(--fd);
 }
@@ -157,7 +157,7 @@ body{display:flex;flex-direction:column}
 /* ══════════════════════════════════════
    FASE + TECNICA
 ══════════════════════════════════════ */
-#info-row{display:grid;grid-template-columns:160px 1fr;gap:8px;align-items:stretch}
+#info-row{display:grid;grid-template-columns:130px 1fr;gap:6px;align-items:stretch}
 
 #fase-box{
   background:var(--s3);border:1px solid var(--border);
@@ -169,7 +169,7 @@ body{display:flex;flex-direction:column}
   letter-spacing:.8px;font-weight:700;font-family:var(--fd);margin-bottom:4px;
 }
 #fase-val{
-  font-family:var(--fd);font-size:22px;font-weight:900;
+  font-family:var(--fd);font-size:17px;font-weight:900;
   line-height:1.1;text-transform:uppercase;
   color:var(--zc,var(--cyan));transition:color .4s;
 }
@@ -286,7 +286,7 @@ body{display:flex;flex-direction:column}
 ══════════════════════════════════════ */
 #prog-wrap{flex-shrink:0}
 #prog-bg{
-  height:10px;background:var(--s3);
+  height:7px;background:var(--s3);
   border-radius:5px;overflow:hidden;cursor:pointer;
   margin-bottom:6px;position:relative;
 }
@@ -299,7 +299,7 @@ body{display:flex;flex-direction:column}
 .prog-marker{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.4)}
 #time-row{
   display:flex;justify-content:space-between;
-  font-size:16px;font-family:var(--fm);font-weight:700;
+  font-size:13px;font-family:var(--fm);font-weight:700;
 }
 #t-cur{color:#fff}#t-rem{color:var(--red)}#t-end{color:var(--dim)}
 
@@ -335,7 +335,7 @@ body{display:flex;flex-direction:column}
 #sp-dot.err{background:var(--red)}
 #sp-dot.wait{background:var(--amber);animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
-#sp-status-txt{font-size:14px;color:var(--muted);font-weight:600;flex:1}
+#sp-status-txt{font-size:12px;color:var(--muted);font-weight:600;flex:1}
 
 /* PLAY button — integrato nella riga nav */
 #big-play{
@@ -579,14 +579,14 @@ body{display:flex;flex-direction:column}
   #col-right{display:flex!important;width:320px}
   #now{overflow:visible;flex:none}
   #chart-canvas{height:130px}
-  #np-title{font-size:36px!important}
-  .mv{font-size:22px}.ml{font-size:9px}
+  #np-title{font-size:26px!important}
+  .mv{font-size:18px!important}.ml{font-size:8px}
   /* Tecnica: altezza adeguata, scroll visibile */
   #tec-box{max-height:120px}
   #tec-segs-wrap{max-height:112px}
-  .tec-seg-item{font-size:14px}
-  .tec-seg-item.active{font-size:16px}
-  #focus-val{font-size:13px}
+  .tec-seg-item{font-size:13px}
+  .tec-seg-item.active{font-size:15px}
+  #focus-val{font-size:12px}
   #focus-box{padding:7px 10px}
   #ctrl-section{flex-shrink:0}
 }
@@ -608,8 +608,8 @@ body{display:flex;flex-direction:column}
   #col-left{overflow:visible;height:auto}
   #now{overflow:visible;flex:none}
   #chart-canvas{height:100px}
-  #np-title{font-size:28px!important}
-  .mv{font-size:19px!important}.ml{font-size:8px}
+  #np-title{font-size:22px!important}
+  .mv{font-size:14px!important}.ml{font-size:7px}
   .tec-seg-time{display:none}
   #tec-box{max-height:105px}
   #tec-segs-wrap{max-height:97px}
@@ -623,8 +623,8 @@ body{display:flex;flex-direction:column}
   #big-play{font-size:18px;padding:13px}
 }
 @media(max-width:420px){
-  .mv{font-size:16px!important}
-  #np-title{font-size:23px!important}
+  .mv{font-size:14px!important}
+  #np-title{font-size:18px!important}
   #metrics{gap:2px!important}
   .metric{padding:5px 2px!important}
 }
