@@ -79,7 +79,7 @@ body{display:flex;flex-direction:column}
   flex-shrink:0;touch-action:none;
 }
 #chart-canvas{
-  width:100%;height:110px;
+  width:100%;height:160px;
   display:block;cursor:pointer;border-radius:6px;
 }
 #zone-leg{
@@ -575,7 +575,7 @@ body{display:flex;flex-direction:column}
   #col-left{overflow:visible;height:auto}
   #col-right{display:flex!important;width:320px}
   #now{overflow:visible;flex:none}
-  #chart-canvas{height:90px}
+  #chart-canvas{height:130px}
   #np-title{font-size:36px!important}
   .mv{font-size:22px}.ml{font-size:9px}
   /* Tecnica: altezza adeguata, scroll visibile */
@@ -605,7 +605,7 @@ body{display:flex;flex-direction:column}
   #col-right{display:none!important}
   #col-left{overflow:visible;height:auto}
   #now{overflow:visible;flex:none}
-  #chart-canvas{height:75px}
+  #chart-canvas{height:100px}
   #np-title{font-size:28px!important}
   .mv{font-size:19px!important}.ml{font-size:8px}
   .tec-seg-time{display:none}
@@ -1114,13 +1114,22 @@ function getElapsed(){const raw=isPlaying&&wallStart?pausedAt+(Date.now()-wallSt
 
 async function autoSync(){
   const sp=await spGetAbsolutePosition();if(!sp)return;
-  const diff=Math.abs(sp.absSec-getElapsed());
   const badge=document.getElementById('sync-badge');
+  // ── GUARD crossfade lookahead ──────────────────────────────────
+  // tick() avanza ci 4s prima (CROSSFADE). Spotify è ancora sul brano N-1.
+  // Se Spotify riporta esattamente ci-1, è il gap di crossfade: NON fare reset.
+  const isCrossfadeGap=(sp.trackIdx>=0 && sp.trackIdx===ci-1);
+  if(isCrossfadeGap) return; // posizione già corretta dal timer
+  // ── Cambio traccia reale da Spotify (seek, skip) ───────────────
+  if(sp.trackIdx>=0 && sp.trackIdx!==ci){
+    ci=sp.trackIdx;lastCi=ci;lastSegIdx=-1;_warned30=false;scheduleTecCountdown();
+  }
+  // ── Correzione posizione temporale ────────────────────────────
+  const diff=Math.abs(sp.absSec-getElapsed());
   if(diff<1){badge.textContent='✓ sync';badge.className='good';}
   else if(diff<4){badge.textContent='Δ '+diff.toFixed(1)+'s';badge.className='warn';}
   else{badge.textContent='Δ '+diff.toFixed(1)+'s';badge.className='bad';}
   if(diff>0.3){pausedAt=sp.absSec*1000;if(isPlaying)wallStart=Date.now();}
-  if(sp.trackIdx>=0&&sp.trackIdx!==ci){ci=sp.trackIdx;lastCi=ci;lastSegIdx=-1;_warned30=false;scheduleTecCountdown();}
 }
 
 async function togglePlayback(){
@@ -1477,174 +1486,194 @@ function drawChart(el){
   if(el===undefined)el=getElapsed();
   const cv=document.getElementById('chart-canvas');
   const W=cv.offsetWidth;if(!W)return;
-  const H=cv.offsetHeight||100;
+  const H=cv.offsetHeight||150;
   cv.width=W*devicePixelRatio||W;
   cv.height=H*devicePixelRatio||H;
   const ctx=cv.getContext('2d');
   ctx.scale(devicePixelRatio||1,devicePixelRatio||1);
 
-  // ── Background ──────────────────────────────────────
-  ctx.fillStyle='#0d0d12';ctx.fillRect(0,0,W,H);
-
-  // ── Bande di zona orizzontali (sfondo) ──────────────
-  // Z5→Z4→Z3→Z2→Z1: ogni banda colorata nella propria fascia
-  const zoneBands=[
-    {zn:5,color:'rgba(255,31,66,.10)'},
-    {zn:4,color:'rgba(255,109,24,.09)'},
-    {zn:3,color:'rgba(255,191,0,.07)'},
-    {zn:2,color:'rgba(0,204,112,.06)'},
-    {zn:1,color:'rgba(68,119,255,.05)'},
+  // ── SFONDO: bande zona colorate (stile BestCycling) ──────────────
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+  const MAXBH=H*.90; // altezza massima = Z5
+  const bandDefs=[
+    {zn:5,col:'rgba(255,31,66,.28)'},
+    {zn:4,col:'rgba(255,109,24,.24)'},
+    {zn:3,col:'rgba(255,191,0,.18)'},
+    {zn:2,col:'rgba(0,204,112,.16)'},
+    {zn:1,col:'rgba(68,119,255,.14)'},
   ];
-  zoneBands.forEach(({zn,color})=>{
-    const top=H-(zn/5)*H*.88-1;
-    const prev=zn<5?H-(( zn+1)/5)*H*.88-1:0;
-    ctx.fillStyle=color;
-    ctx.fillRect(0,top,W,prev-top);
+  bandDefs.forEach(({zn,col})=>{
+    const y0=H-Math.round((zn/5)*MAXBH)-1;
+    const y1=zn<5?H-Math.round(((zn-1)/5)*MAXBH)-1:H;
+    ctx.fillStyle=col;
+    ctx.fillRect(0,y0,W,y1-y0);
   });
 
-  // ── Linee griglia zone (faint) ───────────────────────
+  // ── LINEE GRIGLIA ZONA (tratteggiate sottili) ─────────────────────
   [1,2,3,4,5].forEach(z=>{
-    const y=H-(z/5)*H*.88-1;
-    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
-    ctx.setLineDash([3,4]);
-    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
-    ctx.setLineDash([]);
-    // Label zona a destra
-    ctx.fillStyle='rgba(255,255,255,.18)';
-    ctx.font='bold 8px monospace';ctx.textAlign='right';
+    const y=H-Math.round((z/5)*MAXBH)-1;
+    ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;ctx.setLineDash([3,5]);
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,255,255,.22)';ctx.font='bold 8px monospace';ctx.textAlign='right';
     ctx.fillText('Z'+z,W-2,y-2);
   });
 
-  // ── Barre brani (colorate per zona) ─────────────────
-  T.forEach((t,idx)=>{
-    const x=(t.s/TOTAL)*W;
-    const w=Math.max((t.d/TOTAL)*W-1.5,2);
-    const zn=parseInt(t.z[1]);
-    const bh=Math.round((zn/5)*H*.88);
-    const y=H-bh-1;
-    const isActive=idx===ci;
-
-    ctx.fillStyle=ZC[t.z]+(isActive?'28':idx<ci?'18':'20');
-    ctx.beginPath();
-    ctx.roundRect?ctx.roundRect(x,y,w,bh,3):ctx.rect(x,y,w,bh);
-    ctx.fill();
-
-    if(isActive){
-      ctx.strokeStyle=ZC[t.z]+'88';ctx.lineWidth=1.5;
-      ctx.beginPath();
-      ctx.roundRect?ctx.roundRect(x,y,w,bh,3):ctx.rect(x,y,w,bh);
-      ctx.stroke();
-    }
-
-    if(w>18){
-      ctx.fillStyle=isActive?'rgba(255,255,255,.7)':'rgba(255,255,255,.25)';
-      ctx.font=`bold ${Math.min(10,w/3)}px monospace`;
-      ctx.textAlign='center';
-      ctx.fillText(t.i,x+w/2,H-3);
-    }
-  });
-
-  // ── Calcola intensità di ogni segmento ───────────────
-  // sprint_on → zona piena; sprint_off → Z1 recovery;
-  // jump → zona -0.5; standing → zona; seated → zona-1; steady → zona
-  function segZn(seg,trackZn){
+  // ── Calcola intensità reale da segmenti ──────────────────────────
+  function segZnFloat(seg,trackZn){
     switch(seg.type){
       case 'sprint_on':  return trackZn;
-      case 'sprint_off': return 1;
-      case 'jump':       return Math.max(1,trackZn-0.5);
-      case 'standing':   return Math.min(5,trackZn+0.3);
-      case 'seated':     return Math.max(1,trackZn-1);
+      case 'sprint_off': return 0.8;           // Z1 recupero
+      case 'jump':       return trackZn-0.6;   // leggermente sotto zona
+      case 'standing':   return Math.min(5,trackZn+0.25);
+      case 'seated':     return Math.max(0.8,trackZn-0.8);
       default:           return trackZn;
     }
   }
 
-  // ── Costruisci array punti intensità da tutti i segmenti ──
-  const segPts=[];
+  // ── Costruisci punti linea da segmenti ────────────────────────────
+  // Per i jump: genera picchi oscillanti (su/giù) invece di linea piatta
+  const pts=[]; // {x, y, type, trackZ}
   T.forEach(t=>{
-    const trackZn=parseInt(t.z[1]);
+    const trackZn=parseFloat(t.z[1]);
     const segs=t._segs&&t._segs.length?t._segs:[{from:0,to:t.d,type:'steady'}];
     segs.forEach(seg=>{
-      const zn=segZn(seg,trackZn);
-      const bh=(zn/5)*H*.88;
+      const znF=segZnFloat(seg,trackZn);
+      const bh=(znF/5)*MAXBH;
       const y=H-bh-1;
       const xL=((t.s+seg.from)/TOTAL)*W;
       const xR=((t.s+seg.to)/TOTAL)*W;
-      segPts.push({xL,xR,y,zn,type:seg.type,trackZ:t.z});
+      const segW=xR-xL;
+
+      if(seg.type==='jump' && segW>6){
+        // Oscillazione jump: 3-4 picchi su/giù (Z base ↔ Z base-1)
+        const znHi=znF, znLo=Math.max(0.5,znF-1.2);
+        const yHi=H-(znHi/5)*MAXBH-1;
+        const yLo=H-(znLo/5)*MAXBH-1;
+        // Numero di cicli in base alla larghezza disponibile
+        const nCycles=Math.max(2,Math.round(segW/24));
+        const step=segW/nCycles;
+        pts.push({x:xL,y:yHi,type:'jump',trackZ:t.z});
+        for(let c=0;c<nCycles;c++){
+          pts.push({x:xL+step*(c+0.5),y:yLo,type:'jump',trackZ:t.z});
+          pts.push({x:xL+step*(c+1),y:yHi,type:'jump',trackZ:t.z});
+        }
+      } else {
+        pts.push({x:xL,y,type:seg.type,trackZ:t.z});
+        pts.push({x:xR,y,type:seg.type,trackZ:t.z});
+      }
     });
   });
 
-  if(segPts.length){
-    // Fill area sotto la curva: gradiente colorato per zona
+  if(pts.length){
+    // ── Fill gradient sotto la curva ──────────────────────────────
     ctx.save();
     ctx.beginPath();
-    segPts.forEach((p,i)=>{
-      if(i===0){ctx.moveTo(p.xL,p.y);}
+    pts.forEach((p,i)=>{
+      if(i===0){ctx.moveTo(p.x,p.y);}
       else{
-        const prev=segPts[i-1];
-        ctx.lineTo(p.xL,prev.y);
-        ctx.lineTo(p.xL,p.y);
+        const prev=pts[i-1];
+        if(p.type==='jump'||prev.type==='jump'){
+          // Linea curva smooth per jump
+          ctx.lineTo(p.x,p.y);
+        } else {
+          // Gradino per cambi zona
+          ctx.lineTo(p.x,prev.y);
+          ctx.lineTo(p.x,p.y);
+        }
       }
-      ctx.lineTo(p.xR,p.y);
     });
-    const last=segPts[segPts.length-1];
-    ctx.lineTo(last.xR,H);ctx.lineTo(0,H);ctx.closePath();
-    const fillGrad=ctx.createLinearGradient(0,0,0,H);
-    fillGrad.addColorStop(0,'rgba(255,255,255,.20)');
-    fillGrad.addColorStop(0.5,'rgba(255,255,255,.10)');
-    fillGrad.addColorStop(1,'rgba(255,255,255,.02)');
-    ctx.fillStyle=fillGrad;ctx.fill();
+    ctx.lineTo(pts[pts.length-1].x,H);ctx.lineTo(0,H);ctx.closePath();
+    const fillG=ctx.createLinearGradient(0,0,0,H);
+    fillG.addColorStop(0,'rgba(255,255,255,.22)');
+    fillG.addColorStop(0.4,'rgba(255,255,255,.12)');
+    fillG.addColorStop(1,'rgba(255,255,255,.02)');
+    ctx.fillStyle=fillG;ctx.fill();
     ctx.restore();
 
-    // Linea profilo bianca (step) — la curva vera
+    // ── Linea curva principale (bianca) ───────────────────────────
     ctx.save();
     ctx.beginPath();
-    segPts.forEach((p,i)=>{
-      if(i===0){ctx.moveTo(p.xL,p.y);}
+    pts.forEach((p,i)=>{
+      if(i===0){ctx.moveTo(p.x,p.y);}
       else{
-        const prev=segPts[i-1];
-        ctx.lineTo(p.xL,prev.y);
-        ctx.lineTo(p.xL,p.y);
+        const prev=pts[i-1];
+        if(p.type==='jump'||prev.type==='jump'){
+          ctx.lineTo(p.x,p.y);
+        } else {
+          ctx.lineTo(p.x,prev.y);
+          ctx.lineTo(p.x,p.y);
+        }
       }
-      ctx.lineTo(p.xR,p.y);
     });
-    ctx.strokeStyle='rgba(255,255,255,.65)';ctx.lineWidth=1.5;
+    ctx.strokeStyle='rgba(255,255,255,.80)';ctx.lineWidth=2;
     ctx.lineJoin='miter';ctx.stroke();
     ctx.restore();
 
-    // Colorazione segmenti sprint ON/jump: evidenzia la cima
-    segPts.forEach((p,i)=>{
-      if(p.type==='sprint_on'||p.type==='jump'){
-        const c=ZC[p.trackZ]||'#ff1f42';
-        ctx.save();
-        ctx.strokeStyle=c;ctx.lineWidth=2.5;
-        ctx.globalAlpha=.8;
-        ctx.beginPath();ctx.moveTo(p.xL,p.y);ctx.lineTo(p.xR,p.y);ctx.stroke();
-        ctx.restore();
-      }
+    // ── Highlight sprint ON: linea colorata spessa ────────────────
+    let sStart=null;
+    pts.forEach((p,i)=>{
+      if(p.type==='sprint_on'){
+        if(!sStart) sStart=p;
+        const next=pts[i+1];
+        if(!next||next.type!=='sprint_on'){
+          ctx.save();
+          ctx.strokeStyle=ZC[p.trackZ]||'#ff1f42';ctx.lineWidth=3;ctx.globalAlpha=.9;
+          ctx.beginPath();ctx.moveTo(sStart.x,sStart.y);ctx.lineTo(p.x,p.y);ctx.stroke();
+          ctx.restore();sStart=null;
+        }
+      } else sStart=null;
     });
+
+    // ── Highlight brano attivo: glow sul segmento corrente ────────
+    const actT=T[ci];
+    const el2=getElapsed();
+    const posInT=el2-actT.s;
+    const si2=typeof getActiveSegIdx==='function'?getActiveSegIdx(actT,posInT):0;
+    const actSeg=actT._segs&&actT._segs[si2];
+    if(actSeg){
+      const ax=((actT.s+actSeg.from)/TOTAL)*W;
+      const bx=((actT.s+actSeg.to)/TOTAL)*W;
+      const ay=H-(segZnFloat(actSeg,parseFloat(actT.z[1]))/5)*MAXBH-1;
+      ctx.save();
+      ctx.strokeStyle=ZC[actT.z]||'#fff';ctx.lineWidth=3;ctx.globalAlpha=.7;
+      ctx.shadowColor=ZC[actT.z];ctx.shadowBlur=8;
+      ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,ay);ctx.stroke();
+      ctx.restore();
+    }
   }
 
-  // ── Overlay elapsed (area già percorsa) ─────────────
+  // ── Etichette numero brano ────────────────────────────────────
+  T.forEach((t,idx)=>{
+    const x=(t.s/TOTAL)*W,w=Math.max((t.d/TOTAL)*W-1,2);
+    if(w>16){
+      ctx.fillStyle=idx===ci?'rgba(255,255,255,.9)':'rgba(255,255,255,.22)';
+      ctx.font=`bold ${Math.min(11,w/2.5)}px monospace`;ctx.textAlign='center';
+      ctx.fillText(t.i,x+w/2,H-3);
+    }
+  });
+
+  // ── Overlay area percorsa ──────────────────────────────────────
   ctx.fillStyle='rgba(255,31,66,.07)';ctx.fillRect(0,0,(el/TOTAL)*W,H);
 
-  // ── Cursore posizione attuale ────────────────────────
-  const cx=(el/TOTAL)*W;
-  ctx.strokeStyle='#ff1f42';ctx.lineWidth=2.5;
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // ── Cursore posizione ─────────────────────────────────────────
+  const cx2=(el/TOTAL)*W;
+  ctx.strokeStyle='#ff1f42';ctx.lineWidth=2;
+  ctx.shadowColor='#ff1f42';ctx.shadowBlur=12;
+  ctx.beginPath();ctx.moveTo(cx2,0);ctx.lineTo(cx2,H);ctx.stroke();
+  ctx.shadowBlur=0;
   ctx.fillStyle='#ff1f42';
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx-5,8);ctx.lineTo(cx+5,8);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.moveTo(cx2,0);ctx.lineTo(cx2-5,9);ctx.lineTo(cx2+5,9);ctx.closePath();ctx.fill();
 
-  // ── Tick temporali ogni 5 min ────────────────────────
+  // ── Tick temporali ogni 5 minuti ─────────────────────────────
   ctx.font='bold 9px monospace';ctx.textAlign='left';
   for(let s=300;s<TOTAL;s+=300){
     const tx=(s/TOTAL)*W;
-    ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(tx,0);ctx.lineTo(tx,H);ctx.stroke();
-    ctx.fillStyle='rgba(255,255,255,.3)';
+    ctx.fillStyle='rgba(255,255,255,.35)';
     ctx.fillText(fmt(s),tx+2,10);
   }
 
-  // ── Marker segmenti sulla progress bar ───────────────
   buildProgMarkers();
 }
 
@@ -1932,15 +1961,14 @@ let _projCh = null;
 try { _projCh = new BroadcastChannel('cycling_coach_proj'); } catch(e){}
 
 function broadcastProjState() {
-  if(!_projCh) return;
   const t = T[ci];
   const el = getElapsed();
   const pct = Math.min((el/TOTAL)*100,100);
   const posInTrack = el - t.s;
   const si = getActiveSegIdx(t, posInTrack);
-  // Invia solo il segmento tecnica ATTIVO — niente anticipi, niente countdown
   const activeSeg = t._segs && t._segs[si] ? t._segs[si].label : t.tec;
-  _projCh.postMessage({
+  const msg = {
+    _proj:  true, // marker per postMessage
     title:  t.title,
     artist: t.ar,
     zone:   t.z,
@@ -1953,7 +1981,13 @@ function broadcastProjState() {
     pct:    pct,
     trackNum: t.i,
     trackTotal: T.length,
-  });
+  };
+  // postMessage diretto sulla finestra di proiezione (funziona su about:blank)
+  if(projWin && !projWin.closed){
+    try{ projWin.postMessage(msg,'*'); }catch(e){}
+  }
+  // BroadcastChannel come canale secondario
+  if(_projCh){ try{ _projCh.postMessage(msg); }catch(e){} }
 }
 
 // Hook updateUI per broadcast automatico ad ogni frame
