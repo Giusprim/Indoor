@@ -915,14 +915,18 @@ function parseTecSegments(t){
     // Allinea inizio a multiplo del beat (evita anticipo percepito)
     // Arrotonda ON e OFF al multiplo di 8 battiti più vicino
     // Sprint che inizia e finisce SEMPRE su una frase musicale completa (8 beat)
-    const onBeats =Math.max(8,Math.round(on /beatLen/8)*8);
-    const offBeats=Math.max(8,Math.round(off/beatLen/8)*8);
+    // Arrotonda a multiplo di 8 beat, minimo 32 beat (= 1 frase musicale standard)
+    // 32 beat @ 132 BPM = 14.5s, @ 150 BPM = 12.8s, @ 160 BPM = 12s
+    const onBeats =Math.max(32,Math.round(on /beatLen/8)*8);
+    const offBeats=Math.max(32,Math.round(off/beatLen/8)*8);
     const onSec=onBeats*beatLen, offSec=offBeats*beatLen;
-    // ── Buffer stabilizzazione inizio traccia (≥15s seduto) ──
-    // Allinea il buffer a multiplo di 8 battiti per rispettare la frase musicale
-    const phrase8=8*beatLen;
-    const stabBeats=Math.max(8,Math.round(15/beatLen/8)*8); // almeno 1 frase da 8 battiti
-    const stabSec=stabBeats*beatLen;
+    // ── Buffer iniziale: copre solo il crossfade (≈4s allineato a 8 battiti) ──
+    // NON usiamo 15s perché metterebbe il primo sprint nel punto sbagliato della canzone.
+    // Vogliamo che lo sprint parta il prima possibile dopo il crossfade (4s),
+    // allineato alla frase musicale più vicina di 8 battiti.
+    const XFADE=typeof CROSSFADE!=='undefined'?CROSSFADE:4;
+    const stabBeats=Math.max(8,Math.ceil(XFADE/beatLen/8)*8);
+    const stabSec=stabBeats*beatLen; // tipicamente 7-9s (1-2 frasi da 8 beat)
     const segs=[];
     // Inserisci intro seduto se c'è spazio sufficiente per almeno 1 ciclo ON+OFF dopo
     let startOffset=0;
@@ -946,40 +950,91 @@ function parseTecSegments(t){
 
   // ── 2. JUMP: almeno un "jump in N" nella tec ──
   const jumpRx=/jump\s+in\s+(\d+)/gi;
-  if([...tec.matchAll(jumpRx)].length>0){
+  const jumpMatches=[...tec.matchAll(jumpRx)];
+  if(jumpMatches.length>0){
     const labels=tec.split('→').map(s=>s.trim()).filter(Boolean);
-    const phraseLen=8*beatLen;
-    // Transizione seduta tra fasi jump diverse (1 frase musicale = 8 beat)
-    // Permette di "respirare" e cambiare ritmo senza tagliare la musica a metà
-    const transSec=phraseLen;
-    const nTrans=Math.max(0,labels.length-1);
-    // ── Buffer stabilizzazione inizio traccia ──
-    const stabBeats=Math.max(8,Math.round(15/beatLen/8)*8);
-    const stabSec=stabBeats*beatLen;
-    // Calcola durata per ogni segmento jump al netto di stab + transizioni
-    const availForJumps=dur-stabSec-nTrans*transSec;
-    const phrasesPerSeg=Math.max(1,Math.round((availForJumps/labels.length)/phraseLen));
-    const segDur=phrasesPerSeg*phraseLen;
+
+    // ── Stab crossfade-aligned (stessa logica sprint) ─────────────────────
+    const XFADE=typeof CROSSFADE!=='undefined'?CROSSFADE:4;
+    const stabBeatsJ=Math.max(8,Math.ceil(XFADE/beatLen/8)*8);
+    const stabSecJ=stabBeatsJ*beatLen;
+
     const segs=[];
-    let startOffset=0;
-    if(dur>stabSec+segDur*labels.length*0.6){
-      segs.push({label:'Seduto — Trova il ritmo',mani:'P2',from:0,to:parseFloat(stabSec.toFixed(2)),type:'seated'});
-      startOffset=stabSec;
+    let cur=0;
+
+    // Buffer iniziale seduto se il brano lo permette
+    if(dur>stabSecJ+16*beatLen){
+      segs.push({label:'Seduto — Trova il ritmo',mani:'P2',
+        from:0,to:parseFloat(stabSecJ.toFixed(2)),type:'seated'});
+      cur=stabSecJ;
     }
-    let cur=startOffset;
+
+    // ── Distribuzione tempo: non-jump = 16 beat fissi; jump = tempo restante ──
+    const nTrans=Math.max(0,labels.length-1);
+    const transSec=8*beatLen;
+    const nonJumpLabels=labels.filter(l=>!/jump/i.test(l));
+    const jumpLabels   =labels.filter(l=>/jump/i.test(l));
+    const nonJumpSec=nonJumpLabels.length * 16*beatLen; // 16 beat per frase non-jump
+    const availForJumps=dur-cur-nonJumpSec-nTrans*transSec;
+    const timePerJump=Math.max(16*beatLen, availForJumps/Math.max(1,jumpLabels.length));
+
     labels.forEach((label,i)=>{
-      const from=parseFloat(cur.toFixed(2));
-      const to=parseFloat(Math.min(cur+segDur,dur).toFixed(2));
-      const {type,mani}=inferSeg(label,t.mani,t.z);
-      segs.push({label,mani,from,to,type});
-      cur+=segDur;
-      // Inserisci "Seduto — Cambia ritmo" tra fasi jump diverse (non dopo l'ultima)
-      if(i<labels.length-1 && cur+transSec<dur-phraseLen){
-        segs.push({label:'Seduto — Cambia ritmo',mani:t.mani||'P2',
-          from:parseFloat(cur.toFixed(2)),to:parseFloat((cur+transSec).toFixed(2)),type:'seated'});
+      const jMatch=label.match(/jump\s+in\s+(\d+)/i);
+
+      if(jMatch){
+        // ── Fase JUMP: genera cicli ON/OFF espliciti ───────────────────
+        const n=parseInt(jMatch[1]);
+        const onSec =n*beatLen;  // N beat in piedi
+        const offSec=n*beatLen;  // N beat seduto
+        const cycleLen=onSec+offSec;
+
+        const phaseEnd=parseFloat(Math.min(cur+timePerJump,
+          dur-(i<labels.length-1?transSec+16*beatLen:0)).toFixed(2));
+        const avail=phaseEnd-cur;
+        const nCycles=Math.max(1,Math.floor(avail/cycleLen));
+
+        for(let c=0;c<nCycles;c++){
+          const onFrom=parseFloat(cur.toFixed(2));
+          const onTo  =parseFloat((cur+onSec).toFixed(2));
+          segs.push({
+            label:`In piedi — JUMP (${n})`,
+            mani:t.z==='Z5'?'P3':'P2',
+            from:onFrom,to:onTo,type:'jump'
+          });
+          cur+=onSec;
+          if(cur>=phaseEnd-0.1) break;
+
+          const offFrom=parseFloat(cur.toFixed(2));
+          const offTo  =parseFloat(Math.min(cur+offSec,phaseEnd).toFixed(2));
+          segs.push({
+            label:'Seduto — JUMP OFF',
+            mani:'P2',
+            from:offFrom,to:offTo,type:'jump_off'
+          });
+          cur+=offSec;
+          if(cur>=phaseEnd-0.1){cur=phaseEnd;break;}
+        }
+        cur=phaseEnd; // snap al confine fase
+
+      } else {
+        // Segmento non-jump: 16 beat fissi
+        const nonJumpDur=16*beatLen;
+        const segEnd=parseFloat(Math.min(cur+nonJumpDur,dur).toFixed(2));
+        const {type,mani}=inferSeg(label,t.mani,t.z);
+        segs.push({label,mani,from:parseFloat(cur.toFixed(2)),to:segEnd,type});
+        cur=segEnd;
+      }
+
+      // Transizione "Cambia ritmo" tra fasi diverse (non dopo l'ultima)
+      if(i<labels.length-1 && cur+transSec<dur-4*beatLen){
+        segs.push({label:'Seduto — Cambia ritmo',mani:'P2',
+          from:parseFloat(cur.toFixed(2)),
+          to:parseFloat((cur+transSec).toFixed(2)),
+          type:'seated'});
         cur+=transSec;
       }
     });
+
     if(segs.length>0) segs[segs.length-1].to=dur;
     return segs;
   }
@@ -1030,7 +1085,7 @@ function getNextTecChange(el){
   const curSeg=t._segs&&t._segs[si];
 
   // Non attivare se sprint o jump attivi (sj-tracker gestisce già)
-  if(curSeg&&(curSeg.type==='sprint_on'||curSeg.type==='sprint_off'||curSeg.type==='jump')){
+  if(curSeg&&(curSeg.type==='sprint_on'||curSeg.type==='sprint_off'||curSeg.type==='jump'||curSeg.type==='jump_off')){
     return null;
   }
 
@@ -1039,7 +1094,7 @@ function getNextTecChange(el){
     if(si<t._segs.length-1){
       const nextSeg=t._segs[si+1];
       // Salta cambi verso altri sprint/jump (gestiti dal tracker)
-      if(nextSeg.type==='sprint_on'||nextSeg.type==='sprint_off'||nextSeg.type==='jump'){
+      if(nextSeg.type==='sprint_on'||nextSeg.type==='sprint_off'||nextSeg.type==='jump'||nextSeg.type==='jump_off'){
         return null;
       }
       const secToChange=(t.s+nextSeg.from)-el;
@@ -1174,8 +1229,9 @@ function tick(){
   if(ni!==lastCi){
     ci=ni;lastCi=ni;lastSegIdx=-1;_warned30=false;
     const t=T[ci];
-    showAlert('▶',`${t.i}/18  ${t.title}`,`${t.fase} · ${t.rpm} RPM · Res ${t.res}`,ZC[t.z]);
+    showAlert('▶',`${t.i}/${T.length}  ${t.title}`,`${t.fase} · ${t.rpm} RPM · Res ${t.res}`,ZC[t.z]);
     scheduleTecCountdown();
+    if(isPlaying) setTimeout(()=>autoSync(),700);
   }
   renderUI(el);
   if(el<TOTAL&&isPlaying)rafId=requestAnimationFrame(tick);
@@ -1240,7 +1296,7 @@ function renderCountdown(el, curSeg){
   if(!overlay) return;
 
   // Non mostrare se siamo in sprint_on o jump (sj-tracker gestisce già)
-  if(curSeg && (curSeg.type==='sprint_on' || curSeg.type==='jump')){
+  if(curSeg && (curSeg.type==='sprint_on' || curSeg.type==='jump' || curSeg.type==='jump_off')){
     if(_cdLastShown){ overlay.classList.remove('show'); _cdLastShown=false; }
     return;
   }
@@ -1329,12 +1385,13 @@ function renderUI(el){
   if(el===undefined)el=getElapsed();
   const t=T[ci];
   const zc=ZC[t.z];
-  const posInTrack=el-t.s;
+  // posInTrack: mai negativo (crossfade anticipa ci di 4s ma el è reale)
+  const posInTrack=Math.max(0,el-t.s);
 
   // Basic info
   document.getElementById('np-title').textContent=t.title;
   document.getElementById('np-artist').textContent=t.ar;
-  document.getElementById('np-badge').textContent=`${t.i}/18`;
+  document.getElementById('np-badge').textContent=`${t.i}/${T.length}`;
   document.getElementById('m-zone').textContent=t.z;
   document.getElementById('m-zone').style.color=zc;
   document.getElementById('m-rpm').textContent=t.rpm;
@@ -1425,7 +1482,7 @@ function renderSjTracker(t,posInTrack,el){
 
   // Mostra il tracker SOLO se il segmento corrente è sprint o jump
   const isSprint=seg.type==='sprint_on'||seg.type==='sprint_off';
-  const isJump=seg.type==='jump';
+  const isJump=seg.type==='jump'||seg.type==='jump_off';
   if(!isSprint&&!isJump){
     tracker.classList.remove('active');
     hideSjFullscreen();
@@ -1435,6 +1492,7 @@ function renderSjTracker(t,posInTrack,el){
   tracker.classList.add('active');
 
   const isOn=seg.type==='sprint_on'||seg.type==='jump';
+  // jump_off = ON visivamente spento, come sprint_off
   const color=isOn?(isSprint?'var(--red)':'var(--amber)'):'var(--cyan)';
   tracker.style.setProperty('--sjc',color);
 
@@ -1538,7 +1596,8 @@ function drawChart(el){
     switch(seg.type){
       case 'sprint_on':  return trackZn;
       case 'sprint_off': return 0.8;
-      case 'jump':       return trackZn-0.6;
+      case 'jump':       return trackZn-0.3;   // in piedi leggero
+      case 'jump_off':   return Math.max(0.8,trackZn-1.2); // seduto recupero
       case 'standing':   return Math.min(5,trackZn+0.25);
       case 'seated':     return Math.max(0.8,trackZn-0.8);
       default:           return trackZn;
@@ -1556,7 +1615,7 @@ function drawChart(el){
       const xL=((t.s+seg.from)/TOTAL)*W;
       const xR=((t.s+seg.to)/TOTAL)*W;
       const segW=xR-xL;
-      if(seg.type==='jump'&&segW>6){
+      if((seg.type==='jump'||seg.type==='jump_off')&&segW>6){
         const znLo=Math.max(0.5,znF-1.2);
         const yHi=H-(znF/5)*MAXBH-1;
         const yLo=H-(znLo/5)*MAXBH-1;
