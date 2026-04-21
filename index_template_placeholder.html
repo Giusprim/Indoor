@@ -428,8 +428,8 @@ body{display:flex;flex-direction:column}
 }
 #tl-head{
   display:grid;
-  grid-template-columns:30px 1fr 70px 48px 60px 46px;
-  gap:4px;padding:8px 12px;
+  grid-template-columns:24px 1fr 66px 44px 56px 44px;
+  gap:3px;padding:7px 10px;
   font-size:10px;color:var(--muted);
   border-bottom:2px solid var(--border2);
   text-transform:uppercase;letter-spacing:.6px;font-weight:700;
@@ -440,8 +440,8 @@ body{display:flex;flex-direction:column}
 #tl-body::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
 .tr{
   display:grid;
-  grid-template-columns:30px 1fr 70px 48px 60px 46px;
-  gap:4px;padding:10px 12px;align-items:center;cursor:pointer;
+  grid-template-columns:24px 1fr 66px 44px 56px 44px;
+  gap:3px;padding:8px 10px;align-items:center;cursor:pointer;
   border-bottom:1px solid rgba(255,255,255,.04);
   transition:background .1s;
 }
@@ -542,31 +542,69 @@ body{display:flex;flex-direction:column}
 #alert-zone{font-family:var(--fd);font-size:44px;font-weight:900;flex-shrink:0}
 
 /* ══════════════════════════════════════
-   SPRINT/JUMP FULLSCREEN FLASH
+   SPRINT/JUMP FLASH — banner laterale
+   Non copre il contenuto: appare sul
+   bordo sinistro, semitrasparente
 ══════════════════════════════════════ */
 #sj-fullscreen{
-  position:fixed;inset:0;z-index:850;
+  position:fixed;
+  left:0;top:0;bottom:0;
+  width:72px;           /* striscia laterale */
+  z-index:850;
   display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:10px;
-  opacity:0;pointer-events:none;transition:opacity .2s;
+  flex-direction:column;gap:6px;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
+  overflow:hidden;
+  border-right:3px solid transparent;
 }
 #sj-fullscreen.show{opacity:1}
-#sj-fs-bg{position:absolute;inset:0;animation:sjpulse 1s ease-in-out infinite}
-@keyframes sjpulse{0%,100%{opacity:.5}50%{opacity:.9}}
+#sj-fs-bg{
+  position:absolute;inset:0;
+  animation:sjpulse .8s ease-in-out infinite;
+  /* Sfondo semitrasparente — si vede il contenuto attraverso */
+  opacity:.82;
+}
+@keyframes sjpulse{0%,100%{opacity:.70}50%{opacity:.92}}
 #sj-fs-label{
-  position:relative;font-family:var(--fd);
-  font-size:100px;font-weight:900;text-transform:uppercase;
+  position:relative;
+  font-family:var(--fd);
+  font-size:28px;font-weight:900;text-transform:uppercase;
   letter-spacing:2px;color:#fff;z-index:1;
-  text-shadow:0 0 60px currentColor;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  transform:rotate(180deg);
+  text-shadow:0 0 20px currentColor;
+  line-height:1;
 }
 #sj-fs-phase{
   position:relative;font-family:var(--fd);
-  font-size:50px;font-weight:900;letter-spacing:1px;z-index:1;
+  font-size:16px;font-weight:900;letter-spacing:2px;z-index:1;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  color:#fff;opacity:.9;
 }
 #sj-fs-time{
   position:relative;font-family:var(--fm);
-  font-size:70px;font-weight:700;z-index:1;color:#fff;
+  font-size:22px;font-weight:700;z-index:1;color:#fff;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  letter-spacing:1px;
 }
+/* Landscape: sposta il banner in alto invece che a sinistra */
+@media(orientation:landscape) and (max-height:650px){
+  #sj-fullscreen{
+    left:0;right:0;top:0;bottom:auto;
+    width:auto;height:48px;
+    flex-direction:row;
+    border-right:none;border-bottom:3px solid transparent;
+  }
+  #sj-fs-label,#sj-fs-phase,#sj-fs-time{
+    writing-mode:horizontal-tb;transform:none;
+    font-size:20px;
+  }
+  #sj-fs-phase{font-size:13px}
+  #sj-fs-time{font-size:18px}
+}
+
 
 /* ══════════════════════════════════════════════
    RESPONSIVE — Tablet & Mobile
@@ -577,6 +615,9 @@ body{display:flex;flex-direction:column}
   #main{flex:1;overflow:visible;display:grid;grid-template-columns:1fr 320px;grid-template-rows:auto;gap:6px;padding:6px}
   #col-left{overflow:visible;height:auto}
   #col-right{display:flex!important;width:320px}
+  /* Tracklist: riduci gap e font */
+  #tl-head,
+  .tr{gap:3px;padding:7px 10px}
   #now{overflow:visible;flex:none}
   #chart-canvas{height:130px}
   #np-title{font-size:26px!important}
@@ -594,6 +635,11 @@ body{display:flex;flex-direction:column}
   #main{grid-template-columns:1fr 280px}
   #col-right{width:280px}
   .tec-seg-time{display:none}
+  /* Tracklist 280px: togli Fase, griglia 5 col */
+  #tl-head,
+  .tr{grid-template-columns:22px 1fr 44px 52px 42px!important}
+  .tf{display:none}
+  #tl-head span:nth-child(3){display:none}
   #tec-box{max-height:110px}
   #tec-segs-wrap{max-height:102px}
   .tec-seg-item{font-size:13px}
@@ -627,6 +673,187 @@ body{display:flex;flex-direction:column}
   #np-title{font-size:18px!important}
   #metrics{gap:2px!important}
   .metric{padding:5px 2px!important}
+}
+
+/* ══════════════════════════════════════════════════════════
+   LANDSCAPE MOBILE/TABLET — tutto visibile senza scorrere
+   Attivo quando altezza < 650px (telefono landscape o tablet
+   orizzontale con barra browser)
+══════════════════════════════════════════════════════════ */
+@media(orientation:landscape) and (max-height:650px){
+  /* Corpo pagina: fixed, no scroll */
+  html,body{height:100%;overflow:hidden}
+  #app,body{height:100%;display:flex;flex-direction:column}
+
+  /* Header ultra-compatto: 36px */
+  #hdr{padding:3px 12px;min-height:0}
+  #hdr-sub{display:none}
+  #hdr-title{font-size:14px}
+  #wake-ind{width:7px;height:7px}
+
+  /* Layout 2 colonne rigido, occupa tutto lo spazio */
+  #main{
+    flex:1;overflow:hidden;
+    display:grid;
+    grid-template-columns:1fr 240px;
+    gap:5px;padding:4px;
+    height:calc(100vh - 44px);
+  }
+
+  /* Colonna sinistra: fissa, no overflow */
+  #col-left{
+    display:flex;flex-direction:column;
+    gap:4px;overflow:hidden;height:100%;
+  }
+
+  /* Grafico compresso */
+  #chart-canvas{height:70px!important}
+  #chart-wrap{padding:4px 6px 3px;flex-shrink:0}
+  #zone-leg{display:none}
+
+  /* Now playing: flex:1 per riempire lo spazio restante */
+  #now{
+    flex:1;overflow:hidden;
+    padding:5px 10px;gap:3px;
+    min-height:0;
+  }
+
+  /* Titolo più piccolo */
+  #np-title{font-size:18px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #np-artist{font-size:10px;margin-top:0}
+  #np-badge{font-size:10px;padding-top:0}
+  #np-row{margin-bottom:0}
+
+  /* ── METRICHE: grandi e leggibili da lontano ─────────────────
+     Zona, RPM, BPM, Resistenza, Manubrio sono il cruscotto
+     principale — devono essere visibili dalla bici (>2m)       */
+  #metrics{
+    gap:4px;
+    /* Altezza fissa: usa il 35% dello spazio del pannello now */
+    flex-shrink:0;
+  }
+  .metric{
+    padding:6px 4px!important;
+    border-radius:10px;
+    /* Bordo colorato più spesso per distinguere le zone */
+    border-width:2px!important;
+  }
+  /* Barra colore in cima più alta */
+  .metric::after{height:5px!important}
+  /* Valore: grande, leggibile da lontano */
+  .mv{
+    font-size:26px!important;
+    font-weight:900!important;
+    letter-spacing:-.5px;
+    line-height:1;
+  }
+  /* Label: piccola ma presente */
+  .ml{
+    font-size:8px!important;
+    margin-top:3px;
+    letter-spacing:.5px;
+  }
+
+  /* Info row: fase nascosta, tec compatta */
+  #info-row{grid-template-columns:1fr!important;gap:3px}
+  #fase-box{display:none}
+  #tec-box{max-height:64px;padding:4px 8px}
+  #tec-segs-wrap{max-height:56px}
+  /* Segmento attivo: ben leggibile, quelli futuri solo accennati */
+  .tec-seg-item{font-size:11px;padding:3px 7px}
+  .tec-seg-item.active{
+    font-size:15px!important;
+    font-weight:800;
+    letter-spacing:-.2px;
+  }
+  .tec-seg-mani{font-size:10px;padding:1px 5px}
+  .tec-seg-time{display:none}
+
+  /* Focus coaching: testo più grande rispetto al resto */
+  #focus-box{padding:4px 10px;flex-shrink:0}
+  #focus-lbl{display:none}
+  #focus-val{
+    font-size:13px!important;
+    line-height:1.3;
+    font-weight:700;
+  }
+
+  /* SJ tracker ridotto */
+  #sj-label{font-size:18px}
+  #sj-countdown{font-size:24px}
+  #sj-phase{font-size:10px;padding:2px 6px}
+  #sj-tracker{padding:5px 10px}
+
+  /* Progress bar minima */
+  #prog-bg{height:5px;margin-bottom:3px}
+  #time-row{font-size:11px}
+  #prog-wrap{flex-shrink:0}
+
+  /* Controlli: tutto in 1 riga, niente bordo separato */
+  #ctrl-section{
+    flex-shrink:0;padding:4px 8px;gap:4px;
+    border-radius:8px;
+  }
+  #sp-status-row{padding:3px 8px}
+  #sp-status-txt{font-size:10px}
+  #sp-dot{width:7px;height:7px}
+  #big-play{font-size:14px;padding:7px 8px}
+  .btn-sm{padding:7px 12px;font-size:16px}
+  #sync-badge{font-size:10px;padding:2px 6px}
+  #status-txt{font-size:9px}
+
+  /* Colonna destra: metronomo + tracklist compatti */
+  #col-right{
+    display:flex!important;flex-direction:column;
+    gap:4px;overflow:hidden;height:100%;width:240px;
+  }
+  #metro-wrap{flex-shrink:0;padding:6px 10px}
+  #metro-top{margin-bottom:4px}
+  #metro-lbl{font-size:9px}
+  #metro-bpm-val{font-size:20px}
+  #metro-bpm-lbl{font-size:9px}
+  .beat-dot.b1{width:36px;height:36px}
+  .beat-dot.b234{width:28px;height:28px}
+  #metro-beats{gap:8px}
+  #metro-sound-btn{padding:4px 8px;font-size:14px}
+
+  /* Tracklist: compattissima, scorribile */
+  #tl-wrap{flex:1;min-height:0}
+  /* Tracklist 240px landscape: solo #, Titolo, RPM, RES */
+  #tl-head,
+  .tr{grid-template-columns:20px 1fr 50px 40px!important;gap:2px}
+  #tl-head{padding:3px 6px;font-size:8px}
+  .tr{padding:4px 6px}
+  .tf{display:none!important}   /* nasconde Fase */
+  .tb{display:none!important}   /* nasconde BPM */
+  /* Mostra solo: #, Titolo, RPM, RES */
+  .ti{font-size:9px}
+  .tt{font-size:10px}
+  .tr2{font-size:11px;font-weight:800;color:var(--green)}
+  .tres{font-size:11px;font-weight:800;color:var(--red)}
+
+  /* sprint/jump banner: gestito nel blocco CSS dedicato */
+
+  /* Countdown overlay */
+  #tco-num{font-size:40px}
+  #tco-next{font-size:26px}
+  #tco-mani{font-size:16px;padding:4px 14px}
+}
+
+/* Landscape su schermi più alti (tablet 768px+): solo tweaks minori */
+@media(orientation:landscape) and (min-height:651px) and (max-height:900px){
+  #chart-canvas{height:90px!important}
+  #zone-leg{display:none}
+  #np-title{font-size:22px!important}
+  .mv{font-size:17px!important}
+  #tec-box{max-height:100px}
+  #tec-segs-wrap{max-height:92px}
+  #focus-val{font-size:12px}
+  /* Tracklist 320px: togli Fase, griglia 5 col */
+  #tl-head,
+  .tr{grid-template-columns:22px 1fr 44px 52px 42px!important}
+  .tf{display:none}
+  #tl-head span:nth-child(3){display:none}
 }
 
 </style>
@@ -1360,6 +1587,10 @@ function maybeShowSjFullscreen(slot){
     phaseText='OFF';
   }
   document.getElementById('sj-fs-bg').style.background=bgColor;
+  // Bordo del banner nel colore zona
+  const el=document.getElementById('sj-fullscreen');
+  el.style.borderRightColor=fsc;
+  el.style.borderBottomColor=fsc;
   document.getElementById('sj-fs-label').textContent=labelText;
   document.getElementById('sj-fs-label').style.color=fsc;
   document.getElementById('sj-fs-phase').textContent=phaseText;
@@ -1946,6 +2177,146 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 #pj-prog{position:absolute;bottom:0;left:0;height:10px;background:var(--zc);transition:width .5s linear,background .6s;box-shadow:0 0 20px var(--zc)}
 #pj-standby{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3vh;z-index:50}
 #pj-standby p{font-size:clamp(18px,2.5vw,36px);color:#333;text-align:center}
+/* ══════════════════════════════════════════════════════════
+   LANDSCAPE MOBILE/TABLET — tutto visibile senza scorrere
+   Attivo quando altezza < 650px (telefono landscape o tablet
+   orizzontale con barra browser)
+══════════════════════════════════════════════════════════ */
+@media(orientation:landscape) and (max-height:650px){
+  /* Corpo pagina: fixed, no scroll */
+  html,body{height:100%;overflow:hidden}
+  #app,body{height:100%;display:flex;flex-direction:column}
+
+  /* Header ultra-compatto: 36px */
+  #hdr{padding:3px 12px;min-height:0}
+  #hdr-sub{display:none}
+  #hdr-title{font-size:14px}
+  #wake-ind{width:7px;height:7px}
+
+  /* Layout 2 colonne rigido, occupa tutto lo spazio */
+  #main{
+    flex:1;overflow:hidden;
+    display:grid;
+    grid-template-columns:1fr 240px;
+    gap:5px;padding:4px;
+    height:calc(100vh - 44px);
+  }
+
+  /* Colonna sinistra: fissa, no overflow */
+  #col-left{
+    display:flex;flex-direction:column;
+    gap:4px;overflow:hidden;height:100%;
+  }
+
+  /* Grafico compresso */
+  #chart-canvas{height:70px!important}
+  #chart-wrap{padding:4px 6px 3px;flex-shrink:0}
+  #zone-leg{display:none}
+
+  /* Now playing: flex:1 per riempire lo spazio restante */
+  #now{
+    flex:1;overflow:hidden;
+    padding:5px 10px;gap:3px;
+    min-height:0;
+  }
+
+  /* Titolo più piccolo */
+  #np-title{font-size:18px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #np-artist{font-size:10px;margin-top:0}
+  #np-badge{font-size:10px;padding-top:0}
+  #np-row{margin-bottom:0}
+
+  /* Metriche: 1 riga ultrac ompatta */
+  #metrics{gap:3px}
+  .mv{font-size:16px!important}
+  .ml{font-size:7px!important}
+  .metric{padding:4px 2px!important}
+
+  /* Info row: fase nascosta, tec compatta */
+  #info-row{grid-template-columns:1fr!important;gap:3px}
+  #fase-box{display:none}
+  #tec-box{max-height:72px;padding:4px 8px}
+  #tec-segs-wrap{max-height:64px}
+  .tec-seg-item{font-size:12px;padding:3px 7px}
+  .tec-seg-item.active{font-size:14px}
+  .tec-seg-mani{font-size:10px;padding:1px 5px}
+  .tec-seg-time{display:none}
+
+  /* Focus coaching compattissimo */
+  #focus-box{padding:4px 8px}
+  #focus-lbl{display:none}
+  #focus-val{font-size:12px;line-height:1.25}
+
+  /* SJ tracker ridotto */
+  #sj-label{font-size:18px}
+  #sj-countdown{font-size:24px}
+  #sj-phase{font-size:10px;padding:2px 6px}
+  #sj-tracker{padding:5px 10px}
+
+  /* Progress bar minima */
+  #prog-bg{height:5px;margin-bottom:3px}
+  #time-row{font-size:11px}
+  #prog-wrap{flex-shrink:0}
+
+  /* Controlli: tutto in 1 riga, niente bordo separato */
+  #ctrl-section{
+    flex-shrink:0;padding:4px 8px;gap:4px;
+    border-radius:8px;
+  }
+  #sp-status-row{padding:3px 8px}
+  #sp-status-txt{font-size:10px}
+  #sp-dot{width:7px;height:7px}
+  #big-play{font-size:14px;padding:7px 8px}
+  .btn-sm{padding:7px 12px;font-size:16px}
+  #sync-badge{font-size:10px;padding:2px 6px}
+  #status-txt{font-size:9px}
+
+  /* Colonna destra: metronomo + tracklist compatti */
+  #col-right{
+    display:flex!important;flex-direction:column;
+    gap:4px;overflow:hidden;height:100%;width:240px;
+  }
+  #metro-wrap{flex-shrink:0;padding:6px 10px}
+  #metro-top{margin-bottom:4px}
+  #metro-lbl{font-size:9px}
+  #metro-bpm-val{font-size:20px}
+  #metro-bpm-lbl{font-size:9px}
+  .beat-dot.b1{width:36px;height:36px}
+  .beat-dot.b234{width:28px;height:28px}
+  #metro-beats{gap:8px}
+  #metro-sound-btn{padding:4px 8px;font-size:14px}
+
+  /* Tracklist: compattissima, scorribile */
+  #tl-wrap{flex:1;min-height:0}
+  #tl-head{padding:4px 8px;font-size:9px}
+  .tr{padding:5px 8px}
+  .ti{font-size:9px}
+  .tt{font-size:10px}
+  .tf{font-size:8px}
+  .tb,.tr2,.tres{font-size:9px}
+
+  /* Overlay fullscreen sprint/jump: testo compatto */
+  #sj-fs-label{font-size:60px}
+  #sj-fs-phase{font-size:32px}
+  #sj-fs-time{font-size:44px}
+
+  /* Countdown overlay */
+  #tco-num{font-size:40px}
+  #tco-next{font-size:26px}
+  #tco-mani{font-size:16px;padding:4px 14px}
+}
+
+/* Landscape su schermi più alti (tablet 768px+): solo tweaks minori */
+@media(orientation:landscape) and (min-height:651px) and (max-height:900px){
+  #chart-canvas{height:90px!important}
+  #zone-leg{display:none}
+  #np-title{font-size:22px!important}
+  .mv{font-size:17px!important}
+  #tec-box{max-height:100px}
+  #tec-segs-wrap{max-height:92px}
+  #focus-val{font-size:12px}
+}
+
 </style>
 </head>
 <body>
