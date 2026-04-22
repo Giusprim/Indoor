@@ -54,12 +54,32 @@ label{font-size:11px;color:#6666aa;display:block;margin-bottom:3px;text-transfor
 .info-bar strong{color:#e8e8f0}
 .info-bar code{background:#141428;padding:2px 5px;border-radius:3px;color:var(--accent);font-size:10px}
 .schema-box{background:#080810;border:1px solid #333355;border-radius:8px;padding:12px 14px;font-size:12px;font-family:monospace;color:#8888cc;line-height:2;margin-bottom:10px}
+/* seg-pill tipi aggiuntivi */
+.seg-pill.sprint_off{border-color:#00dfc0;color:#00dfc0}
+.seg-pill.jump_off{border-color:#88aaff;color:#88aaff}
+.seg-pill.crono{border-color:#4d79ff;color:#4d79ff}
+.seg-pill.crono_attack{border-color:#cc88ff;color:#cc88ff}
+.seg-pill.salita{border-color:#ff8844;color:#ff8844}
+.seg-pill.running{border-color:#44dd88;color:#44dd88}
+.seg-pill.seated{border-color:#6666aa;color:#6666aa}
+/* Editor modal */
+#edit-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center}
+#edit-modal.open{display:flex}
+#edit-box{background:#111120;border:1px solid #3a3a60;border-radius:14px;padding:24px;width:min(520px,92vw);max-height:90vh;overflow-y:auto}
+#edit-box h3{font-size:15px;font-weight:700;margin-bottom:16px;color:var(--accent)}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.edit-field label{font-size:10px;color:#6666aa;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:3px}
+.edit-field input,.edit-field select,.edit-field textarea{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:7px;color:#e8e8f0;padding:8px 10px;font-size:13px;outline:none;font-family:inherit}
+.edit-field input:focus,.edit-field select:focus,.edit-field textarea:focus{border-color:var(--accent)}
+.edit-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.edit-btn{background:var(--s3);border:1px solid var(--border);border-radius:6px;color:#e8e8f0;padding:4px 10px;cursor:pointer;font-size:14px}
+.edit-btn:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
 <header>
   <div><h1>🚴 Indoor Cycling Planner</h1><p>Power Ride Coach · Giuseppe Primavera · AIF 2° Livello</p></div>
-  <span class="badge">v3.6</span>
+  <span class="badge">v3.7</span>
 </header>
 <main>
 
@@ -129,6 +149,8 @@ La Cura — Franco Battiato | 90 | 3:55"></textarea>
         <option value="forza">Forza/Strength</option>
         <option value="piramidale">Piramidale</option>
         <option value="tabata">Tabata Cycling</option>
+        <option value="fartlek">Fartlek</option>
+        <option value="running">Running / Cadenza</option>
       </select>
     </div>
   </div>
@@ -258,7 +280,20 @@ function clearTracks(){TRACKS=[];document.getElementById("cards").innerHTML='<p 
 function calcS(){let cur=0;TRACKS.forEach(t=>{t.s=cur;cur+=t.d;});}
 function setIS(msg,type){const el=document.getElementById("import-status");el.textContent=msg;el.className=type==="ok"?"status-ok":"status-err";}
 
-function guessType(label){const l=label.toLowerCase();if(l.includes("sprint"))return"sprint";if(l.includes("jump"))return"jump";if(l.includes("in piedi")&&!l.includes("leggero"))return"standing";return"steady";}
+function guessType(label){
+  const l=label.toLowerCase();
+  if(l.includes('sprint')&&(l.includes(' on')||l.includes('piedi'))) return 'sprint';
+  if(l.includes('sprint')&&(l.includes(' off')||l.includes('recupero'))) return 'sprint_off';
+  if(l.includes('jump')&&l.includes('off')) return 'jump_off';
+  if(l.includes('jump')) return 'jump';
+  if(l.includes('crono attack')) return 'crono_attack';
+  if(l.includes('crono')) return 'crono';
+  if(l.includes('salita')) return 'salita';
+  if(l.includes('in piedi')&&!l.includes('leggero')) return 'standing';
+  if(l.includes('running')) return 'running';
+  if(l.includes('seduto')) return 'seated';
+  return 'steady';
+}
 
 function renderCards(){
   const wrap=document.getElementById("cards");
@@ -429,8 +464,8 @@ async function generatePlayer(){
       .replace(/\{\{CLIENT_ID\}\}/g,client).replace(/\{\{REDIRECT_URI\}\}/g,redirect)
       .replace(/\{\{PLAYLIST_URI\}\}/g,playlist)
       .replace("const T = [];// Injected dynamically","const T = "+JSON.stringify(TRACKS,null,2)+";")
-      .replace("const TOTAL=3495;","const TOTAL="+totSec+";")
-      .replace(/0:58:15/g,total);
+      .replace(/const TOTAL=\d+;/,"const TOTAL="+totSec+";")
+      .replace(/\d+:\d{2}:\d{2}/g,total);
     const blob=new Blob([filled],{type:"text/html"});
     const url=URL.createObjectURL(blob);
     const a=document.getElementById("dl-link");
