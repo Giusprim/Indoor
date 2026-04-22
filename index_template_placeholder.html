@@ -844,16 +844,65 @@ body{display:flex;flex-direction:column}
 @media(orientation:landscape) and (min-height:651px) and (max-height:900px){
   #chart-canvas{height:90px!important}
   #zone-leg{display:none}
-  #np-title{font-size:22px!important}
-  .mv{font-size:17px!important}
-  #tec-box{max-height:100px}
-  #tec-segs-wrap{max-height:92px}
-  #focus-val{font-size:12px}
-  /* Tracklist 320px: togli Fase, griglia 5 col */
+
+  /* ── TITOLO BRANO: leggibile dalla spinbike (2m+) ── */
+  #np-title{font-size:28px!important;font-weight:900!important}
+  #np-artist{font-size:13px}
+
+  /* ── BADGE BRANO (es. 2/16): grande e visibile ── */
+  #np-badge{font-size:18px!important;color:#fff;font-weight:800}
+
+  /* ── METRICHE: cruscotto principale dalla bike ─────────────
+     Zona FC, RPM, BPM, Resistenza, Manubrio
+     Font grande + box più alto + barra colore spessa           */
+  #metrics{gap:5px;flex-shrink:0}
+  .metric{
+    padding:10px 4px!important;
+    border-radius:11px;
+    border-width:2px!important;
+  }
+  .metric::after{height:6px!important}
+  .mv{
+    font-size:34px!important;
+    font-weight:900!important;
+    line-height:1;
+    letter-spacing:-.5px;
+  }
+  .ml{
+    font-size:9px!important;
+    margin-top:4px;
+    letter-spacing:.6px;
+  }
+
+  /* ── FASE: visibile senza ingrandire troppo ── */
+  #fase-box{display:flex!important}
+  #fase-val{font-size:18px!important}
+  #info-row{grid-template-columns:120px 1fr;gap:5px}
+
+  /* ── SEGMENTO ATTIVO: leggibile a colpo d'occhio ── */
+  .tec-seg-item{font-size:12px}
+  .tec-seg-item.active{
+    font-size:17px!important;
+    font-weight:800;
+  }
+  #tec-box{max-height:110px;padding:6px 10px}
+  #tec-segs-wrap{max-height:102px}
+
+  /* ── FOCUS COACHING ── */
+  #focus-val{font-size:14px!important;font-weight:700}
+
+  /* ── SJ TRACKER (JUMP/SPRINT nella barra sinistra) ── */
+  #sj-label{font-size:22px!important}
+  #sj-countdown{font-size:28px!important}
+
+  /* Tracklist: togli Fase, griglia 5 col */
   #tl-head,
   .tr{grid-template-columns:22px 1fr 44px 52px 42px!important}
   .tf{display:none}
   #tl-head span:nth-child(3){display:none}
+  .tb{font-size:16px}
+  .tr2{font-size:15px;font-weight:800}
+  .tres{font-size:15px;font-weight:800}
 }
 
 </style>
