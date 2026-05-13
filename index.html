@@ -1167,13 +1167,13 @@ const T = [
     "bpm": "122",
     "d": 147,
     "z": "Z3",
-    "rpm": "85-100",
+    "rpm": "70-85",
     "res": "40%",
     "rn": 0.4,
     "tec": "Salita progressiva: Seduto carico → In piedi carico",
     "mani": "P2→P3",
     "fase": "Corpo lezione",
-    "focus": "Forza e resistenza.",
+    "focus": "Forza e resistenza; tieni la schiena dritta in salita.",
     "s": 382
   },
   {
@@ -1199,13 +1199,13 @@ const T = [
     "bpm": "121",
     "d": 365,
     "z": "Z3",
-    "rpm": "85-100",
+    "rpm": "70-90",
     "res": "40%",
     "rn": 0.4,
-    "tec": "Salita progressiva: Seduto carico → In piedi carico",
+    "tec": "Seduto carico → Jump in 8 × 4 → In piedi carico → Jump in 8 × 4 → Seduto carico",
     "mani": "P2→P3",
     "fase": "Corpo lezione",
-    "focus": "Forza e resistenza.",
+    "focus": "Mantieni la cadenza nei jump; gambe leggere in piedi.",
     "s": 710
   },
   {
@@ -1231,13 +1231,13 @@ const T = [
     "bpm": "124",
     "d": 279,
     "z": "Z3",
-    "rpm": "85-100",
+    "rpm": "70-90",
     "res": "40%",
     "rn": 0.4,
-    "tec": "Salita progressiva: Seduto carico → In piedi carico",
+    "tec": "Seduto carico → Jump in 4 × 8 → In piedi carico → Jump in 4 × 8 → Seduto carico",
     "mani": "P2→P3",
     "fase": "Corpo lezione",
-    "focus": "Forza e resistenza.",
+    "focus": "Jump veloci 4x4: tieni i fianchi fermi, solo le gambe lavorano.",
     "s": 1309
   },
   {
@@ -1279,13 +1279,13 @@ const T = [
     "bpm": "116",
     "d": 153,
     "z": "Z3",
-    "rpm": "85-100",
+    "rpm": "70-85",
     "res": "40%",
     "rn": 0.4,
     "tec": "Salita progressiva: Seduto carico → In piedi carico",
     "mani": "P2→P3",
     "fase": "Corpo lezione",
-    "focus": "Forza e resistenza.",
+    "focus": "Forza e resistenza; tieni la schiena dritta in salita.",
     "s": 1901
   },
   {
@@ -1311,13 +1311,13 @@ const T = [
     "bpm": "194",
     "d": 147,
     "z": "Z3",
-    "rpm": "85-100",
+    "rpm": "70-85",
     "res": "40%",
     "rn": 0.4,
     "tec": "Salita progressiva: Seduto carico → In piedi carico",
     "mani": "P2→P3",
     "fase": "Corpo lezione",
-    "focus": "Forza e resistenza.",
+    "focus": "Forza e resistenza; tieni la schiena dritta in salita.",
     "s": 2373
   },
   {
@@ -1342,14 +1342,14 @@ const T = [
     "ar": "Nu Guinea, Célia Kameni",
     "bpm": "110",
     "d": 264,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante",
-    "mani": "P2",
-    "fase": "Corpo lezione",
-    "focus": "Cadenza e tecnica.",
+    "z": "Z1",
+    "rpm": "60-70",
+    "res": "20%",
+    "rn": 0.2,
+    "tec": "Defaticamento: Seduto leggero → Seduto molto leggero",
+    "mani": "P1↔P2",
+    "fase": "Defaticamento",
+    "focus": "Abbassa gradualmente la frequenza cardiaca. Respiro profondo.",
     "s": 2675
   },
   {
@@ -1358,14 +1358,14 @@ const T = [
     "ar": "Bon Entendeur",
     "bpm": "123",
     "d": 183,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
-    "mani": "P1↔P2",
-    "fase": "Defaticamento",
-    "focus": "Recupero e rilassamento.",
+    "z": "Z1",
+    "rpm": "40-50",
+    "res": "10%",
+    "rn": 0.1,
+    "tec": "Stretching: Pedalata lentissima → Recupero fuori bici",
+    "mani": "P1",
+    "fase": "Stretching",
+    "focus": "Allunga quadricipiti, ischio-crurali e dorsali. Respira lento.",
     "s": 2939
   }
 ];
@@ -1496,7 +1496,7 @@ function parseTecSegments(t){
     const timePerJump=Math.max(16*beatLen, availForJumps/Math.max(1,jumpLabels.length));
 
     labels.forEach((label,i)=>{
-      const jMatch=label.match(/jump\s+in\s+(\d+)/i);
+      const jMatch=label.match(/jump\s+in\s+(\d+)(?:\s*[x×]\s*(\d+))?/i);
 
       if(jMatch){
         // ── Fase JUMP: genera cicli ON/OFF espliciti ───────────────────
@@ -1508,7 +1508,10 @@ function parseTecSegments(t){
         const phaseEnd=parseFloat(Math.min(cur+timePerJump,
           dur-(i<labels.length-1?transSec+16*beatLen:0)).toFixed(2));
         const avail=phaseEnd-cur;
-        const nCycles=Math.max(1,Math.floor(avail/cycleLen));
+        const nMaxCycles=jMatch[2]?parseInt(jMatch[2]):null;
+        const nCycles=nMaxCycles
+          ?Math.min(Math.max(1,Math.floor(avail/cycleLen)),nMaxCycles)
+          :Math.max(1,Math.floor(avail/cycleLen));
 
         for(let c=0;c<nCycles;c++){
           const onFrom=parseFloat(cur.toFixed(2));
