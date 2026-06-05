@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>🚴 Italian Remix Montagna</title>
+<title>🚴 Italian Power Ride</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -912,8 +912,8 @@ body{display:flex;flex-direction:column}
 <!-- HEADER -->
 <div id="hdr">
   <div>
-    <div id="hdr-title">🚴 Italian Remix Montagna</div>
-    <div id="hdr-sub">Giuseppe Primavera · 15 BRANI · 0:52:02</div>
+    <div id="hdr-title">🚴 Italian Power Ride</div>
+    <div id="hdr-sub">GIUSEPPE PRIMAVERA · AIF 2° LVL · 18 BRANI · 58:15</div>
   </div>
   <div id="hdr-r">
     <span id="wake-ind"></span>
@@ -1008,9 +1008,9 @@ body{display:flex;flex-direction:column}
           <div id="prog-markers"></div>
         </div>
         <div id="time-row">
-          <span id="t-cur">0:52:02</span>
+          <span id="t-cur">0:00:00</span>
           <span id="t-rem">−0:00</span>
-          <span id="t-end">0:52:02</span>
+          <span id="t-end">0:58:15</span>
         </div>
       </div>
     </div>
@@ -1121,257 +1121,35 @@ body{display:flex;flex-direction:column}
 // ═══════════════════════════════════════════════════════
 const CLIENT_ID = 'fec34f5ffb9a46ca912190a6557e637c';
 const REDIRECT = 'https://giusprim.github.io/Indoor/';
-const PLAYLIST = 'spotify:playlist:35giki2hUlBqrc4TRfnIxP';
+const PLAYLIST = 'spotify:playlist:2YEWQkX2mrFV4qzE6mS0ZF';
 const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
 // ═══════════════════════════════════════════════════════
 //  DATI LEZIONE
 // ═══════════════════════════════════════════════════════
-const T = [
-  {
-    "i": 1,
-    "title": "Nel Blu Dipinto Di Blu (Volare)",
-    "ar": "DOLCE VITA",
-    "bpm": "120",
-    "d": 168,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
-    "mani": "P1↔P2",
-    "fase": "Warm-up",
-    "focus": "Riscaldamento; prepara le gambe.",
-    "s": 0
-  },
-  {
-    "i": 2,
-    "title": "Ancora",
-    "ar": "Remix — Dj Giulio Tarturaga, Paolo Lipari Sax",
-    "bpm": "130",
-    "d": 214,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
-    "mani": "P1↔P2",
-    "fase": "Warm-up",
-    "focus": "Riscaldamento; prepara le gambe.",
-    "s": 168
-  },
-  {
-    "i": 3,
-    "title": "Sant'allegria",
-    "ar": "Jack Sani Remix — Ornella Vanoni, Jack Sani",
-    "bpm": "122",
-    "d": 147,
-    "z": "Z3",
-    "rpm": "70-85",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Salita progressiva: Seduto carico → In piedi carico",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Forza e resistenza; tieni la schiena dritta in salita.",
-    "s": 382
-  },
-  {
-    "i": 4,
-    "title": "Ma stasera",
-    "ar": "Benny Benassi Remix — Marco Mengoni, Benny Benassi",
-    "bpm": "121",
-    "d": 181,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante",
-    "mani": "P2",
-    "fase": "Corpo lezione",
-    "focus": "Cadenza e tecnica.",
-    "s": 529
-  },
-  {
-    "i": 5,
-    "title": "Figli Delle Stelle",
-    "ar": "Italian Disco Mix — TheDjLawyer",
-    "bpm": "121",
-    "d": 365,
-    "z": "Z3",
-    "rpm": "70-90",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Seduto carico → Jump in 8 × 4 → In piedi carico → Jump in 8 × 4 → Seduto carico",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Mantieni la cadenza nei jump; gambe leggere in piedi.",
-    "s": 710
-  },
-  {
-    "i": 6,
-    "title": "Perduto",
-    "ar": "Radio Mix — Inspiro, Ornella Vanoni",
-    "bpm": "124",
-    "d": 234,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante",
-    "mani": "P2",
-    "fase": "Corpo lezione",
-    "focus": "Cadenza e tecnica.",
-    "s": 1075
-  },
-  {
-    "i": 7,
-    "title": "Occidentali's Karma (Benny Benassi & MazZz Remix)",
-    "ar": "Francesco Gabbani, MazZz, Benny Benassi",
-    "bpm": "124",
-    "d": 279,
-    "z": "Z3",
-    "rpm": "70-90",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Seduto carico → Jump in 4 × 8 → In piedi carico → Jump in 4 × 8 → Seduto carico",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Jump veloci 4x4: tieni i fianchi fermi, solo le gambe lavorano.",
-    "s": 1309
-  },
-  {
-    "i": 8,
-    "title": "...Baby One More Time",
-    "ar": "D'Amico & Valax",
-    "bpm": "125",
-    "d": 128,
-    "z": "Z4",
-    "rpm": "50-105",
-    "res": "55%",
-    "rn": 0.55,
-    "tec": "Crono: Seduto aero → In piedi leggero → Seduto aero",
-    "mani": "P4",
-    "fase": "Corpo lezione",
-    "focus": "Potenza e velocità.",
-    "s": 1588
-  },
-  {
-    "i": 9,
-    "title": "In My Mind",
-    "ar": "Dynoro, Gigi D'Agostino",
-    "bpm": "126",
-    "d": 185,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante",
-    "mani": "P2",
-    "fase": "Corpo lezione",
-    "focus": "Cadenza e tecnica.",
-    "s": 1716
-  },
-  {
-    "i": 10,
-    "title": "Nell'aria 2021",
-    "ar": "Ben DJ",
-    "bpm": "116",
-    "d": 153,
-    "z": "Z3",
-    "rpm": "70-85",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Salita progressiva: Seduto carico → In piedi carico",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Forza e resistenza; tieni la schiena dritta in salita.",
-    "s": 1901
-  },
-  {
-    "i": 11,
-    "title": "Acqua e Sale",
-    "ar": "Disco Extended Mix — B-Groove",
-    "bpm": "120",
-    "d": 319,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Running leggero: Seduto veloce (pedalata rotonda) → Seduto ritmo costante",
-    "mani": "P2",
-    "fase": "Corpo lezione",
-    "focus": "Cadenza e tecnica.",
-    "s": 2054
-  },
-  {
-    "i": 12,
-    "title": "Everybody Needs Somebody to Love",
-    "ar": "Jive Bunny and the Mastermixers",
-    "bpm": "194",
-    "d": 147,
-    "z": "Z3",
-    "rpm": "70-85",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Salita progressiva: Seduto carico → In piedi carico",
-    "mani": "P2→P3",
-    "fase": "Corpo lezione",
-    "focus": "Forza e resistenza; tieni la schiena dritta in salita.",
-    "s": 2373
-  },
-  {
-    "i": 13,
-    "title": "Shake a Tail Feather",
-    "ar": "2023 Remaster — Tina Turner",
-    "bpm": "156",
-    "d": 155,
-    "z": "Z4",
-    "rpm": "50-105",
-    "res": "55%",
-    "rn": 0.55,
-    "tec": "Crono: Seduto aero → In piedi leggero → Seduto aero",
-    "mani": "P4",
-    "fase": "Corpo lezione",
-    "focus": "Potenza e velocità.",
-    "s": 2520
-  },
-  {
-    "i": 14,
-    "title": "Marechià",
-    "ar": "Nu Guinea, Célia Kameni",
-    "bpm": "110",
-    "d": 264,
-    "z": "Z1",
-    "rpm": "60-70",
-    "res": "20%",
-    "rn": 0.2,
-    "tec": "Defaticamento: Seduto leggero → Seduto molto leggero",
-    "mani": "P1↔P2",
-    "fase": "Defaticamento",
-    "focus": "Abbassa gradualmente la frequenza cardiaca. Respiro profondo.",
-    "s": 2675
-  },
-  {
-    "i": 15,
-    "title": "Méditerranée",
-    "ar": "Bon Entendeur",
-    "bpm": "123",
-    "d": 183,
-    "z": "Z1",
-    "rpm": "40-50",
-    "res": "10%",
-    "rn": 0.1,
-    "tec": "Stretching: Pedalata lentissima → Recupero fuori bici",
-    "mani": "P1",
-    "fase": "Stretching",
-    "focus": "Allunga quadricipiti, ischio-crurali e dorsali. Respira lento.",
-    "s": 2939
-  }
+const T=[
+  {i:1, title:"Nell'aria 2021",         ar:"Ben DJ",                          s:0,    d:145, z:"Z2",rpm:"80–90", bpm:"116",res:"25%",tec:"Seduto leggero → In piedi leggero → Seduto leggero",              mani:"P1↔P2",fase:"Warm-up",           focus:"Riscaldamento; prepara le gambe al ritmo."},
+  {i:2, title:"Primavera",              ar:"Ben DJ",                          s:145,  d:202, z:"Z2",rpm:"85–95", bpm:"114",res:"35%",tec:"Seduto veloce → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Warm-up attivo",     focus:"Attiva la cadenza; 90 RPM controllati."},
+  {i:3, title:"Nel blu dipinto di blu", ar:"Domenico Modugno, Jack Sani",     s:347,  d:176, z:"Z3",rpm:"90–98", bpm:"123",res:"45%",tec:"Seduto veloce → Seduto ritmo costante",                           mani:"P1",   fase:"Endurance",          focus:"Mantieni regolarità; respira ogni 4 battiti."},
+  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Seduto ritmo → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Endurance",          focus:"Stabilità di core; niente rollii."},
+  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → In piedi carico → Seduto carico",  mani:"P2→P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
+  {i:6, title:"Con un Deca",            ar:"883, Fargetta",                   s:857,  d:346, z:"Z4",rpm:"70–80", bpm:"124",res:"70%",tec:"Salita progressiva: Seduto carico → In piedi carico",              mani:"P2→P3",fase:"Climb progressivo",  focus:"Ogni minuto +1/10 di carico."},
+  {i:7, title:"Ninna Nanna",            ar:"Loredana Bertè, TWENTY SIX",     s:1203, d:117, z:"Z4",rpm:"85–95", bpm:"130",res:"60%",tec:"Jump in 8 → Jump in 4 → Jump in 2",                              mani:"P2↔P3",fase:"Jump",              focus:"Leggeri in piedi, potenti seduti."},
+  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Jump in 4 → In piedi veloce → Seduto veloce",                    mani:"P2↔P3",fase:"Build‑up",          focus:"Accelera 10–15 alla fine di ogni ritornello."},
+  {i:9, title:"Happy Hour",             ar:"DJ Matrix",                       s:1488, d:218, z:"Z5",rpm:"105–120",bpm:"140",res:"75%",tec:"Sprint 20'' ON (in piedi) → Seduto 20'' OFF",                    mani:"P4Atk",   fase:"Sprint Block #1",    focus:"Sprint pulito: bacino fermo, spinta rotonda."},
+  {i:10,title:"Soldi",                  ar:"Mahmood, Denis First",            s:1706, d:172, z:"Z5",rpm:"100–110",bpm:"100",res:"75%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF",       mani:"P4Atk",fase:"Sprint Block #1",   focus:"30 ON / 45 OFF ×3–4."},
+  {i:11,title:"Mambo Salentino",        ar:"Boomdabash, Alessandra Amoroso",  s:1878, d:147, z:"Z3",rpm:"90–100",bpm:"100",res:"50%",tec:"Tempo ride: Seduto veloce → Seduto leggero",                      mani:"P2",   fase:"Recovery ritmato",   focus:"Respira; sorridi; tieni il tempo."},
+  {i:12,title:"Far l'Amore",            ar:"Bob Sinclar, Raffaella Carrà",    s:2025, d:174, z:"Z5",rpm:"105–115",bpm:"128",res:"80%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF (x4‑6)",              mani:"P3",   fase:"Sprint tecnico",     focus:"4–6 ripetizioni, chiudi in accelerazione."},
+  {i:13,title:"Rumore",                 ar:"Raffaella Carrà, Steve Forest",   s:2199, d:204, z:"Z3",rpm:"95–100",bpm:"125",res:"55%",tec:"Tempo ride controllo (seduto)",                                    mani:"P2",   fase:"Controllo",          focus:"Ricomponi il gesto; respira profondo."},
+  {i:14,title:"Fare l'Amore",           ar:"Loredana Bertè, Evissimax",       s:2403, d:222, z:"Z5",rpm:"85–90", bpm:"174",res:"80%",tec:"Sprint 15'' ON (in piedi) → Seduto 15'' OFF",                      mani:"P4Atk",   fase:"PEAK / Finisher",    focus:"Dai tutto ma resta pulito."},
+  {i:15,title:"Blue (Da Ba Dee)",       ar:"Eiffel 65, Gabry Ponte",          s:2625, d:212, z:"Z4",rpm:"98–102",bpm:"198",res:"65%",tec:"Jump in 4 → Jump in 2 → Sprint breve → Seduto veloce",            mani:"P2↔P3",fase:"Party Decompression",focus:"Ultimo sprint di classe; divertiti."},
+  {i:16,title:"Aserejé",                ar:"Elettra Lamborghini, Los Ketchup",s:2837, d:171, z:"Z3",rpm:"80–90", bpm:"92", res:"50%",tec:"Seduto leggero (party ride)",                                      mani:"P2",   fase:"Party Ride",         focus:"Mantieni la cadenza; focus sul divertimento."},
+  {i:17,title:"Ti Porto Via Con Me",    ar:"Jovanotti",                       s:3008, d:252, z:"Z2",rpm:"80–85", bpm:"132",res:"35%",tec:"Seduto leggero (defaticamento)",                                   mani:"P1↔P2",fase:"Defaticamento",      focus:"Allunga la pedalata, abbassa FC."},
+  {i:18,title:"La Cura",                ar:"Franco Battiato",                 s:3260, d:235, z:"Z1",rpm:"60–65", bpm:"90", res:"20%",tec:"Stretching in bici / off‑bike",                                    mani:"P1",   fase:"Stretching",         focus:"Respira; chiudi con gratitudine."},
 ];
 
 const CROSSFADE=4;
-const TOTAL=3122;
+const TOTAL=3495;
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
 // ═══════════════════════════════════════════════════════
@@ -1496,7 +1274,7 @@ function parseTecSegments(t){
     const timePerJump=Math.max(16*beatLen, availForJumps/Math.max(1,jumpLabels.length));
 
     labels.forEach((label,i)=>{
-      const jMatch=label.match(/jump\s+in\s+(\d+)(?:\s*[x×]\s*(\d+))?/i);
+      const jMatch=label.match(/jump\s+in\s+(\d+)/i);
 
       if(jMatch){
         // ── Fase JUMP: genera cicli ON/OFF espliciti ───────────────────
@@ -1508,10 +1286,7 @@ function parseTecSegments(t){
         const phaseEnd=parseFloat(Math.min(cur+timePerJump,
           dur-(i<labels.length-1?transSec+16*beatLen:0)).toFixed(2));
         const avail=phaseEnd-cur;
-        const nMaxCycles=jMatch[2]?parseInt(jMatch[2]):null;
-        const nCycles=nMaxCycles
-          ?Math.min(Math.max(1,Math.floor(avail/cycleLen)),nMaxCycles)
-          :Math.max(1,Math.floor(avail/cycleLen));
+        const nCycles=Math.max(1,Math.floor(avail/cycleLen));
 
         for(let c=0;c<nCycles;c++){
           const onFrom=parseFloat(cur.toFixed(2));
@@ -2449,7 +2224,7 @@ function buildProjHTML() {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>📺 Indoor Cycling — Proiezione</title>
+<title>🚴 Italian Power Ride</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--zc:#00cc70}
