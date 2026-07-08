@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Contabattute</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: #14161a;
+    color: #f2f2ee;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    overscroll-behavior: none;
+  }
+  .wrap {
+    max-width: 480px; margin: 0 auto; padding: 16px 16px 40px;
+    min-height: 100%; display: flex; flex-direction: column; gap: 14px;
+  }
+  h1 { font-size: 14px; font-weight: 600; margin: 6px 0 0; color: #8f948f; }
+
+  .stage {
+    background: #1d2026; border-radius: 16px; padding: 20px 18px;
+    text-align: center; border: 2px solid #2a2e35; transition: border-color 0.25s, background 0.25s;
+  }
+  .stage.listening { border-color: #ffb648; }
+  .stage.listening .stage-state { color: #ffb648; }
+  .stage.synced { border-color: #4fd58a; background: #172420; }
+  .stage.synced .stage-state { color: #4fd58a; }
+
+  .stage-state { font-size: 13px; font-weight: 600; letter-spacing: 0.3px; margin-bottom: 6px; color: #8f948f; }
+  .bpm-value { font-size: 52px; font-weight: 700; line-height: 1; letter-spacing: -1px; }
+  .bpm-label { font-size: 12px; color: #8f948f; margin-top: 4px; }
+
+  .level-meter { height: 6px; background: #2a2e35; border-radius: 3px; margin-top: 14px; overflow: hidden; }
+  .level-fill { height: 100%; width: 0%; background: #ffb648; transition: width 0.05s linear; }
+  .stage.synced .level-fill { background: #4fd58a; }
+
+  .sync-progress { font-size: 11px; color: #6b6f76; margin-top: 8px; min-height: 14px; }
+
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+
+  button {
+    border: none; border-radius: 12px; padding: 14px 10px; font-size: 15px; font-weight: 600;
+    cursor: pointer; color: #f2f2ee; background: #2a2e35;
+  }
+  button:active { transform: scale(0.97); }
+  button.primary { background: #ff9d5c; color: #1d2026; }
+  button.primary.stop { background: #e0524b; color: #fff; }
+  button.ghost { background: transparent; border: 1px solid #2a2e35; }
+  button.small { padding: 10px; font-size: 13px; }
+
+  .counters { display: flex; gap: 10px; }
+  .counter-box {
+    flex: 1; background: #1d2026; border-radius: 14px; padding: 14px 8px;
+    text-align: center; border: 1px solid #2a2e35;
+  }
+  .counter-value { font-size: 32px; font-weight: 700; }
+  .counter-label { font-size: 11px; color: #8f948f; margin-top: 2px; }
+  .counter-box.accent .counter-value { color: #ff9d5c; }
+
+  .beat-dots { display: flex; justify-content: center; gap: 12px; }
+  .dot {
+    width: 32px; height: 32px; border-radius: 50%; background: #2a2e35;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: #6b6f76;
+    transition: background 0.06s, color 0.06s, transform 0.06s;
+  }
+  .dot.on { background: #ff9d5c; color: #1d2026; transform: scale(1.12); }
+  .dot.on.first { background: #4fd58a; }
+
+  .nudge-row { display: flex; gap: 8px; }
+  .nudge-row button { flex: 1; }
+
+  .settings {
+    background: #1d2026; border-radius: 14px; padding: 14px 16px;
+    border: 1px solid #2a2e35; display: flex; flex-direction: column; gap: 10px;
+  }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .setting-row label { font-size: 13px; color: #c7cac6; }
+  .setting-row input[type=number] {
+    width: 64px; background: #14161a; border: 1px solid #2a2e35; border-radius: 8px;
+    color: #f2f2ee; font-size: 14px; padding: 6px 8px; text-align: center;
+  }
+  .toggle {
+    width: 42px; height: 24px; border-radius: 12px; background: #2a2e35;
+    position: relative; cursor: pointer; border: 1px solid #33383f; flex-shrink: 0;
+  }
+  .toggle.on { background: #ff9d5c; }
+  .toggle .knob {
+    width: 18px; height: 18px; border-radius: 50%; background: #f2f2ee;
+    position: absolute; top: 2px; left: 2px; transition: left 0.12s;
+  }
+  .toggle.on .knob { left: 21px; }
+
+  details { background: #1d2026; border-radius: 14px; border: 1px solid #2a2e35; padding: 4px 16px; }
+  summary { cursor: pointer; font-size: 13px; color: #8f948f; padding: 10px 0; }
+  details p { font-size: 13px; color: #a9ada9; line-height: 1.5; }
+
+  .manual-block { display: flex; flex-direction: column; gap: 10px; }
+  .tap-btn {
+    width: 100%; padding: 22px 10px; font-size: 16px; border-radius: 14px;
+    background: #262a31; border: 1px solid #33383f;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Contabattute per pianificazione brani</h1>
+
+  <div class="stage" id="stage">
+    <div class="stage-state" id="stageState">Fermo</div>
+    <div class="bpm-value" id="bpmDisplay">--</div>
+    <div class="bpm-label">BPM</div>
+    <div class="level-meter"><div class="level-fill" id="levelFill"></div></div>
+    <div class="sync-progress" id="syncProgress"></div>
+  </div>
+
+  <div class="row">
+    <button class="primary" id="autoBtn">Avvia rilevamento automatico</button>
+    <button class="ghost" id="resyncBtn" style="display:none;">Risincronizza</button>
+  </div>
+
+  <div class="nudge-row">
+    <button class="small" id="halfBtn">BPM /2</button>
+    <button class="small" id="doubleBtn">BPM x2</button>
+    <button class="small" id="resetBarBtn">Reset a battuta 1</button>
+  </div>
+
+  <div class="beat-dots" id="beatDots"></div>
+
+  <div class="counters">
+    <div class="counter-box accent">
+      <div class="counter-value" id="beatValue">1</div>
+      <div class="counter-label">battito</div>
+    </div>
+    <div class="counter-box">
+      <div class="counter-value" id="barValue">0</div>
+      <div class="counter-label">battuta</div>
+    </div>
+    <div class="counter-box">
+      <div class="counter-value" id="phraseValue">1</div>
+      <div class="counter-label">frase</div>
+    </div>
+  </div>
+
+  <div class="settings">
+    <div class="setting-row">
+      <label>Battiti per battuta</label>
+      <input type="number" id="beatsPerBar" value="4" min="2" max="8">
+    </div>
+    <div class="setting-row">
+      <label>Battute per frase</label>
+      <input type="number" id="barsPerPhrase" value="4" min="1" max="16">
+    </div>
+    <div class="setting-row">
+      <label>Tempo minimo di sincronizzazione (secondi)</label>
+      <input type="number" id="minSyncSeconds" value="6" min="3" max="20">
+    </div>
+    <div class="setting-row">
+      <label>Click sonoro ogni battito</label>
+      <div class="toggle" id="clickToggle"><div class="knob"></div></div>
+    </div>
+    <div class="setting-row">
+      <label>Annuncio vocale numero battuta</label>
+      <div class="toggle" id="voiceToggle"><div class="knob"></div></div>
+    </div>
+    <div class="setting-row">
+      <label>Ogni quante battute annunciare</label>
+      <input type="number" id="voiceEvery" value="4" min="1" max="32">
+    </div>
+  </div>
+
+  <details>
+    <summary>Modalità manuale di riserva (tap tempo)</summary>
+    <div class="manual-block">
+      <button class="tap-btn" id="tapBtn">Tap tempo<br><span style="font-size:11px;color:#8f948f;font-weight:400;">tocca a tempo sul primo movimento, minimo 4 tap</span></button>
+    </div>
+  </details>
+
+  <details>
+    <summary>Come funziona</summary>
+    <p>Il rilevamento automatico ascolta il microfono, isola le basse frequenze (dove sta il battito) e calcola il BPM dai picchi di energia. Serve un tempo minimo (impostabile, default 6 secondi) e un numero minimo di battiti rilevati con intervallo stabile prima di dichiarare la sincronizzazione: quando succede, il riquadro diventa verde, senti un doppio segnale acustico e il conteggio riparte da battito 1 / battuta 1.<br><br>
+    Funziona meglio su basi a cassa marcata (house, dance, la maggior parte delle basi da spinning). Su brani con ritmica debole o rumore di sala forte può agganciare metà o doppio tempo: in quel caso usa i pulsanti BPM /2 o BPM x2 per correggere subito senza rifare la sincronizzazione.<br><br>
+    "Risincronizza" riavvia l'ascolto tenendo il microfono attivo, utile a ogni cambio brano. "Reset a battuta 1" riallinea il conteggio senza toccare il BPM, se perdi la battuta a vista.<br><br>
+    Se il rilevamento automatico non aggancia in modo affidabile, usa la modalità manuale a tap tempo: meno comoda ma sempre precisa.</p>
+  </details>
+
+</div>
+
+<script>
+(function(){
+  let audioCtx = null;
+  let micStream = null;
+  let lowpass = null;
+  let processor = null;
+
+  let isRunning = false;
+  let bpm = 128;
+  let beatsPerBar = 4;
+  let barsPerPhrase = 4;
+  let currentBeat = 1;
+  let barCount = 0;
+  let nextNoteTime = 0;
+  let timerID = null;
+  const scheduleAheadTime = 0.12;
+  const lookahead = 25;
+  let notesInQueue = [];
+  let clickEnabled = false;
+  let voiceEnabled = false;
+  let voiceEvery = 4;
+  let lastAnnouncedBar = -1;
+
+  let tapTimes = [];
+
+  let wakeLock = null;
+  async function acquireWakeLock(){
+    try {
+      if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+    } catch (err){ wakeLock = null; }
+  }
+  function releaseWakeLock(){
+    if (wakeLock){ wakeLock.release(); wakeLock = null; }
+  }
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible' && detecting && !wakeLock) acquireWakeLock();
+  });
+
+  let detecting = false;
+  let locked = false;
+  let energyHistory = [];
+  const historySize = 43;
+  let beatTimestamps = [];
+  let intervalBuffer = [];
+  let lastBeatTime = 0;
+  let detectionStartTime = 0;
+  let minSyncMs = 6000;
+  const MIN_BEATS = 8;
+  const CV_THRESHOLD = 0.09;
+
+  const stage = document.getElementById('stage');
+  const stageState = document.getElementById('stageState');
+  const bpmDisplay = document.getElementById('bpmDisplay');
+  const levelFill = document.getElementById('levelFill');
+  const syncProgress = document.getElementById('syncProgress');
+  const beatValue = document.getElementById('beatValue');
+  const barValue = document.getElementById('barValue');
+  const phraseValue = document.getElementById('phraseValue');
+  const beatDots = document.getElementById('beatDots');
+  const autoBtn = document.getElementById('autoBtn');
+  const resyncBtn = document.getElementById('resyncBtn');
+  const tapBtn = document.getElementById('tapBtn');
+  const halfBtn = document.getElementById('halfBtn');
+  const doubleBtn = document.getElementById('doubleBtn');
+  const resetBarBtn = document.getElementById('resetBarBtn');
+  const beatsPerBarInput = document.getElementById('beatsPerBar');
+  const barsPerPhraseInput = document.getElementById('barsPerPhrase');
+  const minSyncInput = document.getElementById('minSyncSeconds');
+  const clickToggle = document.getElementById('clickToggle');
+  const voiceToggle = document.getElementById('voiceToggle');
+  const voiceEveryInput = document.getElementById('voiceEvery');
+
+  function ensureAudio(){
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function renderDots(){
+    beatDots.innerHTML = '';
+    for (let i = 1; i <= beatsPerBar; i++){
+      const d = document.createElement('div');
+      d.className = 'dot';
+      d.textContent = i;
+      beatDots.appendChild(d);
+    }
+  }
+  renderDots();
+
+  function updateDots(beat){
+    const dots = beatDots.querySelectorAll('.dot');
+    dots.forEach((d, i) => {
+      d.classList.remove('on', 'first');
+      if (i + 1 === beat){
+        d.classList.add('on');
+        if (beat === 1) d.classList.add('first');
+      }
+    });
+  }
+
+  function setStage(state){
+    stage.classList.remove('listening', 'synced');
+    if (state === 'listening'){
+      stage.classList.add('listening');
+      stageState.textContent = 'Sincronizzazione in corso';
+    } else if (state === 'synced'){
+      stage.classList.add('synced');
+      stageState.textContent = 'Sincronizzato';
+    } else {
+      stageState.textContent = 'Fermo';
+    }
+  }
+
+  function playClick(time, accent){
+    if (!clickEnabled) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = accent ? 1500 : 1000;
+    gain.gain.setValueAtTime(0.001, time);
+    gain.gain.exponentialRampToValueAtTime(accent ? 0.35 : 0.2, time + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(time);
+    osc.stop(time + 0.06);
+  }
+
+  function playSyncChime(){
+    const t0 = audioCtx.currentTime;
+    [880, 1320].forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.frequency.value = freq;
+      const start = t0 + i * 0.11;
+      gain.gain.setValueAtTime(0.001, start);
+      gain.gain.exponentialRampToValueAtTime(0.3, start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.16);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(start);
+      osc.stop(start + 0.18);
+    });
+    if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
+  }
+
+  function speak(text){
+    if (!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'it-IT';
+    u.rate = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+
+  function scheduleNote(beatNum, barNum, time){
+    playClick(time, beatNum === 1);
+    notesInQueue.push({ beat: beatNum, bar: barNum, time: time });
+  }
+
+  function advanceNote(){
+    const secondsPerBeat = 60.0 / bpm;
+    nextNoteTime += secondsPerBeat;
+    currentBeat++;
+    if (currentBeat > beatsPerBar){
+      currentBeat = 1;
+      barCount++;
+    }
+  }
+
+  function scheduler(){
+    while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime){
+      scheduleNote(currentBeat, barCount, nextNoteTime);
+      advanceNote();
+    }
+    timerID = setTimeout(scheduler, lookahead);
+  }
+
+  let uiLoopHandle = null;
+  function uiLoop(){
+    const now = audioCtx ? audioCtx.currentTime : 0;
+    while (notesInQueue.length && notesInQueue[0].time < now){
+      const note = notesInQueue.shift();
+      beatValue.textContent = note.beat;
+      barValue.textContent = note.bar;
+      const phraseNum = Math.floor(note.bar / barsPerPhrase) + 1;
+      phraseValue.textContent = phraseNum;
+      updateDots(note.beat);
+      if (voiceEnabled && note.beat === 1 && note.bar !== lastAnnouncedBar && note.bar % voiceEvery === 0){
+        lastAnnouncedBar = note.bar;
+        speak(String(note.bar));
+      }
+    }
+    uiLoopHandle = requestAnimationFrame(uiLoop);
+  }
+
+  function startClockFromNow(){
+    currentBeat = 1;
+    barCount = 0;
+    lastAnnouncedBar = -1;
+    notesInQueue = [];
+    nextNoteTime = audioCtx.currentTime + 0.05;
+    clearTimeout(timerID);
+    cancelAnimationFrame(uiLoopHandle);
+    scheduler();
+    uiLoop();
+    isRunning = true;
+    bpmDisplay.textContent = bpm;
+  }
+
+  function stopClockOnly(){
+    clearTimeout(timerID);
+    cancelAnimationFrame(uiLoopHandle);
+    isRunning = false;
+  }
+
+  resetBarBtn.addEventListener('click', () => {
+    if (!isRunning) return;
+    currentBeat = 1;
+    barCount = 0;
+    lastAnnouncedBar = -1;
+    notesInQueue = [];
+    nextNoteTime = audioCtx.currentTime + 0.05;
+  });
+
+  function nudgeToOctave(factor){
+    bpm = Math.round(bpm * factor * 10) / 10;
+    bpmDisplay.textContent = bpm;
+    if (isRunning){
+      const secondsPerBeat = 60.0 / bpm;
+      nextNoteTime = audioCtx.currentTime + secondsPerBeat;
+    }
+  }
+  halfBtn.addEventListener('click', () => nudgeToOctave(0.5));
+  doubleBtn.addEventListener('click', () => nudgeToOctave(2));
+
+  tapBtn.addEventListener('click', () => {
+    ensureAudio();
+    stopDetection();
+    setStage('idle');
+    const now = performance.now();
+    tapTimes.push(now);
+    if (tapTimes.length > 8) tapTimes.shift();
+    if (tapTimes.length >= 2){
+      const intervals = [];
+      for (let i = 1; i < tapTimes.length; i++) intervals.push(tapTimes[i] - tapTimes[i-1]);
+      const recent = intervals.slice(-6);
+      const avgMs = recent.reduce((a,b) => a+b, 0) / recent.length;
+      const newBpm = Math.round((60000 / avgMs) * 10) / 10;
+      if (newBpm > 40 && newBpm < 220){
+        bpm = newBpm;
+        bpmDisplay.textContent = bpm;
+      }
+    }
+    if (tapTimes.length >= 4){
+      startClockFromNow();
+    }
+  });
+  let tapResetTimer = null;
+  tapBtn.addEventListener('click', () => {
+    clearTimeout(tapResetTimer);
+    tapResetTimer = setTimeout(() => { tapTimes = []; }, 2000);
+  });
+
+  beatsPerBarInput.addEventListener('change', () => {
+    beatsPerBar = Math.max(2, Math.min(8, parseInt(beatsPerBarInput.value) || 4));
+    beatsPerBarInput.value = beatsPerBar;
+    renderDots();
+  });
+  barsPerPhraseInput.addEventListener('change', () => {
+    barsPerPhrase = Math.max(1, Math.min(16, parseInt(barsPerPhraseInput.value) || 4));
+    barsPerPhraseInput.value = barsPerPhrase;
+  });
+  minSyncInput.addEventListener('change', () => {
+    const v = Math.max(3, Math.min(20, parseInt(minSyncInput.value) || 6));
+    minSyncInput.value = v;
+    minSyncMs = v * 1000;
+  });
+  voiceEveryInput.addEventListener('change', () => {
+    voiceEvery = Math.max(1, Math.min(32, parseInt(voiceEveryInput.value) || 4));
+    voiceEveryInput.value = voiceEvery;
+  });
+  clickToggle.addEventListener('click', () => {
+    clickEnabled = !clickEnabled;
+    clickToggle.classList.toggle('on', clickEnabled);
+  });
+  voiceToggle.addEventListener('click', () => {
+    voiceEnabled = !voiceEnabled;
+    voiceToggle.classList.toggle('on', voiceEnabled);
+    if (voiceEnabled) ensureAudio();
+  });
+
+  function resetDetectionBuffers(){
+    energyHistory = [];
+    beatTimestamps = [];
+    intervalBuffer = [];
+    lastBeatTime = 0;
+    locked = false;
+    detectionStartTime = performance.now();
+    syncProgress.textContent = 'Battiti rilevati: 0';
+  }
+
+  function onAudioProcess(e){
+    const input = e.inputBuffer.getChannelData(0);
+    let sum = 0;
+    for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
+    const instantEnergy = sum / input.length;
+
+    const levelPct = Math.min(100, Math.round(Math.sqrt(instantEnergy) * 600));
+    levelFill.style.width = levelPct + '%';
+
+    energyHistory.push(instantEnergy);
+    if (energyHistory.length > historySize) energyHistory.shift();
+    if (energyHistory.length < 10) return;
+
+    const avg = energyHistory.reduce((a,b) => a+b, 0) / energyHistory.length;
+    const variance = energyHistory.reduce((a,b) => a + (b-avg)*(b-avg), 0) / energyHistory.length;
+    let C = (-0.0025714 * variance) + 1.5142857;
+    C = Math.min(3.2, Math.max(1.15, C));
+
+    const now = performance.now();
+    if (instantEnergy > C * avg && instantEnergy > 0.00002 && (now - lastBeatTime) > 260){
+      lastBeatTime = now;
+      registerBeat(now);
+    }
+  }
+
+  function registerBeat(t){
+    beatTimestamps.push(t);
+    if (beatTimestamps.length > 20) beatTimestamps.shift();
+    if (beatTimestamps.length >= 2){
+      const interval = t - beatTimestamps[beatTimestamps.length - 2];
+      if (interval > 260 && interval < 1500){
+        intervalBuffer.push(interval);
+        if (intervalBuffer.length > 16) intervalBuffer.shift();
+      }
+    }
+    evaluateSync(t);
+  }
+
+  function evaluateSync(now){
+    syncProgress.textContent = 'Battiti rilevati: ' + intervalBuffer.length;
+    if (locked) return;
+    const elapsed = now - detectionStartTime;
+    if (elapsed < minSyncMs) return;
+    if (intervalBuffer.length < MIN_BEATS) return;
+    const mean = intervalBuffer.reduce((a,b) => a+b, 0) / intervalBuffer.length;
+    const variance = intervalBuffer.reduce((a,b) => a + (b-mean)*(b-mean), 0) / intervalBuffer.length;
+    const sd = Math.sqrt(variance);
+    const cv = sd / mean;
+    if (cv < CV_THRESHOLD){
+      lockBpm(mean);
+    }
+  }
+
+  function lockBpm(meanIntervalMs){
+    bpm = Math.round((60000 / meanIntervalMs) * 10) / 10;
+    locked = true;
+    setStage('synced');
+    playSyncChime();
+    startClockFromNow();
+    resyncBtn.style.display = 'block';
+  }
+
+  async function startDetection(){
+    try {
+      ensureAudio();
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+    } catch (err){
+      syncProgress.textContent = 'Microfono non disponibile: consenti l\'accesso e riprova.';
+      return;
+    }
+    const source = audioCtx.createMediaStreamSource(micStream);
+    lowpass = audioCtx.createBiquadFilter();
+    lowpass.type = 'lowpass';
+    lowpass.frequency.value = 150;
+    processor = audioCtx.createScriptProcessor(1024, 1, 1);
+    processor.onaudioprocess = onAudioProcess;
+    const silentGain = audioCtx.createGain();
+    silentGain.gain.value = 0;
+    source.connect(lowpass);
+    lowpass.connect(processor);
+    processor.connect(silentGain);
+    silentGain.connect(audioCtx.destination);
+
+    detecting = true;
+    resetDetectionBuffers();
+    setStage('listening');
+    autoBtn.textContent = 'Ferma rilevamento';
+    autoBtn.classList.add('stop');
+    resyncBtn.style.display = 'block';
+    acquireWakeLock();
+  }
+
+  function stopDetection(){
+    detecting = false;
+    if (processor){ processor.disconnect(); processor.onaudioprocess = null; processor = null; }
+    if (lowpass){ lowpass.disconnect(); lowpass = null; }
+    if (micStream){ micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+    stopClockOnly();
+    setStage('idle');
+    autoBtn.textContent = 'Avvia rilevamento automatico';
+    autoBtn.classList.remove('stop');
+    resyncBtn.style.display = 'none';
+    levelFill.style.width = '0%';
+    syncProgress.textContent = '';
+    releaseWakeLock();
+  }
+
+  autoBtn.addEventListener('click', () => {
+    if (detecting) stopDetection(); else startDetection();
+  });
+
+  resyncBtn.addEventListener('click', () => {
+    if (!detecting) return;
+    resetDetectionBuffers();
+    setStage('listening');
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden === false && audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  });
+})();
+</script>
+</body>
+</html>
