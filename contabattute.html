@@ -138,7 +138,10 @@
     <div class="bar-in-phrase" id="barInPhrase"></div>
     <div class="bar-dots" id="barDots"></div>
     <div class="beat-dots" id="beatDots"></div>
-    <div class="level-meter"><div class="level-fill" id="levelFill"></div></div>
+    <div style="display:flex; align-items:center; gap:8px; width:100%; margin-top:6px;">
+      <div class="level-meter" style="flex:1;"><div class="level-fill" id="levelFill"></div></div>
+      <span id="levelNumber" style="font-size:11px; color:#8f948f; min-width:32px; text-align:right;">0%</span>
+    </div>
   </div>
 
   <button class="main-btn" id="autoBtn">Avvia</button>
@@ -158,6 +161,10 @@
       <div class="setting-row">
         <label>Tempo minimo sincronizzazione (s)</label>
         <input type="number" id="minSyncSeconds" value="6" min="3" max="20">
+      </div>
+      <div class="setting-row">
+        <label>Sensibilità rilevamento</label>
+        <input type="number" id="sensitivityInput" value="1.4" min="0.5" max="3" step="0.1">
       </div>
       <div class="setting-row">
         <label>Click sonoro ogni battito</label>
@@ -223,6 +230,8 @@
   let minSyncMs = 6000;
   const MIN_BEATS = 8;
   const CV_THRESHOLD = 0.09;
+  let sensitivity = 1.4;
+  let minEnergyFloor = 0.000004;
 
   let overlayShown = null; // null | 'warn' | 'flash'
 
@@ -230,6 +239,7 @@
   const stageState = document.getElementById('stageState');
   const bpmPill = document.getElementById('bpmPill');
   const levelFill = document.getElementById('levelFill');
+  const levelNumber = document.getElementById('levelNumber');
   const syncProgress = document.getElementById('syncProgress');
   const phraseValue = document.getElementById('phraseValue');
   const barInPhrase = document.getElementById('barInPhrase');
@@ -246,6 +256,7 @@
   const beatsPerBarInput = document.getElementById('beatsPerBar');
   const barsPerPhraseInput = document.getElementById('barsPerPhrase');
   const minSyncInput = document.getElementById('minSyncSeconds');
+  const sensitivityInput = document.getElementById('sensitivityInput');
   const clickToggle = document.getElementById('clickToggle');
   const voiceToggle = document.getElementById('voiceToggle');
   const changeOverlay = document.getElementById('changeOverlay');
@@ -513,6 +524,11 @@
     minSyncInput.value = v;
     minSyncMs = v * 1000;
   });
+  sensitivityInput.addEventListener('change', () => {
+    const v = Math.max(0.5, Math.min(3, parseFloat(sensitivityInput.value) || 1.4));
+    sensitivityInput.value = v;
+    sensitivity = v;
+  });
   clickToggle.addEventListener('click', () => {
     clickEnabled = !clickEnabled;
     clickToggle.classList.toggle('on', clickEnabled);
@@ -539,8 +555,9 @@
     for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
     const instantEnergy = sum / input.length;
 
-    const levelPct = Math.min(100, Math.round(Math.sqrt(instantEnergy) * 600));
+    const levelPct = Math.min(100, Math.round(Math.sqrt(instantEnergy) * 900));
     levelFill.style.width = levelPct + '%';
+    levelNumber.textContent = levelPct + '%';
 
     energyHistory.push(instantEnergy);
     if (energyHistory.length > historySize) energyHistory.shift();
@@ -550,9 +567,10 @@
     const variance = energyHistory.reduce((a,b) => a + (b-avg)*(b-avg), 0) / energyHistory.length;
     let C = (-0.0025714 * variance) + 1.5142857;
     C = Math.min(3.2, Math.max(1.15, C));
+    C = C / sensitivity;
 
     const now = performance.now();
-    if (instantEnergy > C * avg && instantEnergy > 0.00002 && (now - lastBeatTime) > 260){
+    if (instantEnergy > C * avg && instantEnergy > minEnergyFloor && (now - lastBeatTime) > 260){
       lastBeatTime = now;
       registerBeat(now);
     }
@@ -572,7 +590,7 @@
   }
 
   function evaluateSync(now){
-    syncProgress.textContent = 'Battiti rilevati: ' + intervalBuffer.length;
+    syncProgress.textContent = 'Battiti rilevati: ' + intervalBuffer.length + ' su ' + MIN_BEATS + ' richiesti';
     if (locked) return;
     const elapsed = now - detectionStartTime;
     if (elapsed < minSyncMs) return;
@@ -594,12 +612,29 @@
   }
 
   async function startDetection(){
+    ensureAudio();
+    const strictConstraints = {
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+        googEchoCancellation: false,
+        googAutoGainControl: false,
+        googNoiseSuppression: false,
+        googHighpassFilter: false,
+        googTypingNoiseDetection: false,
+        channelCount: 1
+      }
+    };
     try {
-      ensureAudio();
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
-    } catch (err){
-      hint.textContent = 'Microfono non disponibile: consenti l\'accesso e riprova.';
-      return;
+      micStream = await navigator.mediaDevices.getUserMedia(strictConstraints);
+    } catch (err1){
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (err2){
+        hint.textContent = 'Microfono non disponibile: consenti l\'accesso e riprova.';
+        return;
+      }
     }
     const source = audioCtx.createMediaStreamSource(micStream);
     lowpass = audioCtx.createBiquadFilter();
