@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>🚴 Italian Power Ride</title>
+<title>🚴 Spinning 10 Estiva</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -912,8 +912,8 @@ body{display:flex;flex-direction:column}
 <!-- HEADER -->
 <div id="hdr">
   <div>
-    <div id="hdr-title">🚴 Italian Power Ride</div>
-    <div id="hdr-sub">GIUSEPPE PRIMAVERA · AIF 2° LVL · 18 BRANI · 58:15</div>
+    <div id="hdr-title">🚴 Spinning 10 Estiva</div>
+    <div id="hdr-sub">Giuseppe Primavera · 15 BRANI · 0:52:35</div>
   </div>
   <div id="hdr-r">
     <span id="wake-ind"></span>
@@ -1008,9 +1008,9 @@ body{display:flex;flex-direction:column}
           <div id="prog-markers"></div>
         </div>
         <div id="time-row">
-          <span id="t-cur">0:00:00</span>
+          <span id="t-cur">0:52:35</span>
           <span id="t-rem">−0:00</span>
-          <span id="t-end">0:58:15</span>
+          <span id="t-end">0:52:35</span>
         </div>
       </div>
     </div>
@@ -1121,35 +1121,257 @@ body{display:flex;flex-direction:column}
 // ═══════════════════════════════════════════════════════
 const CLIENT_ID = 'fec34f5ffb9a46ca912190a6557e637c';
 const REDIRECT = 'https://giusprim.github.io/Indoor/';
-const PLAYLIST = 'spotify:playlist:2YEWQkX2mrFV4qzE6mS0ZF';
+const PLAYLIST = 'spotify:playlist:37i9dQZF1FwXwA6k1UsQbu';
 const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
 // ═══════════════════════════════════════════════════════
 //  DATI LEZIONE
 // ═══════════════════════════════════════════════════════
-const T=[
-  {i:1, title:"Nell'aria 2021",         ar:"Ben DJ",                          s:0,    d:145, z:"Z2",rpm:"80–90", bpm:"116",res:"25%",tec:"Seduto leggero → In piedi leggero → Seduto leggero",              mani:"P1↔P2",fase:"Warm-up",           focus:"Riscaldamento; prepara le gambe al ritmo."},
-  {i:2, title:"Primavera",              ar:"Ben DJ",                          s:145,  d:202, z:"Z2",rpm:"85–95", bpm:"114",res:"35%",tec:"Seduto veloce → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Warm-up attivo",     focus:"Attiva la cadenza; 90 RPM controllati."},
-  {i:3, title:"Nel blu dipinto di blu", ar:"Domenico Modugno, Jack Sani",     s:347,  d:176, z:"Z3",rpm:"90–98", bpm:"123",res:"45%",tec:"Seduto veloce → Seduto ritmo costante",                           mani:"P1",   fase:"Endurance",          focus:"Mantieni regolarità; respira ogni 4 battiti."},
-  {i:4, title:"Ti Sento",               ar:"Bob Sinclar, Matia Bazar",        s:523,  d:172, z:"Z3",rpm:"95–100",bpm:"123",res:"50%",tec:"Seduto ritmo → In piedi leggero → Seduto veloce",                mani:"P2",   fase:"Endurance",          focus:"Stabilità di core; niente rollii."},
-  {i:5, title:"ITALIA STARTER PACK",    ar:"J‑Ax",                           s:695,  d:162, z:"Z4",rpm:"75–85", bpm:"115",res:"65%",tec:"Salita ritmica: Seduto carico → In piedi carico → Seduto carico",  mani:"P2→P3",fase:"Salita Power",      focus:"Aggiungi carico; resta sul beat."},
-  {i:6, title:"Con un Deca",            ar:"883, Fargetta",                   s:857,  d:346, z:"Z4",rpm:"70–80", bpm:"124",res:"70%",tec:"Salita progressiva: Seduto carico → In piedi carico",              mani:"P2→P3",fase:"Climb progressivo",  focus:"Ogni minuto +1/10 di carico."},
-  {i:7, title:"Ninna Nanna",            ar:"Loredana Bertè, TWENTY SIX",     s:1203, d:117, z:"Z4",rpm:"85–95", bpm:"130",res:"60%",tec:"Jump in 8 → Jump in 4 → Jump in 2",                              mani:"P2↔P3",fase:"Jump",              focus:"Leggeri in piedi, potenti seduti."},
-  {i:8, title:"Gloria",                 ar:"Agatino Romero, Umberto Tozzi",  s:1320, d:168, z:"Z4",rpm:"95–105",bpm:"134",res:"65%",tec:"Jump in 4 → In piedi veloce → Seduto veloce",                    mani:"P2↔P3",fase:"Build‑up",          focus:"Accelera 10–15 alla fine di ogni ritornello."},
-  {i:9, title:"Happy Hour",             ar:"DJ Matrix",                       s:1488, d:218, z:"Z5",rpm:"105–120",bpm:"140",res:"75%",tec:"Sprint 20'' ON (in piedi) → Seduto 20'' OFF",                    mani:"P4Atk",   fase:"Sprint Block #1",    focus:"Sprint pulito: bacino fermo, spinta rotonda."},
-  {i:10,title:"Soldi",                  ar:"Mahmood, Denis First",            s:1706, d:172, z:"Z5",rpm:"100–110",bpm:"100",res:"75%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF",       mani:"P4Atk",fase:"Sprint Block #1",   focus:"30 ON / 45 OFF ×3–4."},
-  {i:11,title:"Mambo Salentino",        ar:"Boomdabash, Alessandra Amoroso",  s:1878, d:147, z:"Z3",rpm:"90–100",bpm:"100",res:"50%",tec:"Tempo ride: Seduto veloce → Seduto leggero",                      mani:"P2",   fase:"Recovery ritmato",   focus:"Respira; sorridi; tieni il tempo."},
-  {i:12,title:"Far l'Amore",            ar:"Bob Sinclar, Raffaella Carrà",    s:2025, d:174, z:"Z5",rpm:"105–115",bpm:"128",res:"80%",tec:"Sprint 30'' ON (in piedi) → Seduto 30'' OFF (x4‑6)",              mani:"P3",   fase:"Sprint tecnico",     focus:"4–6 ripetizioni, chiudi in accelerazione."},
-  {i:13,title:"Rumore",                 ar:"Raffaella Carrà, Steve Forest",   s:2199, d:204, z:"Z3",rpm:"95–100",bpm:"125",res:"55%",tec:"Tempo ride controllo (seduto)",                                    mani:"P2",   fase:"Controllo",          focus:"Ricomponi il gesto; respira profondo."},
-  {i:14,title:"Fare l'Amore",           ar:"Loredana Bertè, Evissimax",       s:2403, d:222, z:"Z5",rpm:"85–90", bpm:"174",res:"80%",tec:"Sprint 15'' ON (in piedi) → Seduto 15'' OFF",                      mani:"P4Atk",   fase:"PEAK / Finisher",    focus:"Dai tutto ma resta pulito."},
-  {i:15,title:"Blue (Da Ba Dee)",       ar:"Eiffel 65, Gabry Ponte",          s:2625, d:212, z:"Z4",rpm:"98–102",bpm:"198",res:"65%",tec:"Jump in 4 → Jump in 2 → Sprint breve → Seduto veloce",            mani:"P2↔P3",fase:"Party Decompression",focus:"Ultimo sprint di classe; divertiti."},
-  {i:16,title:"Aserejé",                ar:"Elettra Lamborghini, Los Ketchup",s:2837, d:171, z:"Z3",rpm:"80–90", bpm:"92", res:"50%",tec:"Seduto leggero (party ride)",                                      mani:"P2",   fase:"Party Ride",         focus:"Mantieni la cadenza; focus sul divertimento."},
-  {i:17,title:"Ti Porto Via Con Me",    ar:"Jovanotti",                       s:3008, d:252, z:"Z2",rpm:"80–85", bpm:"132",res:"35%",tec:"Seduto leggero (defaticamento)",                                   mani:"P1↔P2",fase:"Defaticamento",      focus:"Allunga la pedalata, abbassa FC."},
-  {i:18,title:"La Cura",                ar:"Franco Battiato",                 s:3260, d:235, z:"Z1",rpm:"60–65", bpm:"90", res:"20%",tec:"Stretching in bici / off‑bike",                                    mani:"P1",   fase:"Stretching",         focus:"Respira; chiudi con gratitudine."},
+const T = [
+  {
+    "i": 1,
+    "title": "Self Control",
+    "ar": "Raf",
+    "bpm": "120",
+    "d": 210,
+    "z": "Z2",
+    "rpm": "80-90",
+    "res": "30%",
+    "rn": 0.3,
+    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
+    "mani": "P1↔P2",
+    "fase": "Warm-up",
+    "focus": "Riscaldamento; prepara le gambe al ritmo.",
+    "s": 0
+  },
+  {
+    "i": 2,
+    "title": "Musica (E Il Resto Scompare)",
+    "ar": "Elettra Lamborghini",
+    "bpm": "124",
+    "d": 185,
+    "z": "Z2",
+    "rpm": "85-95",
+    "res": "35%",
+    "rn": 0.35,
+    "tec": "Seduto veloce → In piedi leggero → Seduto veloce",
+    "mani": "P1↔P2",
+    "fase": "Warm-up attivo",
+    "focus": "Attiva la cadenza; alza gradualmente il ritmo.",
+    "s": 210
+  },
+  {
+    "i": 3,
+    "title": "Ti Pretendo",
+    "ar": "Raf",
+    "bpm": "112",
+    "d": 240,
+    "z": "Z3",
+    "rpm": "85-100",
+    "res": "45%",
+    "rn": 0.45,
+    "tec": "Jump in 8 → Jump in 4 → Jump in 2",
+    "mani": "P2",
+    "fase": "Corpo lezione",
+    "focus": "Allenamento intervallo; jump sul ritmo.",
+    "s": 395
+  },
+  {
+    "i": 4,
+    "title": "Pem Pem",
+    "ar": "Elettra Lamborghini",
+    "bpm": "128",
+    "d": 180,
+    "z": "Z4",
+    "rpm": "70-105",
+    "res": "65%",
+    "rn": 0.65,
+    "tec": "Sprint 20'' ON (in piedi) → Seduto 20'' OFF",
+    "mani": "P3",
+    "fase": "Corpo lezione",
+    "focus": "Sprint; aumenta la velocità.",
+    "s": 635
+  },
+  {
+    "i": 5,
+    "title": "Roma - Bangkok (feat. Giusy Ferreri)",
+    "ar": "Baby K, Giusy Ferreri",
+    "bpm": "100",
+    "d": 190,
+    "z": "Z2",
+    "rpm": "80-90",
+    "res": "35%",
+    "rn": 0.35,
+    "tec": "Seduto leggero → Jump in 8 → Seduto leggero",
+    "mani": "P1↔P2",
+    "fase": "Recupero attivo",
+    "focus": "Recupero dinamico; jump leggero senza caricare.",
+    "s": 815
+  },
+  {
+    "i": 6,
+    "title": "Il battito animale",
+    "ar": "Raf",
+    "bpm": "128",
+    "d": 230,
+    "z": "Z4",
+    "rpm": "70-105",
+    "res": "65%",
+    "rn": 0.65,
+    "tec": "Sprint 20'' ON (in piedi) → Seduto 20'' OFF",
+    "mani": "P3",
+    "fase": "Corpo lezione",
+    "focus": "Sforzo massimo; spinta pulita.",
+    "s": 1005
+  },
+  {
+    "i": 7,
+    "title": "Vorrei ma non posto",
+    "ar": "J-AX, Fedez",
+    "bpm": "120",
+    "d": 200,
+    "z": "Z3",
+    "rpm": "88-98",
+    "res": "45%",
+    "rn": 0.45,
+    "tec": "Crono: Seduto aero → In piedi leggero → Seduto aero",
+    "mani": "P4",
+    "fase": "Corpo lezione",
+    "focus": "Tenuta aerobica; pedalata fluida in posizione aero.",
+    "s": 1235
+  },
+  {
+    "i": 8,
+    "title": "Cosa Resterà Degli Anni 80",
+    "ar": "Raf",
+    "bpm": "118",
+    "d": 235,
+    "z": "Z3",
+    "rpm": "88-98",
+    "res": "45%",
+    "rn": 0.45,
+    "tec": "Seduto veloce → In piedi leggero → Seduto veloce",
+    "mani": "P2",
+    "fase": "Corpo lezione",
+    "focus": "Mantieni il ritmo; core stabile, niente rollii.",
+    "s": 1435
+  },
+  {
+    "i": 9,
+    "title": "Mala",
+    "ar": "Elettra Lamborghini",
+    "bpm": "100",
+    "d": 170,
+    "z": "Z3",
+    "rpm": "85-100",
+    "res": "45%",
+    "rn": 0.45,
+    "tec": "Jump in 8 → Jump in 4",
+    "mani": "P2",
+    "fase": "Corpo lezione",
+    "focus": "Allenamento intervallo; rimbalzo leggero sul ritmo.",
+    "s": 1670
+  },
+  {
+    "i": 10,
+    "title": "LA DOLCE VITA",
+    "ar": "Fedez, Tananai, Mara Sattei",
+    "bpm": "104",
+    "d": 175,
+    "z": "Z3",
+    "rpm": "85-100",
+    "res": "45%",
+    "rn": 0.45,
+    "tec": "Jump in 4 → Jump in 2 → Seduto leggero",
+    "mani": "P2↔P3",
+    "fase": "Corpo lezione",
+    "focus": "Ultimo blocco jump; tieni il ritmo fino alla fine della frase.",
+    "s": 1840
+  },
+  {
+    "i": 11,
+    "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+    "ar": "Jovanotti",
+    "bpm": "120",
+    "d": 300,
+    "z": "Z4",
+    "rpm": "70-105",
+    "res": "60%",
+    "rn": 0.6,
+    "tec": "Salita: Seduto carico → In piedi carico → Seduto carico",
+    "mani": "P2→P3",
+    "fase": "Salita Power",
+    "focus": "Salita progressiva; aumenta il carico ogni minuto.",
+    "s": 2015
+  },
+  {
+    "i": 12,
+    "title": "ITALODISCO",
+    "ar": "The Kolors",
+    "bpm": "123",
+    "d": 180,
+    "z": "Z3",
+    "rpm": "88-98",
+    "res": "45%",
+    "rn": 0.45,
+    "tec": "Seduto veloce → In piedi leggero → Seduto veloce",
+    "mani": "P2",
+    "fase": "Corpo lezione",
+    "focus": "Chiusura corpo lezione; ultima spinta prima del defaticamento.",
+    "s": 2315
+  },
+  {
+    "i": 13,
+    "title": "Vamos a la Playa",
+    "ar": "Righeira",
+    "bpm": "123",
+    "d": 220,
+    "z": "Z2",
+    "rpm": "80-90",
+    "res": "30%",
+    "rn": 0.3,
+    "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
+    "mani": "P1↔P2",
+    "fase": "Defaticamento",
+    "focus": "Inizia a defaticare; riduci la resistenza.",
+    "s": 2495
+  },
+  {
+    "i": 14,
+    "title": "Freed From Desire",
+    "ar": "Gala, Molella, Phil Jay",
+    "bpm": "120",
+    "d": 200,
+    "z": "Z2",
+    "rpm": "75-85",
+    "res": "25%",
+    "rn": 0.25,
+    "tec": "Seduto leggero (party ride)",
+    "mani": "P1↔P2",
+    "fase": "Defaticamento",
+    "focus": "Continua a defaticare; goditi il ritmo a bassa resistenza.",
+    "s": 2715
+  },
+  {
+    "i": 15,
+    "title": "Almeno Tu Nell'Universo",
+    "ar": "Mia Martini",
+    "bpm": "70",
+    "d": 240,
+    "z": "Z1",
+    "rpm": "55-65",
+    "res": "15%",
+    "rn": 0.15,
+    "tec": "Stretching in bici",
+    "mani": "P1",
+    "fase": "Stretching",
+    "focus": "Stretching finale; respira e rilassa i muscoli.",
+    "s": 2915
+  }
 ];
 
 const CROSSFADE=4;
-const TOTAL=3495;
+const TOTAL=3155;
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
 // ═══════════════════════════════════════════════════════
@@ -2224,7 +2446,7 @@ function buildProjHTML() {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>🚴 Italian Power Ride</title>
+<title>📺 Indoor Cycling — Proiezione</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--zc:#00cc70}
