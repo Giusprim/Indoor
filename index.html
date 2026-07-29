@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>🚴 Spinning 10 - 50min</title>
+<title>🚴 Spinning 10 - Interval Estensivo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -912,8 +912,8 @@ body{display:flex;flex-direction:column}
 <!-- HEADER -->
 <div id="hdr">
   <div>
-    <div id="hdr-title">🚴 Spinning 10 - 50min</div>
-    <div id="hdr-sub">Giuseppe Primavera · 16 BRANI · 0:52:07</div>
+    <div id="hdr-title">🚴 Spinning 10 - Interval Estensivo</div>
+    <div id="hdr-sub">Giuseppe Primavera · 14 BRANI · 0:49:52</div>
   </div>
   <div id="hdr-r">
     <span id="wake-ind"></span>
@@ -1008,9 +1008,9 @@ body{display:flex;flex-direction:column}
           <div id="prog-markers"></div>
         </div>
         <div id="time-row">
-          <span id="t-cur">0:52:07</span>
+          <span id="t-cur">0:49:52</span>
           <span id="t-rem">−0:00</span>
-          <span id="t-end">0:52:07</span>
+          <span id="t-end">0:49:52</span>
         </div>
       </div>
     </div>
@@ -1130,10 +1130,26 @@ const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read
 const T = [
   {
     "i": 1,
-    "title": "Self Control",
-    "ar": "Vinny Vinyl, Laura Branigan",
-    "bpm": "122",
-    "d": 197,
+    "title": "Andamento lento",
+    "ar": "Serena Brancale",
+    "bpm": "100",
+    "d": 120,
+    "z": "Z2",
+    "rpm": "70-80",
+    "res": "20%",
+    "rn": 0.2,
+    "tec": "Seduto leggero — trova il ritmo",
+    "mani": "P1",
+    "fase": "Warm-up",
+    "focus": "Apertura leggera; entra in sella e trova la cadenza, BPM ora confermato a 100.",
+    "s": 0
+  },
+  {
+    "i": 2,
+    "title": "Self Control (Remix)",
+    "ar": "Manuel Grandi, JL",
+    "bpm": "125",
+    "d": 210,
     "z": "Z2",
     "rpm": "80-90",
     "res": "30%",
@@ -1141,11 +1157,11 @@ const T = [
     "tec": "Seduto leggero → In piedi leggero → Seduto leggero",
     "mani": "P1↔P2",
     "fase": "Warm-up",
-    "focus": "Riscaldamento; prepara le gambe al ritmo.",
-    "s": 0
+    "focus": "Riscaldamento; prepara le gambe al ritmo. BPM stimato, verifica.",
+    "s": 120
   },
   {
-    "i": 2,
+    "i": 3,
     "title": "Musica (E Il Resto Scompare)",
     "ar": "Elettra Lamborghini",
     "bpm": "115",
@@ -1158,10 +1174,10 @@ const T = [
     "mani": "P1↔P2",
     "fase": "Warm-up attivo",
     "focus": "Attiva la cadenza; alza gradualmente il ritmo.",
-    "s": 197
+    "s": 330
   },
   {
-    "i": 3,
+    "i": 4,
     "title": "Riccione",
     "ar": "Thegiornalisti",
     "bpm": "110",
@@ -1174,58 +1190,26 @@ const T = [
     "mani": "P2",
     "fase": "Attivazione",
     "focus": "Ultimo gradino prima del corpo lezione; alza leggermente il carico.",
-    "s": 391
-  },
-  {
-    "i": 4,
-    "title": "Ti Pretendo",
-    "ar": "Raf",
-    "bpm": "111",
-    "d": 265,
-    "z": "Z3",
-    "rpm": "85-100",
-    "res": "45%",
-    "rn": 0.45,
-    "tec": "Jump in 8 → Jump in 4 → Jump in 2",
-    "mani": "P2",
-    "fase": "Corpo lezione",
-    "focus": "Allenamento intervallo; jump sul ritmo.",
-    "s": 588
+    "s": 524
   },
   {
     "i": 5,
-    "title": "BACCALÀ",
-    "ar": "Serena Brancale",
+    "title": "Toxic (Workout Remix 132 Bpm)",
+    "ar": "Workout Music Tv",
     "bpm": "132",
-    "d": 121,
+    "d": 267,
     "z": "Z4",
-    "rpm": "70-105",
-    "res": "65%",
-    "rn": 0.65,
+    "rpm": "95-105",
+    "res": "60%",
+    "rn": 0.6,
     "tec": "Sprint 20'' ON (in piedi) → Seduto 20'' OFF",
     "mani": "P3",
     "fase": "Corpo lezione",
-    "focus": "Sprint; spinta pulita, bacino fermo.",
-    "s": 853
+    "focus": "Primo picco; sprint pulito, cadenza costante (brano workout, BPM stabile).",
+    "s": 721
   },
   {
     "i": 6,
-    "title": "Il battito animale",
-    "ar": "Raf, J-Ax, Ackeejuice Rockers",
-    "bpm": "120",
-    "d": 198,
-    "z": "Z4",
-    "rpm": "70-105",
-    "res": "65%",
-    "rn": 0.65,
-    "tec": "Sprint 20'' ON (in piedi) → Seduto 20'' OFF",
-    "mani": "P3",
-    "fase": "Corpo lezione",
-    "focus": "Secondo sprint consecutivo; gestisci il recupero respiratorio.",
-    "s": 974
-  },
-  {
-    "i": 7,
     "title": "Roma - Bangkok (feat. Giusy Ferreri)",
     "ar": "Baby K, Giusy Ferreri",
     "bpm": "100",
@@ -1237,11 +1221,11 @@ const T = [
     "tec": "Seduto leggero → Jump in 8 → Seduto leggero",
     "mani": "P1↔P2",
     "fase": "Recupero attivo",
-    "focus": "Recupero dinamico dopo i due sprint; jump leggero senza caricare.",
-    "s": 1172
+    "focus": "Recupero dopo il primo sprint; jump leggero senza caricare.",
+    "s": 988
   },
   {
-    "i": 8,
+    "i": 7,
     "title": "Everytime",
     "ar": "The Kolors",
     "bpm": "123",
@@ -1253,107 +1237,91 @@ const T = [
     "tec": "Crono: Seduto aero → In piedi leggero → Seduto aero",
     "mani": "P4",
     "fase": "Corpo lezione",
-    "focus": "Tenuta aerobica; pedalata fluida in posizione aero.",
-    "s": 1346
+    "focus": "Tenuta aerobica; pedalata fluida in posizione aero, verso il plateau.",
+    "s": 1162
+  },
+  {
+    "i": 8,
+    "title": "U + Ur Hand (Workout Mix)",
+    "ar": "Workout Music",
+    "bpm": "141",
+    "d": 278,
+    "z": "Z5",
+    "rpm": "105-115",
+    "res": "70%",
+    "rn": 0.7,
+    "tec": "Sprint 30'' ON (in piedi) → Seduto 30'' OFF",
+    "mani": "P4Atk",
+    "fase": "Corpo lezione",
+    "focus": "Plateau, primo rialzo; sprint lungo, brano a tempo fisso.",
+    "s": 1349
   },
   {
     "i": 9,
-    "title": "Balla (Radio Edit)",
-    "ar": "Simone Miggiano",
-    "bpm": "132",
-    "d": 169,
+    "title": "Heaven (138 BPM)",
+    "ar": "Gym Workout",
+    "bpm": "138",
+    "d": 234,
     "z": "Z4",
-    "rpm": "70-105",
-    "res": "65%",
-    "rn": 0.65,
-    "tec": "Sprint 20'' ON (in piedi) → Seduto 20'' OFF",
-    "mani": "P3",
+    "rpm": "90-100",
+    "res": "60%",
+    "rn": 0.6,
+    "tec": "Crono: Seduto aero → In piedi leggero → Seduto aero",
+    "mani": "P4",
     "fase": "Corpo lezione",
-    "focus": "Sprint; aumenta la velocità.",
-    "s": 1533
+    "focus": "Plateau; potenza sostenuta, BPM costante dall'inizio alla fine.",
+    "s": 1627
   },
   {
     "i": 10,
-    "title": "A mano a mano",
-    "ar": "Rino Gaetano",
-    "bpm": "126",
-    "d": 152,
+    "title": "Titanium (Workout Mix)",
+    "ar": "Workout Music",
+    "bpm": "133",
+    "d": 250,
     "z": "Z4",
-    "rpm": "70-105",
+    "rpm": "95-105",
     "res": "65%",
     "rn": 0.65,
     "tec": "Sprint 20'' ON (in piedi) → Seduto 20'' OFF",
     "mani": "P3",
     "fase": "Corpo lezione",
-    "focus": "Sprint consecutivo; se il gruppo cala, riduci resistenza.",
-    "s": 1702
+    "focus": "Plateau, secondo rialzo; sprint. BPM stimato, molte versioni esistono, verifica.",
+    "s": 1861
   },
   {
     "i": 11,
-    "title": "Overdose D'Amore",
-    "ar": "Zucchero, Salmo",
-    "bpm": "125",
-    "d": 176,
-    "z": "Z4",
-    "rpm": "70-105",
-    "res": "60%",
-    "rn": 0.6,
+    "title": "Ludovico Einaudi (Experience) - Techno Remix",
+    "ar": "Slydump",
+    "bpm": "145",
+    "d": 164,
+    "z": "Z5",
+    "rpm": "70-80",
+    "res": "75%",
+    "rn": 0.75,
     "tec": "Salita: Seduto carico → In piedi carico → Seduto carico",
     "mani": "P2→P3",
-    "fase": "Salita Power",
-    "focus": "Salita progressiva; aumenta il carico ogni minuto.",
-    "s": 1854
+    "fase": "Corpo lezione",
+    "focus": "Plateau, terzo rialzo; massimo carico, resta sul beat.",
+    "s": 2111
   },
   {
     "i": 12,
-    "title": "COME UN TUONO",
-    "ar": "Rose Villain, Guè",
-    "bpm": "140",
-    "d": 175,
+    "title": "E.T. - Sprints",
+    "ar": "Power Music Workout",
+    "bpm": "160",
+    "d": 262,
     "z": "Z5",
-    "rpm": "105-120",
+    "rpm": "108-118",
     "res": "75%",
     "rn": 0.75,
     "tec": "Sprint 15'' ON (in piedi) → Seduto 15'' OFF",
     "mani": "P4Atk",
     "fase": "Peak / Finisher",
-    "focus": "Picco della lezione; dai tutto ma resta pulito.",
-    "s": 2030
+    "focus": "Picco principale della lezione; il vero massimo, dai tutto restando pulito.",
+    "s": 2275
   },
   {
     "i": 13,
-    "title": "Bollicine (Remix)",
-    "ar": "Vasco Rossi",
-    "bpm": "120",
-    "d": 306,
-    "z": "Z4",
-    "rpm": "70-105",
-    "res": "65%",
-    "rn": 0.65,
-    "tec": "Sprint 20'' ON (in piedi) → Seduto 20'' OFF",
-    "mani": "P3",
-    "fase": "Corpo lezione",
-    "focus": "Ultimo sprint; chiudi il corpo lezione con energia.",
-    "s": 2205
-  },
-  {
-    "i": 14,
-    "title": "AL MIO PAESE",
-    "ar": "Serena Brancale, Levante, DELIA",
-    "bpm": "140",
-    "d": 197,
-    "z": "Z3",
-    "rpm": "88-98",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Crono: Seduto veloce → In piedi leggero → Seduto veloce",
-    "mani": "P2",
-    "fase": "Corpo lezione",
-    "focus": "Chiusura corpo lezione; cadenza alta ma resistenza bassa, dai fiato al gruppo dopo Bollicine.",
-    "s": 2511
-  },
-  {
-    "i": 15,
     "title": "Non ho bisogno di te",
     "ar": "Noemi",
     "bpm": "126",
@@ -1366,14 +1334,14 @@ const T = [
     "mani": "P1↔P2",
     "fase": "Defaticamento",
     "focus": "Riduci l'intensità e la resistenza.",
-    "s": 2708
+    "s": 2537
   },
   {
-    "i": 16,
-    "title": "Sara non piangere",
-    "ar": "Pino Daniele",
-    "bpm": "100",
-    "d": 269,
+    "i": 14,
+    "title": "Almeno tu nell'universo",
+    "ar": "Mia Martini",
+    "bpm": "64",
+    "d": 305,
     "z": "Z1",
     "rpm": "55-65",
     "res": "15%",
@@ -1382,12 +1350,12 @@ const T = [
     "mani": "P1",
     "fase": "Stretching",
     "focus": "Stretching finale; respira e rilassa i muscoli.",
-    "s": 2858
+    "s": 2687
   }
 ];
 
 const CROSSFADE=4;
-const TOTAL=3127;
+const TOTAL=2992;
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
 // ═══════════════════════════════════════════════════════
