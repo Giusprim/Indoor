@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>🚴 Fondo Variato</title>
+<title>🚴 2000 Fartlek</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -912,7 +912,7 @@ body{display:flex;flex-direction:column}
 <!-- HEADER -->
 <div id="hdr">
   <div>
-    <div id="hdr-title">🚴 Fondo Variato</div>
+    <div id="hdr-title">🚴 2000 Fartlek</div>
     <div id="hdr-sub">Giuseppe Primavera · 16 BRANI · 1:00:29</div>
   </div>
   <div id="hdr-r">
@@ -1122,7 +1122,7 @@ body{display:flex;flex-direction:column}
 // ═══════════════════════════════════════════════════════
 const CLIENT_ID = 'fec34f5ffb9a46ca912190a6557e637c';
 const REDIRECT = 'https://giusprim.github.io/Indoor/';
-const PLAYLIST = 'spotify:playlist:7C8f3OvcSetywCKfgP5iZV';
+const PLAYLIST = 'spotify:playlist:4rbnTNKFpiAPZSfxgyn8I7';
 const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
 // ═══════════════════════════════════════════════════════
@@ -1131,7 +1131,7 @@ const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read
 const T = [
   {
     "i": 1,
-    "title": "Always Remember Us",
+    "title": "Always Remember Us This Way",
     "ar": "Federico Riva",
     "bpm": "115",
     "d": 246,
@@ -1142,13 +1142,13 @@ const T = [
     "tec": "Seduto leggero",
     "mani": "P1",
     "fase": "Warm-up",
-    "focus": "Riscaldamento dolce. Leggera pedala per svegliare le gambe.",
+    "focus": "Riscaldamento dolce.",
     "s": 0
   },
   {
     "i": 2,
-    "title": "PARTENOPE",
-    "ar": "Merk & Kremont",
+    "title": "PARTENOPE (feat. Serena Brancale)",
+    "ar": "Merk & Kremont, Serena Brancale",
     "bpm": "122",
     "d": 150,
     "z": "Z2",
@@ -1158,29 +1158,13 @@ const T = [
     "tec": "Seduto veloce \u2192 In piedi leggero",
     "mani": "P1\u2194P2",
     "fase": "Attivazione",
-    "focus": "Alterna seduto e in piedi; prepara il corpo per il fondo.",
+    "focus": "Alterna posizioni.",
     "s": 246
   },
   {
     "i": 3,
-    "title": "Buona Sera - Ciao Ciao",
-    "ar": "House of Glass",
-    "bpm": "124",
-    "d": 207,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto veloce",
-    "mani": "P1\u2194P2",
-    "fase": "Attivazione",
-    "focus": "Pedalata costante, respira ogni 4 battiti.",
-    "s": 396
-  },
-  {
-    "i": 4,
     "title": "Asereje - Remix",
-    "ar": "MESTIZA",
+    "ar": "MESTIZA, Las Ketchup",
     "bpm": "125",
     "d": 157,
     "z": "Z2",
@@ -1190,43 +1174,27 @@ const T = [
     "tec": "In piedi leggero \u2192 Seduto veloce",
     "mani": "P1\u2194P2",
     "fase": "Attivazione",
-    "focus": "Dinamica; cambia posizione ogni frase.",
-    "s": 603
+    "focus": "Dinamica.",
+    "s": 396
+  },
+  {
+    "i": 4,
+    "title": "Buona Sera - Ciao Ciao (feat. G-Clark)",
+    "ar": "House of Glass, G-Clark",
+    "bpm": "124",
+    "d": 207,
+    "z": "Z2",
+    "rpm": "85-95",
+    "res": "30%",
+    "rn": 0.3,
+    "tec": "Seduto veloce",
+    "mani": "P1\u2194P2",
+    "fase": "Attivazione",
+    "focus": "Pedalata costante.",
+    "s": 553
   },
   {
     "i": 5,
-    "title": "Yaloma 2",
-    "ar": "DJ VAMUZZE",
-    "bpm": "125",
-    "d": 207,
-    "z": "Z3",
-    "rpm": "90-100",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Seduto veloce \u2192 In piedi leggero",
-    "mani": "P1\u2194P2",
-    "fase": "Fondo variato",
-    "focus": "Salita soft; aumenta resistenza gradualmente.",
-    "s": 760
-  },
-  {
-    "i": 6,
-    "title": "Volare - Afro House",
-    "ar": "Afr\u00f8telize",
-    "bpm": "121",
-    "d": 283,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "35%",
-    "rn": 0.35,
-    "tec": "Seduto veloce",
-    "mani": "P1",
-    "fase": "Fondo",
-    "focus": "Ritmo africano, pedalata fluida e rilassata.",
-    "s": 967
-  },
-  {
-    "i": 7,
     "title": "Tu",
     "ar": "Ben DJ",
     "bpm": "123",
@@ -1238,8 +1206,40 @@ const T = [
     "tec": "Seduto veloce",
     "mani": "P1",
     "fase": "Fondo",
-    "focus": "Mantieni cadenza alta, leggera resistenza.",
-    "s": 1250
+    "focus": "Cadenza alta.",
+    "s": 760
+  },
+  {
+    "i": 6,
+    "title": "Yaloma 2",
+    "ar": "DJ VAMUZZE",
+    "bpm": "125",
+    "d": 207,
+    "z": "Z3",
+    "rpm": "90-100",
+    "res": "40%",
+    "rn": 0.4,
+    "tec": "Seduto veloce \u2192 In piedi leggero",
+    "mani": "P1\u2194P2",
+    "fase": "Fondo variato",
+    "focus": "Salita soft.",
+    "s": 887
+  },
+  {
+    "i": 7,
+    "title": "Volare - Afro House",
+    "ar": "Afr\u00f8telize",
+    "bpm": "121",
+    "d": 283,
+    "z": "Z2",
+    "rpm": "85-95",
+    "res": "35%",
+    "rn": 0.35,
+    "tec": "Seduto veloce",
+    "mani": "P1",
+    "fase": "Fondo",
+    "focus": "Ritmo africano fluido.",
+    "s": 1094
   },
   {
     "i": 8,
@@ -1254,13 +1254,13 @@ const T = [
     "tec": "In piedi leggero \u2192 Seduto veloce",
     "mani": "P1\u2194P2",
     "fase": "Fondo variato",
-    "focus": "Dinamica; alterna posizioni per muscoli diversi.",
+    "focus": "Dinamica posizioni.",
     "s": 1377
   },
   {
     "i": 9,
-    "title": "Pedro - W&W",
-    "ar": "Jaxomy, Agatino Romero, Raffaello",
+    "title": "Pedro - W&W Remix",
+    "ar": "Jaxomy, Agatino Romero, Raffaella Carr\u00e0, W&W",
     "bpm": "155",
     "d": 159,
     "z": "Z4",
@@ -1270,13 +1270,13 @@ const T = [
     "tec": "In piedi \u2192 Seduto ritmo massimo",
     "mani": "P3",
     "fase": "Picco esplosivo",
-    "focus": "Elettro aggressivo! Piccola montagna Z4. Spinta massima, attacca il ritmo.",
+    "focus": "Elettro aggressivo Z4.",
     "s": 1564
   },
   {
     "i": 10,
-    "title": "Tu Vera - FNX OMAR",
-    "ar": "Simone Glad",
+    "title": "Tu Vera - FNX OMAR Remix",
+    "ar": "Simone Glad, Bondar, BAQABO, FNX OMAR",
     "bpm": "121",
     "d": 254,
     "z": "Z2",
@@ -1286,29 +1286,13 @@ const T = [
     "tec": "Seduto veloce",
     "mani": "P1",
     "fase": "Active recovery",
-    "focus": "Recovery attiva in Z2; respira bene, prepara per salita.",
+    "focus": "Recovery attiva Z2.",
     "s": 1723
   },
   {
     "i": 11,
-    "title": "Maracaibo - Tech House",
-    "ar": "Lu Colombo, Gian Maria",
-    "bpm": "127",
-    "d": 170,
-    "z": "Z3",
-    "rpm": "90-100",
-    "res": "45%",
-    "rn": 0.45,
-    "tec": "In piedi leggero",
-    "mani": "P2",
-    "fase": "Salita",
-    "focus": "Inizio salita; mantieni ritmo, core attivo.",
-    "s": 1977
-  },
-  {
-    "i": 12,
     "title": "CARUSO",
-    "ar": "Giuseppe Roccasalvo",
+    "ar": "Giuseppe Roccasalvo, JOE ROK, BENZATO",
     "bpm": "122",
     "d": 147,
     "z": "Z2",
@@ -1318,12 +1302,28 @@ const T = [
     "tec": "Seduto veloce",
     "mani": "P1\u2194P2",
     "fase": "Salita soft",
-    "focus": "Respiro profondo; preparazione al picco.",
-    "s": 2147
+    "focus": "Respiro profondo.",
+    "s": 1977
+  },
+  {
+    "i": 12,
+    "title": "Maracaibo - Tech house radio",
+    "ar": "Lu Colombo, Gian Maria Bragantini",
+    "bpm": "127",
+    "d": 170,
+    "z": "Z3",
+    "rpm": "90-100",
+    "res": "45%",
+    "rn": 0.45,
+    "tec": "In piedi leggero",
+    "mani": "P2",
+    "fase": "Salita",
+    "focus": "Inizio salita.",
+    "s": 2124
   },
   {
     "i": 13,
-    "title": "Scatman",
+    "title": "Scatman (ski-ba-bop-ba-dop-bop)",
     "ar": "Scatman John",
     "bpm": "136",
     "d": 215,
@@ -1334,12 +1334,12 @@ const T = [
     "tec": "In piedi \u2192 Seduto ritmo massimo",
     "mani": "P2\u2194P3",
     "fase": "Salita push",
-    "focus": "House energetica percussiva; mantieni cadenza 100+ RPM.",
+    "focus": "House energetica.",
     "s": 2294
   },
   {
     "i": 14,
-    "title": "Played-A-Live (The Bongo Song)",
+    "title": "Played-A-Live (The Bongo Song) - Radio",
     "ar": "Safri Duo",
     "bpm": "138",
     "d": 200,
@@ -1350,13 +1350,13 @@ const T = [
     "tec": "In piedi massimo",
     "mani": "P3",
     "fase": "Salita top",
-    "focus": "Africano energico; push finale prima del climax.",
+    "focus": "Africano energico.",
     "s": 2509
   },
   {
     "i": 15,
     "title": "AL MIO PAESE",
-    "ar": "Serena Brancale",
+    "ar": "Serena Brancale, Levante",
     "bpm": "139",
     "d": 197,
     "z": "Z4",
@@ -1366,11 +1366,27 @@ const T = [
     "tec": "In piedi massimo",
     "mani": "P3",
     "fase": "Climax",
-    "focus": "PICCO: massima resistenza, RPM obiettivo 100-115. Tutto quello che hai!",
+    "focus": "PICCO massimo.",
     "s": 2709
   },
   {
     "i": 16,
+    "title": "I know I want You - I'm so excited Remix",
+    "ar": "Federico Riva",
+    "bpm": "125",
+    "d": 229,
+    "z": "Z2",
+    "rpm": "85-95",
+    "res": "25%",
+    "rn": 0.25,
+    "tec": "Seduto leggero \u2192 In piedi leggero",
+    "mani": "P1\u2194P2",
+    "fase": "Defaticamento",
+    "focus": "Recovery attiva.",
+    "s": 2906
+  },
+  {
+    "i": 17,
     "title": "Aicha",
     "ar": "Revive26",
     "bpm": "123",
@@ -1382,24 +1398,8 @@ const T = [
     "tec": "Seduto veloce",
     "mani": "P1",
     "fase": "Defaticamento",
-    "focus": "Scendi gradualmente dalla salita; cuore che torna a Z2.",
-    "s": 2906
-  },
-  {
-    "i": 17,
-    "title": "I know I want You",
-    "ar": "Federico Riva",
-    "bpm": "125",
-    "d": 229,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "25%",
-    "rn": 0.25,
-    "tec": "Seduto leggero \u2192 In piedi leggero",
-    "mani": "P1\u2194P2",
-    "fase": "Defaticamento",
-    "focus": "Recovery attiva; prepara il corpo per stretching.",
-    "s": 3169
+    "focus": "Scendi dalla salita.",
+    "s": 3135
   },
   {
     "i": 18,
@@ -1414,7 +1414,7 @@ const T = [
     "tec": "Seduto leggero",
     "mani": "P1",
     "fase": "Stretching",
-    "focus": "Respirazione profonda; scendi dalla bici e stretcha tutto.",
+    "focus": "Respirazione profonda.",
     "s": 3398
   }
 ];
