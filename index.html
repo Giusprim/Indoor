@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>🚴 2000 Fartlek</title>
+<title>🚴 Fondo Variato</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -912,8 +912,8 @@ body{display:flex;flex-direction:column}
 <!-- HEADER -->
 <div id="hdr">
   <div>
-    <div id="hdr-title">🚴 2000 Fartlek</div>
-    <div id="hdr-sub">Giuseppe Primavera · 16 BRANI · 1:00:29</div>
+    <div id="hdr-title">🚴 Fondo Variato</div>
+    <div id="hdr-sub">Giuseppe Primavera · 18 BRANI · 60:28</div>
   </div>
   <div id="hdr-r">
     <span id="wake-ind"></span>
@@ -1010,7 +1010,7 @@ body{display:flex;flex-direction:column}
         <div id="time-row">
           <span id="t-cur">0:00:00</span>
           <span id="t-rem">−0:00</span>
-          <span id="t-end">1:00:29</span>
+          <span id="t-end">0:58:15</span>
         </div>
       </div>
     </div>
@@ -1032,18 +1032,17 @@ body{display:flex;flex-direction:column}
           <span id="sp-dot" class="wait"></span>
           <span id="sp-status-txt">Connessione in corso…</span>
         </div>
-        <!-- Play + nav in unica riga compatta -->
+        <button id="big-play" class="off" onclick="togglePlayback()">
+          <span id="bp-icon">▶</span>
+          <span id="bp-label">PLAY — Musica + Timer</span>
+        </button>
         <div id="nav-row">
           <button class="btn-sm" onclick="prevTrack()">⏮</button>
-          <button id="big-play" class="off" onclick="togglePlayback()">
-            <span id="bp-icon">▶</span>
-            <span id="bp-label">PLAY</span>
-          </button>
           <button class="btn-sm" onclick="nextTrack()">⏭</button>
           <span id="sync-badge">sync —</span>
+          <span id="status-txt">In attesa</span>
           <span id="logout-btn" onclick="logout()">esci</span>
         </div>
-        <span id="status-txt" style="font-size:11px;color:var(--muted);font-family:var(--fm);text-align:center">In attesa</span>
       </div>
     </div>
 
@@ -1122,303 +1121,304 @@ body{display:flex;flex-direction:column}
 // ═══════════════════════════════════════════════════════
 const CLIENT_ID = 'fec34f5ffb9a46ca912190a6557e637c';
 const REDIRECT = 'https://giusprim.github.io/Indoor/';
-const PLAYLIST = 'spotify:playlist:4rbnTNKFpiAPZSfxgyn8I7';
+const PLAYLIST = 'spotify:playlist:7C8f3OvcSetywCKfgP5iZV';
 const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
 // ═══════════════════════════════════════════════════════
 //  DATI LEZIONE
 // ═══════════════════════════════════════════════════════
 const T = [
-  {
-    "i": 1,
-    "title": "Always Remember Us This Way",
-    "ar": "Federico Riva",
-    "bpm": "115",
-    "d": 246,
-    "z": "Z1",
-    "rpm": "75-85",
-    "res": "25%",
-    "rn": 0.25,
-    "tec": "Seduto leggero",
-    "mani": "P1",
-    "fase": "Warm-up",
-    "focus": "Riscaldamento dolce.",
-    "s": 0
-  },
-  {
-    "i": 2,
-    "title": "PARTENOPE (feat. Serena Brancale)",
-    "ar": "Merk & Kremont, Serena Brancale",
-    "bpm": "122",
-    "d": 150,
-    "z": "Z2",
-    "rpm": "80-90",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto veloce \u2192 In piedi leggero",
-    "mani": "P1\u2194P2",
-    "fase": "Attivazione",
-    "focus": "Alterna posizioni.",
-    "s": 246
-  },
-  {
-    "i": 3,
-    "title": "Asereje - Remix",
-    "ar": "MESTIZA, Las Ketchup",
-    "bpm": "125",
-    "d": 157,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "35%",
-    "rn": 0.35,
-    "tec": "In piedi leggero \u2192 Seduto veloce",
-    "mani": "P1\u2194P2",
-    "fase": "Attivazione",
-    "focus": "Dinamica.",
-    "s": 396
-  },
-  {
-    "i": 4,
-    "title": "Buona Sera - Ciao Ciao (feat. G-Clark)",
-    "ar": "House of Glass, G-Clark",
-    "bpm": "124",
-    "d": 207,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto veloce",
-    "mani": "P1\u2194P2",
-    "fase": "Attivazione",
-    "focus": "Pedalata costante.",
-    "s": 553
-  },
-  {
-    "i": 5,
-    "title": "Tu",
-    "ar": "Ben DJ",
-    "bpm": "123",
-    "d": 127,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "35%",
-    "rn": 0.35,
-    "tec": "Seduto veloce",
-    "mani": "P1",
-    "fase": "Fondo",
-    "focus": "Cadenza alta.",
-    "s": 760
-  },
-  {
-    "i": 6,
-    "title": "Yaloma 2",
-    "ar": "DJ VAMUZZE",
-    "bpm": "125",
-    "d": 207,
-    "z": "Z3",
-    "rpm": "90-100",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Seduto veloce \u2192 In piedi leggero",
-    "mani": "P1\u2194P2",
-    "fase": "Fondo variato",
-    "focus": "Salita soft.",
-    "s": 887
-  },
-  {
-    "i": 7,
-    "title": "Volare - Afro House",
-    "ar": "Afr\u00f8telize",
-    "bpm": "121",
-    "d": 283,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "35%",
-    "rn": 0.35,
-    "tec": "Seduto veloce",
-    "mani": "P1",
-    "fase": "Fondo",
-    "focus": "Ritmo africano fluido.",
-    "s": 1094
-  },
-  {
-    "i": 8,
-    "title": "Gli anni",
-    "ar": "Federico Riva",
-    "bpm": "128",
-    "d": 187,
-    "z": "Z3",
-    "rpm": "90-100",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "In piedi leggero \u2192 Seduto veloce",
-    "mani": "P1\u2194P2",
-    "fase": "Fondo variato",
-    "focus": "Dinamica posizioni.",
-    "s": 1377
-  },
-  {
-    "i": 9,
-    "title": "Pedro - W&W Remix",
-    "ar": "Jaxomy, Agatino Romero, Raffaella Carr\u00e0, W&W",
-    "bpm": "155",
-    "d": 159,
-    "z": "Z4",
-    "rpm": "110-120",
-    "res": "55%",
-    "rn": 0.55,
-    "tec": "In piedi \u2192 Seduto ritmo massimo",
-    "mani": "P3",
-    "fase": "Picco esplosivo",
-    "focus": "Elettro aggressivo Z4.",
-    "s": 1564
-  },
-  {
-    "i": 10,
-    "title": "Tu Vera - FNX OMAR Remix",
-    "ar": "Simone Glad, Bondar, BAQABO, FNX OMAR",
-    "bpm": "121",
-    "d": 254,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "35%",
-    "rn": 0.35,
-    "tec": "Seduto veloce",
-    "mani": "P1",
-    "fase": "Active recovery",
-    "focus": "Recovery attiva Z2.",
-    "s": 1723
-  },
-  {
-    "i": 11,
-    "title": "CARUSO",
-    "ar": "Giuseppe Roccasalvo, JOE ROK, BENZATO",
-    "bpm": "122",
-    "d": 147,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "40%",
-    "rn": 0.4,
-    "tec": "Seduto veloce",
-    "mani": "P1\u2194P2",
-    "fase": "Salita soft",
-    "focus": "Respiro profondo.",
-    "s": 1977
-  },
-  {
-    "i": 12,
-    "title": "Maracaibo - Tech house radio",
-    "ar": "Lu Colombo, Gian Maria Bragantini",
-    "bpm": "127",
-    "d": 170,
-    "z": "Z3",
-    "rpm": "90-100",
-    "res": "45%",
-    "rn": 0.45,
-    "tec": "In piedi leggero",
-    "mani": "P2",
-    "fase": "Salita",
-    "focus": "Inizio salita.",
-    "s": 2124
-  },
-  {
-    "i": 13,
-    "title": "Scatman (ski-ba-bop-ba-dop-bop)",
-    "ar": "Scatman John",
-    "bpm": "136",
-    "d": 215,
-    "z": "Z4",
-    "rpm": "100-110",
-    "res": "55%",
-    "rn": 0.55,
-    "tec": "In piedi \u2192 Seduto ritmo massimo",
-    "mani": "P2\u2194P3",
-    "fase": "Salita push",
-    "focus": "House energetica.",
-    "s": 2294
-  },
-  {
-    "i": 14,
-    "title": "Played-A-Live (The Bongo Song) - Radio",
-    "ar": "Safri Duo",
-    "bpm": "138",
-    "d": 200,
-    "z": "Z4",
-    "rpm": "105-115",
-    "res": "58%",
-    "rn": 0.58,
-    "tec": "In piedi massimo",
-    "mani": "P3",
-    "fase": "Salita top",
-    "focus": "Africano energico.",
-    "s": 2509
-  },
-  {
-    "i": 15,
-    "title": "AL MIO PAESE",
-    "ar": "Serena Brancale, Levante",
-    "bpm": "139",
-    "d": 197,
-    "z": "Z4",
-    "rpm": "100-115",
-    "res": "60%",
-    "rn": 0.6,
-    "tec": "In piedi massimo",
-    "mani": "P3",
-    "fase": "Climax",
-    "focus": "PICCO massimo.",
-    "s": 2709
-  },
-  {
-    "i": 16,
-    "title": "I know I want You - I'm so excited Remix",
-    "ar": "Federico Riva",
-    "bpm": "125",
-    "d": 229,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "25%",
-    "rn": 0.25,
-    "tec": "Seduto leggero \u2192 In piedi leggero",
-    "mani": "P1\u2194P2",
-    "fase": "Defaticamento",
-    "focus": "Recovery attiva.",
-    "s": 2906
-  },
-  {
-    "i": 17,
-    "title": "Aicha",
-    "ar": "Revive26",
-    "bpm": "123",
-    "d": 263,
-    "z": "Z2",
-    "rpm": "85-95",
-    "res": "30%",
-    "rn": 0.3,
-    "tec": "Seduto veloce",
-    "mani": "P1",
-    "fase": "Defaticamento",
-    "focus": "Scendi dalla salita.",
-    "s": 3135
-  },
-  {
-    "i": 18,
-    "title": "Torna a casa",
-    "ar": "M\u00e5neskin",
-    "bpm": "78",
-    "d": 230,
-    "z": "Z1",
-    "rpm": "60-70",
-    "res": "15%",
-    "rn": 0.15,
-    "tec": "Seduto leggero",
-    "mani": "P1",
-    "fase": "Stretching",
-    "focus": "Respirazione profonda.",
-    "s": 3398
-  }
+ {
+  "i": 1,
+  "title": "Always Remember Us This Way",
+  "ar": "Federico Riva",
+  "bpm": "115",
+  "d": 246,
+  "z": "Z1",
+  "rpm": "75-85",
+  "res": "25%",
+  "rn": 0.25,
+  "tec": "Seduto leggero",
+  "mani": "P1",
+  "fase": "Warm-up",
+  "focus": "Riscaldamento dolce. Leggera pedala per svegliare le gambe.",
+  "s": 0
+ },
+ {
+  "i": 2,
+  "title": "PARTENOPE (feat. Serena Brancale)",
+  "ar": "Merk & Kremont, Serena Brancale",
+  "bpm": "122",
+  "d": 150,
+  "z": "Z2",
+  "rpm": "80-90",
+  "res": "30%",
+  "rn": 0.3,
+  "tec": "Seduto veloce → In piedi leggero",
+  "mani": "P1↔P2",
+  "fase": "Attivazione",
+  "focus": "Alterna seduto e in piedi; prepara il corpo per il fondo.",
+  "s": 246
+ },
+ {
+  "i": 3,
+  "title": "Asereje - Remix",
+  "ar": "MESTIZA, Las Ketchup",
+  "bpm": "125",
+  "d": 157,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "35%",
+  "rn": 0.35,
+  "tec": "In piedi leggero → Seduto veloce",
+  "mani": "P1↔P2",
+  "fase": "Attivazione",
+  "focus": "Dinamica; cambia posizione ogni frase.",
+  "s": 396
+ },
+ {
+  "i": 4,
+  "title": "Buona Sera - Ciao Ciao (feat. G-Clark)",
+  "ar": "House of Glass, G-Clark",
+  "bpm": "124",
+  "d": 207,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "30%",
+  "rn": 0.3,
+  "tec": "Seduto veloce",
+  "mani": "P1↔P2",
+  "fase": "Attivazione",
+  "focus": "Pedalata costante, respira ogni 4 battiti.",
+  "s": 553
+ },
+ {
+  "i": 5,
+  "title": "Tu",
+  "ar": "Ben DJ",
+  "bpm": "123",
+  "d": 127,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "35%",
+  "rn": 0.35,
+  "tec": "Seduto veloce",
+  "mani": "P1",
+  "fase": "Fondo",
+  "focus": "Mantieni cadenza alta, leggera resistenza.",
+  "s": 760
+ },
+ {
+  "i": 6,
+  "title": "Yaloma 2",
+  "ar": "DJ VAMUZZE",
+  "bpm": "125",
+  "d": 207,
+  "z": "Z3",
+  "rpm": "90-100",
+  "res": "40%",
+  "rn": 0.4,
+  "tec": "Seduto veloce → In piedi leggero",
+  "mani": "P1↔P2",
+  "fase": "Fondo variato",
+  "focus": "Salita soft; aumenta resistenza gradualmente.",
+  "s": 887
+ },
+ {
+  "i": 7,
+  "title": "Volare - Afro House",
+  "ar": "Afrøtelize",
+  "bpm": "121",
+  "d": 283,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "35%",
+  "rn": 0.35,
+  "tec": "Seduto veloce",
+  "mani": "P1",
+  "fase": "Fondo",
+  "focus": "Ritmo africano, pedalata fluida e rilassata.",
+  "s": 1094
+ },
+ {
+  "i": 8,
+  "title": "Gli anni",
+  "ar": "Federico Riva",
+  "bpm": "128",
+  "d": 187,
+  "z": "Z3",
+  "rpm": "90-100",
+  "res": "40%",
+  "rn": 0.4,
+  "tec": "In piedi leggero → Seduto veloce",
+  "mani": "P1↔P2",
+  "fase": "Fondo variato",
+  "focus": "Dinamica; alterna posizioni per muscoli diversi.",
+  "s": 1377
+ },
+ {
+  "i": 9,
+  "title": "Pedro - W&W Remix",
+  "ar": "Jaxomy, Agatino Romero, Raffaella Carrà, W&W",
+  "bpm": "155",
+  "d": 159,
+  "z": "Z4",
+  "rpm": "110-120",
+  "res": "55%",
+  "rn": 0.55,
+  "tec": "In piedi → Seduto ritmo massimo",
+  "mani": "P3",
+  "fase": "Picco esplosivo",
+  "focus": "Elettro aggressivo! Piccola montagna Z4. Spinta massima, attacca il ritmo.",
+  "s": 1564
+ },
+ {
+  "i": 10,
+  "title": "Tu Vera - FNX OMAR Remix",
+  "ar": "Simone Glad, Bondar, BAQABO, FNX OMAR",
+  "bpm": "121",
+  "d": 254,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "35%",
+  "rn": 0.35,
+  "tec": "Seduto veloce",
+  "mani": "P1",
+  "fase": "Active recovery",
+  "focus": "Recovery attiva in Z2; respira bene, prepara per salita.",
+  "s": 1723
+ },
+ {
+  "i": 11,
+  "title": "CARUSO",
+  "ar": "Giuseppe Roccasalvo, JOE ROK, BENZATO",
+  "bpm": "122",
+  "d": 147,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "40%",
+  "rn": 0.4,
+  "tec": "Seduto veloce",
+  "mani": "P1↔P2",
+  "fase": "Salita soft",
+  "focus": "Respiro profondo; preparazione al picco.",
+  "s": 1977
+ },
+ {
+  "i": 12,
+  "title": "Maracaibo - Tech house radio",
+  "ar": "Lu Colombo, Gian Maria Bragantini",
+  "bpm": "127",
+  "d": 170,
+  "z": "Z3",
+  "rpm": "90-100",
+  "res": "45%",
+  "rn": 0.45,
+  "tec": "In piedi leggero",
+  "mani": "P2",
+  "fase": "Salita",
+  "focus": "Inizio salita; mantieni ritmo, core attivo.",
+  "s": 2124
+ },
+ {
+  "i": 13,
+  "title": "Scatman (ski-ba-bop-ba-dop-bop)",
+  "ar": "Scatman John",
+  "bpm": "136",
+  "d": 215,
+  "z": "Z4",
+  "rpm": "100-110",
+  "res": "55%",
+  "rn": 0.55,
+  "tec": "In piedi → Seduto ritmo massimo",
+  "mani": "P2↔P3",
+  "fase": "Salita push",
+  "focus": "House energetica percussiva; mantieni cadenza 100+ RPM.",
+  "s": 2294
+ },
+ {
+  "i": 14,
+  "title": "Played-A-Live (The Bongo Song) - Radio",
+  "ar": "Safri Duo",
+  "bpm": "138",
+  "d": 200,
+  "z": "Z4",
+  "rpm": "105-115",
+  "res": "58%",
+  "rn": 0.58,
+  "tec": "In piedi massimo",
+  "mani": "P3",
+  "fase": "Salita top",
+  "focus": "Africano energico; push finale prima del climax.",
+  "s": 2509
+ },
+ {
+  "i": 15,
+  "title": "AL MIO PAESE",
+  "ar": "Serena Brancale, Levante",
+  "bpm": "139",
+  "d": 197,
+  "z": "Z4",
+  "rpm": "100-115",
+  "res": "60%",
+  "rn": 0.6,
+  "tec": "In piedi massimo",
+  "mani": "P3",
+  "fase": "Climax",
+  "focus": "PICCO: massima resistenza, RPM obiettivo 100-115. Tutto quello che hai!",
+  "s": 2709
+ },
+ {
+  "i": 16,
+  "title": "I know I want You - I'm so excited Remix",
+  "ar": "Federico Riva",
+  "bpm": "125",
+  "d": 229,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "25%",
+  "rn": 0.25,
+  "tec": "Seduto leggero → In piedi leggero",
+  "mani": "P1↔P2",
+  "fase": "Defaticamento",
+  "focus": "Recovery attiva; prepara il corpo per stretching.",
+  "s": 2906
+ },
+ {
+  "i": 17,
+  "title": "Aicha",
+  "ar": "Revive26",
+  "bpm": "123",
+  "d": 263,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "30%",
+  "rn": 0.3,
+  "tec": "Seduto veloce",
+  "mani": "P1",
+  "fase": "Defaticamento",
+  "focus": "Scendi gradualmente dalla salita; cuore che torna a Z2.",
+  "s": 3135
+ },
+ {
+  "i": 18,
+  "title": "Torna a casa",
+  "ar": "Måneskin",
+  "bpm": "78",
+  "d": 230,
+  "z": "Z1",
+  "rpm": "60-70",
+  "res": "15%",
+  "rn": 0.15,
+  "tec": "Seduto leggero",
+  "mani": "P1",
+  "fase": "Stretching",
+  "focus": "Respirazione profonda; scendi dalla bici e stretcha tutto.",
+  "s": 3398
+ }
 ];
 
+const CROSSFADE=4;
 const TOTAL=3628;
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
@@ -1796,7 +1796,6 @@ function tick(){
     const t=T[ci];
     showAlert('▶',`${t.i}/${T.length}  ${t.title}`,`${t.fase} · ${t.rpm} RPM · Res ${t.res}`,ZC[t.z]);
     scheduleTecCountdown();
-    // Resync immediato: corregge il drift crossfade (4s) senza aspettare 3s
     if(isPlaying) setTimeout(()=>autoSync(),700);
   }
   renderUI(el);
@@ -2565,59 +2564,26 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
   #np-badge{font-size:10px;padding-top:0}
   #np-row{margin-bottom:0}
 
-  /* ── METRICHE: grandi e leggibili da lontano ─────────────────
-     Zona, RPM, BPM, Resistenza, Manubrio sono il cruscotto
-     principale — devono essere visibili dalla bici (>2m)       */
-  #metrics{
-    gap:4px;
-    /* Altezza fissa: usa il 35% dello spazio del pannello now */
-    flex-shrink:0;
-  }
-  .metric{
-    padding:6px 4px!important;
-    border-radius:10px;
-    /* Bordo colorato più spesso per distinguere le zone */
-    border-width:2px!important;
-  }
-  /* Barra colore in cima più alta */
-  .metric::after{height:5px!important}
-  /* Valore: grande, leggibile da lontano */
-  .mv{
-    font-size:26px!important;
-    font-weight:900!important;
-    letter-spacing:-.5px;
-    line-height:1;
-  }
-  /* Label: piccola ma presente */
-  .ml{
-    font-size:8px!important;
-    margin-top:3px;
-    letter-spacing:.5px;
-  }
+  /* Metriche: 1 riga ultrac ompatta */
+  #metrics{gap:3px}
+  .mv{font-size:16px!important}
+  .ml{font-size:7px!important}
+  .metric{padding:4px 2px!important}
 
   /* Info row: fase nascosta, tec compatta */
   #info-row{grid-template-columns:1fr!important;gap:3px}
   #fase-box{display:none}
-  #tec-box{max-height:64px;padding:4px 8px}
-  #tec-segs-wrap{max-height:56px}
-  /* Segmento attivo: ben leggibile, quelli futuri solo accennati */
-  .tec-seg-item{font-size:11px;padding:3px 7px}
-  .tec-seg-item.active{
-    font-size:15px!important;
-    font-weight:800;
-    letter-spacing:-.2px;
-  }
+  #tec-box{max-height:72px;padding:4px 8px}
+  #tec-segs-wrap{max-height:64px}
+  .tec-seg-item{font-size:12px;padding:3px 7px}
+  .tec-seg-item.active{font-size:14px}
   .tec-seg-mani{font-size:10px;padding:1px 5px}
   .tec-seg-time{display:none}
 
-  /* Focus coaching: testo più grande rispetto al resto */
-  #focus-box{padding:4px 10px;flex-shrink:0}
+  /* Focus coaching compattissimo */
+  #focus-box{padding:4px 8px}
   #focus-lbl{display:none}
-  #focus-val{
-    font-size:13px!important;
-    line-height:1.3;
-    font-weight:700;
-  }
+  #focus-val{font-size:12px;line-height:1.25}
 
   /* SJ tracker ridotto */
   #sj-label{font-size:18px}
@@ -2660,20 +2626,17 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 
   /* Tracklist: compattissima, scorribile */
   #tl-wrap{flex:1;min-height:0}
-  /* Tracklist 240px landscape: solo #, Titolo, RPM, RES */
-  #tl-head,
-  .tr{grid-template-columns:20px 1fr 50px 40px!important;gap:2px}
-  #tl-head{padding:3px 6px;font-size:8px}
-  .tr{padding:4px 6px}
-  .tf{display:none!important}   /* nasconde Fase */
-  .tb{display:none!important}   /* nasconde BPM */
-  /* Mostra solo: #, Titolo, RPM, RES */
+  #tl-head{padding:4px 8px;font-size:9px}
+  .tr{padding:5px 8px}
   .ti{font-size:9px}
   .tt{font-size:10px}
-  .tr2{font-size:11px;font-weight:800;color:var(--green)}
-  .tres{font-size:11px;font-weight:800;color:var(--red)}
+  .tf{font-size:8px}
+  .tb,.tr2,.tres{font-size:9px}
 
-  /* sprint/jump banner: gestito nel blocco CSS dedicato */
+  /* Overlay fullscreen sprint/jump: testo compatto */
+  #sj-fs-label{font-size:60px}
+  #sj-fs-phase{font-size:32px}
+  #sj-fs-time{font-size:44px}
 
   /* Countdown overlay */
   #tco-num{font-size:40px}
@@ -2685,65 +2648,11 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 @media(orientation:landscape) and (min-height:651px) and (max-height:900px){
   #chart-canvas{height:90px!important}
   #zone-leg{display:none}
-
-  /* ── TITOLO BRANO: leggibile dalla spinbike (2m+) ── */
-  #np-title{font-size:28px!important;font-weight:900!important}
-  #np-artist{font-size:13px}
-
-  /* ── BADGE BRANO (es. 2/16): grande e visibile ── */
-  #np-badge{font-size:18px!important;color:#fff;font-weight:800}
-
-  /* ── METRICHE: cruscotto principale dalla bike ─────────────
-     Zona FC, RPM, BPM, Resistenza, Manubrio
-     Font grande + box più alto + barra colore spessa           */
-  #metrics{gap:5px;flex-shrink:0}
-  .metric{
-    padding:10px 4px!important;
-    border-radius:11px;
-    border-width:2px!important;
-  }
-  .metric::after{height:6px!important}
-  .mv{
-    font-size:34px!important;
-    font-weight:900!important;
-    line-height:1;
-    letter-spacing:-.5px;
-  }
-  .ml{
-    font-size:9px!important;
-    margin-top:4px;
-    letter-spacing:.6px;
-  }
-
-  /* ── FASE: visibile senza ingrandire troppo ── */
-  #fase-box{display:flex!important}
-  #fase-val{font-size:18px!important}
-  #info-row{grid-template-columns:120px 1fr;gap:5px}
-
-  /* ── SEGMENTO ATTIVO: leggibile a colpo d'occhio ── */
-  .tec-seg-item{font-size:12px}
-  .tec-seg-item.active{
-    font-size:17px!important;
-    font-weight:800;
-  }
-  #tec-box{max-height:110px;padding:6px 10px}
-  #tec-segs-wrap{max-height:102px}
-
-  /* ── FOCUS COACHING ── */
-  #focus-val{font-size:14px!important;font-weight:700}
-
-  /* ── SJ TRACKER (JUMP/SPRINT nella barra sinistra) ── */
-  #sj-label{font-size:22px!important}
-  #sj-countdown{font-size:28px!important}
-
-  /* Tracklist: togli Fase, griglia 5 col */
-  #tl-head,
-  .tr{grid-template-columns:22px 1fr 44px 52px 42px!important}
-  .tf{display:none}
-  #tl-head span:nth-child(3){display:none}
-  .tb{font-size:16px}
-  .tr2{font-size:15px;font-weight:800}
-  .tres{font-size:15px;font-weight:800}
+  #np-title{font-size:22px!important}
+  .mv{font-size:17px!important}
+  #tec-box{max-height:100px}
+  #tec-segs-wrap{max-height:92px}
+  #focus-val{font-size:12px}
 }
 
 </style>
@@ -2771,15 +2680,8 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 <div id="pj-prog" style="width:0%"></div>
 ` + '<scr' + 'ipt>' + `
 const ZC={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
-// postMessage: funziona indipendentemente dall'origine (about:blank, blob:, etc.)
-window.addEventListener('message',function(e){
-  if(e.data&&e.data._proj) applyState(e.data);
-});
-// Fallback BroadcastChannel per browser che supportano origine ereditata
-try{
-  const ch=new BroadcastChannel('cycling_coach_proj');
-  ch.onmessage=function(e){if(e.data&&e.data._proj)applyState(e.data);};
-}catch(e){}
+const ch = new BroadcastChannel('cycling_coach_proj');
+ch.onmessage = function(e){ applyState(e.data); };
 function applyState(d){
   if(!d) return;
   document.getElementById('pj-standby').style.display='none';
