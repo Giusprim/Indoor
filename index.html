@@ -905,6 +905,81 @@ body{display:flex;flex-direction:column}
   .tres{font-size:15px;font-weight:800}
 }
 
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT COACH LEGGIBILE (tablet/desktop in orizzontale)
+   Tecnica a sinistra, Focus coach a destra, occupano tutto
+   lo spazio libero sotto le metriche. Font scalati sull'altezza.
+══════════════════════════════════════════════════════════ */
+@media(orientation:landscape) and (min-width:900px){
+  #now{
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:auto auto minmax(0,1fr) auto auto;
+    grid-template-areas:"title title" "metrics metrics" "tec focus" "sj sj" "prog prog";
+    gap:6px 8px!important;
+    min-height:0;overflow:hidden;
+  }
+  #np-row{grid-area:title}
+  #metrics{grid-area:metrics}
+  #info-row{grid-area:tec;display:flex!important;min-height:0;min-width:0}
+  #focus-box{grid-area:focus}
+  #sj-tracker{grid-area:sj}
+  #prog-wrap{grid-area:prog}
+  #fase-box{display:none!important}
+
+  /* ── TECNICA ── */
+  #tec-box{
+    flex:1;max-height:none!important;min-height:0;min-width:0;
+    padding:10px 14px!important;
+    display:flex;flex-direction:column;overflow:hidden;
+    border-left:4px solid var(--zc,var(--cyan));
+  }
+  #tec-box::after{display:none!important}
+  #tec-box .lbl{
+    font-size:clamp(11px,1.8vh,15px);letter-spacing:1.2px;
+    margin-bottom:6px;flex-shrink:0;
+  }
+  #tec-segs-wrap{
+    flex:1;min-height:0;max-height:none!important;
+    gap:6px;overflow-y:auto;
+  }
+  .tec-seg-item{
+    font-size:clamp(16px,2.8vh,24px)!important;font-weight:700;
+    opacity:.5;padding:6px 10px;gap:10px;
+  }
+  .tec-seg-item>span:nth-child(2){flex:1;min-width:0;line-height:1.15}
+  .tec-seg-item.active{
+    font-size:clamp(22px,5vh,38px)!important;font-weight:900;
+    opacity:1;background:rgba(255,255,255,.12);
+    padding:8px 10px 8px 8px;
+  }
+  .tec-seg-item.done{display:none!important}
+  .tec-seg-dot{width:14px;height:14px}
+  .tec-seg-mani{
+    display:inline-block!important;
+    font-size:clamp(13px,2.4vh,20px)!important;padding:2px 9px;
+  }
+  .tec-seg-time{
+    display:inline!important;font-size:clamp(12px,2vh,16px)!important;
+  }
+
+  /* ── FOCUS COACH ── */
+  #focus-box{
+    display:flex;flex-direction:column;min-height:0;min-width:0;
+    padding:10px 16px!important;overflow:auto;
+    border-left-width:6px;
+  }
+  #focus-lbl{
+    display:block!important;flex-shrink:0;
+    font-size:clamp(11px,1.8vh,15px)!important;color:#c58cff!important;
+    letter-spacing:1.2px;margin-bottom:6px;
+  }
+  #focus-val{
+    font-size:clamp(18px,3.9vh,32px)!important;
+    font-weight:700;font-style:normal!important;line-height:1.3;color:#fff;
+  }
+}
 </style>
 </head>
 <body>
@@ -957,7 +1032,7 @@ body{display:flex;flex-direction:column}
         </div>
         <div class="metric" style="--mc:var(--green)">
           <div class="mv" id="m-rpm" style="color:var(--green)">—</div>
-          <div class="ml">RPM</div>
+          <div class="ml" id="m-rpm-l">RPM</div>
         </div>
         <div class="metric" style="--mc:var(--amber)">
           <div class="mv" id="m-bpm" style="color:var(--amber)">—</div>
@@ -1215,10 +1290,11 @@ const T = [
   "bpm": "125",
   "d": 207,
   "z": "Z3",
-  "rpm": "90-100",
+  "rpm": "60-70",
+  "sy": "½ tempo",
   "res": "40%",
   "rn": 0.4,
-  "tec": "Seduto veloce → In piedi leggero",
+  "tec": "Seduto carico → In piedi leggero",
   "mani": "P1↔P2",
   "fase": "Fondo variato",
   "focus": "Salita soft; aumenta resistenza gradualmente.",
@@ -1263,13 +1339,14 @@ const T = [
   "bpm": "155",
   "d": 159,
   "z": "Z4",
-  "rpm": "110-120",
+  "rpm": "70-80",
+  "sy": "½ tempo",
   "res": "55%",
   "rn": 0.55,
-  "tec": "In piedi → Seduto ritmo massimo",
+  "tec": "In piedi → Seduto carico",
   "mani": "P3",
   "fase": "Picco esplosivo",
-  "focus": "Elettro aggressivo! Piccola montagna Z4. Spinta massima, attacca il ritmo.",
+  "focus": "Elettro aggressivo! Piccola montagna Z4. Spinta massima a mezzo tempo (70-80 RPM), attacca la salita.",
   "s": 1564
  },
  {
@@ -1279,7 +1356,7 @@ const T = [
   "bpm": "121",
   "d": 254,
   "z": "Z2",
-  "rpm": "85-95",
+  "rpm": "80-90",
   "res": "35%",
   "rn": 0.35,
   "tec": "Seduto veloce",
@@ -1295,10 +1372,11 @@ const T = [
   "bpm": "122",
   "d": 147,
   "z": "Z2",
-  "rpm": "85-95",
+  "rpm": "60-70",
+  "sy": "½ tempo",
   "res": "40%",
   "rn": 0.4,
-  "tec": "Seduto veloce",
+  "tec": "Seduto carico",
   "mani": "P1↔P2",
   "fase": "Salita soft",
   "focus": "Respiro profondo; preparazione al picco.",
@@ -1311,7 +1389,8 @@ const T = [
   "bpm": "127",
   "d": 170,
   "z": "Z3",
-  "rpm": "90-100",
+  "rpm": "60-70",
+  "sy": "½ tempo",
   "res": "45%",
   "rn": 0.45,
   "tec": "In piedi leggero",
@@ -1327,13 +1406,14 @@ const T = [
   "bpm": "136",
   "d": 215,
   "z": "Z4",
-  "rpm": "100-110",
+  "rpm": "65-75",
+  "sy": "½ tempo",
   "res": "55%",
   "rn": 0.55,
-  "tec": "In piedi → Seduto ritmo massimo",
+  "tec": "In piedi → Seduto carico",
   "mani": "P2↔P3",
   "fase": "Salita push",
-  "focus": "House energetica percussiva; mantieni cadenza 100+ RPM.",
+  "focus": "House energetica percussiva; pedala a mezzo tempo (65-75 RPM), forza sulla pedivella.",
   "s": 2294
  },
  {
@@ -1343,7 +1423,8 @@ const T = [
   "bpm": "138",
   "d": 200,
   "z": "Z4",
-  "rpm": "105-115",
+  "rpm": "65-75",
+  "sy": "½ tempo",
   "res": "58%",
   "rn": 0.58,
   "tec": "In piedi massimo",
@@ -1359,13 +1440,14 @@ const T = [
   "bpm": "139",
   "d": 197,
   "z": "Z4",
-  "rpm": "100-115",
+  "rpm": "65-75",
+  "sy": "½ tempo",
   "res": "60%",
   "rn": 0.6,
   "tec": "In piedi massimo",
   "mani": "P3",
   "fase": "Climax",
-  "focus": "PICCO: massima resistenza, RPM obiettivo 100-115. Tutto quello che hai!",
+  "focus": "PICCO: massima resistenza, RPM obiettivo 65-75 a mezzo tempo. Tutto quello che hai!",
   "s": 2709
  },
  {
@@ -1375,7 +1457,7 @@ const T = [
   "bpm": "125",
   "d": 229,
   "z": "Z2",
-  "rpm": "85-95",
+  "rpm": "75-85",
   "res": "25%",
   "rn": 0.25,
   "tec": "Seduto leggero → In piedi leggero",
@@ -1391,7 +1473,7 @@ const T = [
   "bpm": "123",
   "d": 263,
   "z": "Z2",
-  "rpm": "85-95",
+  "rpm": "75-85",
   "res": "30%",
   "rn": 0.3,
   "tec": "Seduto veloce",
@@ -1964,11 +2046,13 @@ function renderUI(el){
   document.getElementById('m-zone').textContent=t.z;
   document.getElementById('m-zone').style.color=zc;
   document.getElementById('m-rpm').textContent=t.rpm;
+  document.getElementById('m-rpm-l').textContent=t.sy?('RPM · '+t.sy.toUpperCase()):'RPM';
   document.getElementById('m-bpm').textContent=t.bpm;
   document.getElementById('m-res').textContent=t.res;
   document.getElementById('m-mani').textContent=t.mani;
   document.getElementById('fase-val').textContent=t.fase;
   document.getElementById('focus-val').textContent=t.focus;
+  document.getElementById('focus-lbl').textContent='🎯 FOCUS COACH · '+(t.fase||'').toUpperCase();
 
   // Zone color theming
   document.getElementById('now').style.setProperty('--zc',zc);
@@ -2671,7 +2755,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
   <div id="pj-fase">—</div>
 </div>
 <div id="pj-metrics">
-  <div class="pjm"><div class="val" id="pj-rpm" style="color:#00cc70">—</div><div class="lbl">RPM</div></div>
+  <div class="pjm"><div class="val" id="pj-rpm" style="color:#00cc70">—</div><div class="lbl" id="pj-rpm-l">RPM</div></div>
   <div class="pjm"><div class="val" id="pj-res" style="color:#ff1f42">—</div><div class="lbl">Resist.</div></div>
   <div class="pjm"><div class="val" id="pj-bpm" style="color:#ffbf00">—</div><div class="lbl">BPM</div></div>
   <div class="pjm"><div class="val" id="pj-mani" style="color:#4488ff">—</div><div class="lbl">Manubrio</div></div>
@@ -2681,9 +2765,20 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 ` + '<scr' + 'ipt>' + `
 const ZC={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 const ch = new BroadcastChannel('cycling_coach_proj');
+let lastRx=0;
 ch.onmessage = function(e){ applyState(e.data); };
+window.addEventListener('message', function(e){ applyState(e.data); });
+function askState(){
+  try{ ch.postMessage({_hello:true}); }catch(x){}
+  try{ if(window.opener) window.opener.postMessage({_hello:true},'*'); }catch(x){}
+}
+askState();
+document.addEventListener('visibilitychange', askState);
+window.addEventListener('focus', askState);
+setInterval(function(){ if(Date.now()-lastRx>2500) askState(); }, 1500);
 function applyState(d){
-  if(!d) return;
+  if(!d || d._hello || !d.title) return;
+  lastRx=Date.now();
   document.getElementById('pj-standby').style.display='none';
   const zc=ZC[d.zone]||'#00cc70';
   document.body.style.setProperty('--zc',zc);
@@ -2698,6 +2793,7 @@ function applyState(d){
   document.getElementById('pj-zone').style.borderColor=zc;
   document.getElementById('pj-fase').textContent=d.fase||'—';
   document.getElementById('pj-rpm').textContent=d.rpm||'—';
+  document.getElementById('pj-rpm-l').textContent=d.sy?('RPM · '+d.sy.toUpperCase()):'RPM';
   document.getElementById('pj-res').textContent=d.res||'—';
   document.getElementById('pj-bpm').textContent=d.bpm||'—';
   document.getElementById('pj-mani').textContent=d.mani||'—';
@@ -2757,8 +2853,9 @@ let _projCh = null;
 try { _projCh = new BroadcastChannel('cycling_coach_proj'); } catch(e){}
 
 function broadcastProjState() {
-  const t = T[ci];
   const el = getElapsed();
+  const _ti = trackAt(Math.min(el+(CROSSFADE||0), TOTAL-0.1));
+  const t = T[_ti>=0?_ti:ci];
   const pct = Math.min((el/TOTAL)*100,100);
   const posInTrack = el - t.s;
   const si = getActiveSegIdx(t, posInTrack);
@@ -2769,6 +2866,7 @@ function broadcastProjState() {
     artist: t.ar,
     zone:   t.z,
     rpm:    t.rpm,
+    sy:     t.sy||'',
     res:    t.res,
     bpm:    t.bpm,
     mani:   t._segs && t._segs[si] ? t._segs[si].mani : t.mani,
@@ -2785,6 +2883,17 @@ function broadcastProjState() {
   // BroadcastChannel come canale secondario
   if(_projCh){ try{ _projCh.postMessage(msg); }catch(e){} }
 }
+
+// Risposta alla richiesta di stato dalla proiezione (apertura, cambio scheda, riconnessione)
+window.addEventListener('message', function(e){ if(e.data && e.data._hello) broadcastProjState(); });
+if(_projCh){ _projCh.onmessage = function(e){ if(e.data && e.data._hello) broadcastProjState(); }; }
+// Heartbeat da Web Worker: non viene sospeso quando la scheda va in background
+(function(){
+  try{
+    const w=new Worker(URL.createObjectURL(new Blob(['setInterval(function(){postMessage(1)},1000)'],{type:'text/javascript'})));
+    w.onmessage=function(){ broadcastProjState(); };
+  }catch(e){ setInterval(broadcastProjState,1000); }
+})();
 
 // Hook updateUI per broadcast automatico ad ogni frame
 const _origUpdateUI = updateUI;
