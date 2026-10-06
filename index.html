@@ -1,0 +1,2906 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🚴 Fondo Variato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#000;--s1:#0a0a0f;--s2:#101016;--s3:#18181f;--s4:#222230;
+  --border:#ffffff12;--border2:#ffffff20;--border3:#ffffff30;
+  --text:#ffffff;--muted:#8888aa;--dim:#333344;
+  --red:#ff1f42;--green:#00ee78;--amber:#ffbf00;
+  --blue:#4488ff;--cyan:#00dfc0;--purple:#cc88ff;
+  --Z1:#4477ff;--Z2:#00cc70;--Z3:#ffbf00;--Z4:#ff6d18;--Z5:#ff1f42;
+  --fd:'Barlow Condensed',sans-serif;
+  --fb:'Barlow',sans-serif;
+  --fm:'Share Tech Mono',monospace;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;font-family:var(--fb)}
+body{display:flex;flex-direction:column}
+
+/* ══════════════════════════════════════
+   HEADER — compatto, info essenziali
+══════════════════════════════════════ */
+#hdr{
+  background:var(--s1);
+  padding:6px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;position:relative;z-index:10;
+  border-bottom:3px solid transparent;
+}
+#hdr::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--Z1),var(--Z2),var(--Z3),var(--Z4),var(--Z5));
+}
+#hdr-title{
+  font-family:var(--fd);font-size:20px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.5px;color:#fff;
+}
+#hdr-sub{font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:1px}
+#hdr-r{display:flex;align-items:center;gap:10px}
+#wake-ind{width:10px;height:10px;border-radius:50%;background:var(--dim)}
+#wake-ind.on{background:var(--green);box-shadow:0 0 10px var(--green)}
+#fs-btn{background:var(--s3);border:1px solid var(--border2);border-radius:8px;
+  color:var(--muted);padding:6px 12px;cursor:pointer;font-size:20px}
+
+/* ══════════════════════════════════════
+   MAIN — 2 colonne su tablet/desktop
+══════════════════════════════════════ */
+#main{
+  flex:1;overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  grid-template-rows:1fr;
+  gap:8px;padding:8px;
+}
+/* Mobile: 1 colonna */
+
+
+/* ══════════════════════════════════════
+   COL LEFT
+══════════════════════════════════════ */
+#col-left{
+  display:flex;flex-direction:column;gap:7px;
+  overflow:hidden;min-width:0;
+}
+
+/* ══════════════════════════════════════
+   CHART — grande, leggibile
+══════════════════════════════════════ */
+#chart-wrap{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:12px;padding:10px 12px 6px;
+  flex-shrink:0;touch-action:none;
+}
+#chart-canvas{
+  width:100%;height:160px;
+  display:block;cursor:pointer;border-radius:6px;
+}
+#zone-leg{
+  display:flex;gap:14px;margin-top:6px;flex-wrap:wrap;
+}
+.zl{
+  font-size:12px;color:var(--muted);
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--fd);font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.zd{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+
+/* ══════════════════════════════════════
+   NOW PLAYING — cuore dell'interfaccia
+══════════════════════════════════════ */
+#now{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:12px;padding:8px 12px;
+  flex:1;overflow:hidden;display:flex;flex-direction:column;gap:5px;
+  position:relative;
+}
+/* Barra sinistra zona colore */
+#now::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:6px;
+  border-radius:12px 0 0 12px;
+  background:var(--zc,var(--muted));transition:background .4s;
+}
+
+/* Titolo + badge */
+#np-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+#np-title{
+  font-family:var(--fd);
+  font-size:34px;
+  font-weight:900;letter-spacing:-.5px;line-height:1;
+  text-transform:uppercase;flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:#fff;
+}
+
+#np-badge{
+  font-family:var(--fm);font-size:12px;
+  color:var(--muted);white-space:nowrap;padding-top:2px;flex-shrink:0;
+}
+#np-artist{
+  font-size:12px;color:var(--muted);font-weight:500;
+  margin-top:-2px;
+}
+
+/* ══════════════════════════════════════
+   METRICHE — 5 box grandi
+══════════════════════════════════════ */
+#metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.metric{
+  background:var(--s3);border:1px solid var(--border);
+  border-radius:10px;padding:7px 4px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.metric::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--mc,transparent);
+}
+.mv{
+  font-size:22px;
+  font-weight:900;font-family:var(--fd);
+  line-height:1;letter-spacing:-.5px;
+}
+
+.ml{
+  font-size:9px;color:var(--muted);margin-top:2px;
+  text-transform:uppercase;letter-spacing:.8px;
+  font-weight:700;font-family:var(--fd);
+}
+
+/* ══════════════════════════════════════
+   FASE + TECNICA
+══════════════════════════════════════ */
+#info-row{display:grid;grid-template-columns:130px 1fr;gap:6px;align-items:stretch}
+
+#fase-box{
+  background:var(--s3);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.lbl{
+  font-size:10px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.8px;font-weight:700;font-family:var(--fd);margin-bottom:4px;
+}
+#fase-val{
+  font-family:var(--fd);font-size:17px;font-weight:900;
+  line-height:1.1;text-transform:uppercase;
+  color:var(--zc,var(--cyan));transition:color .4s;
+}
+#tec-box{
+  background:var(--s3);border:1px solid var(--border);
+  border-radius:10px;padding:8px 10px;
+  /* Altezza fissa: lascia sempre spazio a focus-box + sj-tracker */
+  max-height:130px;overflow:hidden;position:relative;
+  flex-shrink:0;
+}
+/* Gradiente indicatore scroll */
+#tec-box::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:22px;
+  background:linear-gradient(transparent,var(--s3));
+  pointer-events:none;border-radius:0 0 10px 10px;
+}
+#tec-segs-wrap{
+  display:flex;flex-direction:column;gap:2px;
+  overflow-y:auto;max-height:122px;
+  scroll-behavior:smooth;
+  scrollbar-width:thin;scrollbar-color:var(--border2) transparent;
+}
+#tec-segs-wrap::-webkit-scrollbar{width:3px}
+#tec-segs-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.tec-seg-item{
+  display:flex;align-items:center;gap:7px;
+  padding:5px 9px;border-radius:6px;
+  font-size:15px;font-weight:600;
+  opacity:.30;transition:opacity .3s,background .3s;
+  flex-shrink:0;
+}
+.tec-seg-item.active{
+  opacity:1;background:rgba(255,255,255,.10);
+  font-size:17px;border-left:3px solid var(--zc,var(--cyan));
+  padding-left:7px;
+}
+.tec-seg-item.done{opacity:.18;text-decoration:line-through}
+.tec-seg-dot{
+  width:10px;height:10px;border-radius:50%;
+  flex-shrink:0;background:var(--muted);transition:background .3s,box-shadow .3s;
+}
+.tec-seg-item.active .tec-seg-dot{
+  background:var(--zc,var(--cyan));
+  box-shadow:0 0 10px var(--zc,var(--cyan));
+}
+.tec-seg-time{
+  font-family:var(--fm);font-size:12px;
+  color:var(--muted);white-space:nowrap;margin-left:auto;
+}
+.tec-seg-mani{
+  font-family:var(--fd);font-size:12px;font-weight:800;
+  color:var(--blue);background:var(--s2);
+  border:1px solid var(--border2);border-radius:4px;
+  padding:2px 7px;flex-shrink:0;white-space:nowrap;
+}
+
+/* ══════════════════════════════════════
+   FOCUS COACHING
+══════════════════════════════════════ */
+#focus-box{
+  background:linear-gradient(135deg,#0d0820,#0f0a1e);
+  border:1px solid rgba(200,130,255,.25);
+  border-left:4px solid var(--purple);
+  border-radius:10px;padding:8px 12px;
+  flex-shrink:0;
+}
+#focus-lbl{
+  font-size:9px;color:#7a3aaa;text-transform:uppercase;
+  letter-spacing:.8px;font-weight:700;font-family:var(--fd);margin-bottom:3px;
+}
+#focus-val{
+  font-size:15px;font-weight:700;color:#fff;
+  line-height:1.35;font-style:italic;
+}
+
+
+/* ══════════════════════════════════════
+   SPRINT/JUMP TRACKER
+══════════════════════════════════════ */
+#sj-tracker{
+  display:none;background:var(--s3);
+  border:1px solid var(--border2);border-radius:10px;
+  padding:10px 14px;position:relative;overflow:hidden;
+}
+#sj-tracker.active{display:block}
+#sj-tracker::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,var(--sjc,var(--red))18,transparent 65%);
+  pointer-events:none;
+}
+#sj-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+#sj-label{
+  font-family:var(--fd);font-size:26px;font-weight:900;
+  text-transform:uppercase;color:var(--sjc,var(--red));flex:1;
+}
+#sj-phase{
+  font-family:var(--fm);font-size:13px;color:var(--muted);
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:5px;padding:3px 10px;
+}
+#sj-countdown{
+  font-family:var(--fd);font-size:36px;font-weight:900;
+  color:var(--sjc,var(--red));min-width:65px;text-align:right;
+}
+#sj-bar-wrap{height:8px;background:var(--s2);border-radius:4px;overflow:hidden}
+#sj-bar-fill{height:100%;width:0%;border-radius:4px;transition:width .1s linear}
+#sj-info{
+  display:flex;justify-content:space-between;
+  margin-top:5px;font-size:12px;color:var(--muted);font-family:var(--fm);
+}
+
+/* ══════════════════════════════════════
+   PROGRESS BAR — più alta, facile da toccare
+══════════════════════════════════════ */
+#prog-wrap{flex-shrink:0}
+#prog-bg{
+  height:7px;background:var(--s3);
+  border-radius:5px;overflow:hidden;cursor:pointer;
+  margin-bottom:6px;position:relative;
+}
+#prog-fill{
+  height:100%;width:0%;border-radius:5px;
+  background:linear-gradient(90deg,var(--cyan),var(--red));
+  transition:width .25s linear;
+}
+#prog-markers{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
+.prog-marker{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.4)}
+#time-row{
+  display:flex;justify-content:space-between;
+  font-size:13px;font-family:var(--fm);font-weight:700;
+}
+#t-cur{color:#fff}#t-rem{color:var(--red)}#t-end{color:var(--dim)}
+
+/* ══════════════════════════════════════
+   CONTROLLI SPOTIFY
+══════════════════════════════════════ */
+#ctrl-section{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:12px;padding:8px 12px;
+  flex-shrink:0;display:flex;flex-direction:column;gap:6px;
+}
+#login-screen{display:flex;flex-direction:column;gap:10px;align-items:center}
+#login-screen.hidden{display:none}
+#login-title{font-size:14px;color:var(--muted);text-align:center;line-height:1.5}
+#login-title strong{color:#1DB954;font-size:18px;display:block;margin-bottom:3px;
+  font-family:var(--fd);font-weight:900;text-transform:uppercase}
+#login-btn{
+  width:100%;padding:14px;background:#1DB954;border:none;border-radius:10px;
+  color:#000;font-size:20px;font-weight:900;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--fd);text-transform:uppercase;
+}
+#login-btn:active{transform:scale(.97)}
+#session-controls{display:none;flex-direction:column;gap:5px}
+#session-controls.visible{display:flex}
+#sp-status-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s3);border:1px solid var(--border);
+  border-radius:8px;padding:6px 10px;
+}
+#sp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;background:var(--dim)}
+#sp-dot.ok{background:var(--green);box-shadow:0 0 8px var(--green)}
+#sp-dot.err{background:var(--red)}
+#sp-dot.wait{background:var(--amber);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+#sp-status-txt{font-size:12px;color:var(--muted);font-weight:600;flex:1}
+
+/* PLAY button — integrato nella riga nav */
+#big-play{
+  flex:1;padding:11px 8px;
+  font-size:20px;font-weight:900;
+  border:none;border-radius:10px;cursor:pointer;
+  user-select:none;display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--fd);text-transform:uppercase;letter-spacing:.5px;
+  transition:transform .1s,background .15s,box-shadow .2s;
+  min-width:0;
+}
+#big-play.play{background:var(--red);color:#fff;box-shadow:0 3px 18px rgba(255,31,66,.5)}
+#big-play.pause{background:var(--s3);border:2px solid var(--border2);color:#fff}
+#big-play.off{background:var(--s3);color:var(--dim);cursor:default;border:1px solid var(--border)}
+#big-play:active:not(.off){transform:scale(.97)}
+
+#nav-row{display:flex;align-items:center;gap:6px}
+.btn-sm{
+  background:var(--s3);border:1px solid var(--border2);border-radius:8px;
+  color:#fff;padding:10px 18px;cursor:pointer;
+  font-size:22px;font-weight:800;user-select:none;
+}
+.btn-sm:active{transform:scale(.92)}
+#sync-badge{
+  font-size:13px;font-family:var(--fm);font-weight:800;
+  padding:4px 10px;border-radius:6px;
+  background:var(--s3);border:1px solid var(--border);color:var(--muted);
+  white-space:nowrap;
+}
+#sync-badge.good{background:#021a0a;border-color:#0a4a20;color:var(--green)}
+#sync-badge.warn{background:#1a1500;border-color:#4a3a00;color:var(--amber)}
+#sync-badge.bad{background:#1a0508;border-color:#4a1020;color:var(--red)}
+#status-txt{flex:1;font-size:12px;color:var(--muted);font-family:var(--fm)}
+#logout-btn{font-size:12px;color:var(--dim);cursor:pointer;text-decoration:underline}
+
+/* ══════════════════════════════════════
+   COL RIGHT
+══════════════════════════════════════ */
+#col-right{
+  display:flex;flex-direction:column;gap:7px;
+  overflow:hidden;min-width:0;
+}
+
+/* ══════════════════════════════════════
+   METRONOMO — beat grandi e visibili
+══════════════════════════════════════ */
+#metro-wrap{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:12px;padding:12px 14px;flex-shrink:0;
+}
+#metro-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#metro-lbl{
+  font-size:11px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.8px;font-weight:700;font-family:var(--fd);flex:1;
+}
+#metro-bpm-val{
+  font-size:28px;font-weight:900;font-family:var(--fm);
+  color:var(--amber);letter-spacing:-1px;
+}
+#metro-bpm-lbl{font-size:12px;color:var(--muted);font-family:var(--fd);font-weight:700}
+#metro-sound-btn{
+  background:var(--s3);border:1px solid var(--border2);
+  border-radius:8px;color:var(--muted);
+  padding:6px 12px;cursor:pointer;font-size:20px;
+}
+#metro-sound-btn.on{color:var(--amber);border-color:#664400;background:#1a1000}
+#metro-sound-btn:active{transform:scale(.93)}
+#metro-beats{
+  display:flex;gap:16px;align-items:center;justify-content:center;
+}
+/* Beat 1 — grande, accentato */
+.beat-dot{
+  border-radius:50%;background:var(--s3);
+  border:3px solid var(--border2);
+  transition:transform .06s,background .06s,border-color .06s,box-shadow .06s;
+  flex-shrink:0;
+}
+.beat-dot.b1{width:56px;height:56px}  /* grande */
+.beat-dot.b234{width:44px;height:44px} /* medio */
+.beat-dot.active-1{transform:scale(1.35)}
+.beat-dot.active-234{transform:scale(1.2)}
+
+/* ══════════════════════════════════════
+   TRACK LIST — leggibile, righe alte
+══════════════════════════════════════ */
+#tl-wrap{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:12px;overflow:hidden;
+  flex:1;min-height:0;display:flex;flex-direction:column;
+}
+#tl-head{
+  display:grid;
+  grid-template-columns:24px 1fr 66px 44px 56px 44px;
+  gap:3px;padding:7px 10px;
+  font-size:10px;color:var(--muted);
+  border-bottom:2px solid var(--border2);
+  text-transform:uppercase;letter-spacing:.6px;font-weight:700;
+  font-family:var(--fd);flex-shrink:0;
+}
+#tl-body{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+#tl-body::-webkit-scrollbar{width:4px}
+#tl-body::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
+.tr{
+  display:grid;
+  grid-template-columns:24px 1fr 66px 44px 56px 44px;
+  gap:3px;padding:8px 10px;align-items:center;cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  transition:background .1s;
+}
+.tr:active{background:var(--s3)}
+.tr.active{
+  background:linear-gradient(90deg,#200818,var(--s2));
+  border-left:4px solid var(--red);
+}
+.ti{font-size:13px;color:var(--dim);font-family:var(--fm);text-align:right;font-weight:700}
+.tt{
+  font-size:14px;color:#ddd;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;
+}
+.tr.active .tt{color:#fff}
+.tf{
+  font-size:10px;padding:3px 5px;border-radius:4px;
+  background:#100a20;border:1px solid #2a1a50;
+  color:#9977cc;text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-family:var(--fd);font-weight:700;
+}
+.tb{font-size:14px;font-family:var(--fm);text-align:center;color:var(--amber);font-weight:700}
+.tr2{font-size:13px;font-family:var(--fm);text-align:center;color:var(--green);font-weight:700}
+.tres{font-size:14px;font-family:var(--fm);text-align:center;color:var(--red);font-weight:700}
+
+/* ══════════════════════════════════════
+   CAMBIO TECNICA OVERLAY — massimo impatto
+══════════════════════════════════════ */
+#tec-change-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.88);
+  backdrop-filter:blur(8px);
+  z-index:900;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+#tec-change-overlay.show{opacity:1;pointer-events:auto}
+#tco-label{
+  font-family:var(--fd);font-size:18px;font-weight:800;
+  color:var(--amber);text-transform:uppercase;letter-spacing:3px;
+}
+#tco-ring{
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+#tco-svg{position:absolute;width:240px;height:240px;transform:rotate(-90deg)}
+#tco-circle{
+  fill:none;stroke:var(--amber);stroke-width:7;stroke-linecap:round;
+  stroke-dasharray:600;stroke-dashoffset:0;
+  transition:stroke-dashoffset 1s linear;opacity:.5;
+}
+#tco-num{
+  font-family:var(--fd);font-size:140px;font-weight:900;line-height:1;
+  color:var(--amber);
+  text-shadow:0 0 80px rgba(255,191,0,.8),0 0 160px rgba(255,191,0,.3);
+  animation:cdpulse 1s ease-in-out infinite;
+}
+@keyframes cdpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+#tco-arrow{
+  font-family:var(--fd);font-size:40px;font-weight:900;
+  color:var(--amber);opacity:.6;
+  animation:arrowbounce .8s ease-in-out infinite;
+}
+@keyframes arrowbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+#tco-next{
+  font-family:var(--fd);font-size:40px;font-weight:900;
+  color:#fff;text-transform:uppercase;letter-spacing:.5px;
+  text-align:center;max-width:85%;line-height:1.2;
+}
+#tco-mani{
+  font-family:var(--fd);font-size:22px;font-weight:800;
+  color:var(--blue);background:var(--s2);
+  border:2px solid var(--border2);border-radius:8px;padding:6px 20px;
+}
+
+/* ══════════════════════════════════════
+   ALERT BANNER
+══════════════════════════════════════ */
+#alert-box{
+  position:fixed;top:0;left:0;right:0;
+  background:rgba(0,0,0,.97);
+  border-bottom:4px solid var(--red);
+  padding:14px 18px;z-index:800;
+  display:flex;align-items:center;gap:14px;
+  transform:translateY(-110%);
+  transition:transform .3s cubic-bezier(.2,.8,.3,1);
+}
+#alert-box.show{transform:translateY(0)}
+#alert-icon{font-size:32px;flex-shrink:0}
+#alert-texts{flex:1;min-width:0}
+#alert-title{
+  font-family:var(--fd);font-size:26px;font-weight:900;
+  color:#fff;line-height:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-transform:uppercase;
+}
+#alert-sub{font-size:14px;color:var(--muted);margin-top:3px}
+#alert-zone{font-family:var(--fd);font-size:44px;font-weight:900;flex-shrink:0}
+
+/* ══════════════════════════════════════
+   SPRINT/JUMP FLASH — banner laterale
+   Non copre il contenuto: appare sul
+   bordo sinistro, semitrasparente
+══════════════════════════════════════ */
+#sj-fullscreen{
+  position:fixed;
+  left:0;top:0;bottom:0;
+  width:72px;           /* striscia laterale */
+  z-index:850;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:6px;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
+  overflow:hidden;
+  border-right:3px solid transparent;
+}
+#sj-fullscreen.show{opacity:1}
+#sj-fs-bg{
+  position:absolute;inset:0;
+  animation:sjpulse .8s ease-in-out infinite;
+  /* Sfondo semitrasparente — si vede il contenuto attraverso */
+  opacity:.82;
+}
+@keyframes sjpulse{0%,100%{opacity:.70}50%{opacity:.92}}
+#sj-fs-label{
+  position:relative;
+  font-family:var(--fd);
+  font-size:28px;font-weight:900;text-transform:uppercase;
+  letter-spacing:2px;color:#fff;z-index:1;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  transform:rotate(180deg);
+  text-shadow:0 0 20px currentColor;
+  line-height:1;
+}
+#sj-fs-phase{
+  position:relative;font-family:var(--fd);
+  font-size:16px;font-weight:900;letter-spacing:2px;z-index:1;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  color:#fff;opacity:.9;
+}
+#sj-fs-time{
+  position:relative;font-family:var(--fm);
+  font-size:22px;font-weight:700;z-index:1;color:#fff;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  letter-spacing:1px;
+}
+/* Landscape: sposta il banner in alto invece che a sinistra */
+@media(orientation:landscape) and (max-height:650px){
+  #sj-fullscreen{
+    left:0;right:0;top:0;bottom:auto;
+    width:auto;height:48px;
+    flex-direction:row;
+    border-right:none;border-bottom:3px solid transparent;
+  }
+  #sj-fs-label,#sj-fs-phase,#sj-fs-time{
+    writing-mode:horizontal-tb;transform:none;
+    font-size:20px;
+  }
+  #sj-fs-phase{font-size:13px}
+  #sj-fs-time{font-size:18px}
+}
+
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — Tablet & Mobile
+══════════════════════════════════════════════ */
+@media(max-width:1024px){
+  html,body{height:auto;overflow-y:auto;overflow-x:hidden}
+  #app{height:auto;min-height:100vh;display:flex;flex-direction:column}
+  #main{flex:1;overflow:visible;display:grid;grid-template-columns:1fr 320px;grid-template-rows:auto;gap:6px;padding:6px}
+  #col-left{overflow:visible;height:auto}
+  #col-right{display:flex!important;width:320px}
+  /* Tracklist: riduci gap e font */
+  #tl-head,
+  .tr{gap:3px;padding:7px 10px}
+  #now{overflow:visible;flex:none}
+  #chart-canvas{height:130px}
+  #np-title{font-size:26px!important}
+  .mv{font-size:18px!important}.ml{font-size:8px}
+  /* Tecnica: altezza adeguata, scroll visibile */
+  #tec-box{max-height:120px}
+  #tec-segs-wrap{max-height:112px}
+  .tec-seg-item{font-size:13px}
+  .tec-seg-item.active{font-size:15px}
+  #focus-val{font-size:12px}
+  #focus-box{padding:7px 10px}
+  #ctrl-section{flex-shrink:0}
+}
+@media(max-width:820px){
+  #main{grid-template-columns:1fr 280px}
+  #col-right{width:280px}
+  .tec-seg-time{display:none}
+  /* Tracklist 280px: togli Fase, griglia 5 col */
+  #tl-head,
+  .tr{grid-template-columns:22px 1fr 44px 52px 42px!important}
+  .tf{display:none}
+  #tl-head span:nth-child(3){display:none}
+  #tec-box{max-height:110px}
+  #tec-segs-wrap{max-height:102px}
+  .tec-seg-item{font-size:13px}
+  .tec-seg-item.active{font-size:15px}
+  #focus-val{font-size:12px}
+}
+@media(max-width:600px){
+  html,body{height:auto;overflow-y:auto;overflow-x:hidden}
+  #app{height:auto;min-height:100vh}
+  #main{grid-template-columns:1fr!important;grid-template-rows:auto!important;overflow:visible!important;padding:5px;gap:5px}
+  #col-right{display:none!important}
+  #col-left{overflow:visible;height:auto}
+  #now{overflow:visible;flex:none}
+  #chart-canvas{height:100px}
+  #np-title{font-size:22px!important}
+  .mv{font-size:14px!important}.ml{font-size:7px}
+  .tec-seg-time{display:none}
+  #tec-box{max-height:105px}
+  #tec-segs-wrap{max-height:97px}
+  .tec-seg-item{font-size:13px}
+  .tec-seg-item.active{font-size:15px}
+  #info-row{grid-template-columns:1fr!important}
+  #fase-box{display:none}
+  #focus-val{font-size:13px}
+  #ctrl-section{padding:8px 10px}
+  #login-btn{font-size:17px;padding:13px}
+  #big-play{font-size:18px;padding:13px}
+}
+@media(max-width:420px){
+  .mv{font-size:14px!important}
+  #np-title{font-size:18px!important}
+  #metrics{gap:2px!important}
+  .metric{padding:5px 2px!important}
+}
+
+/* ══════════════════════════════════════════════════════════
+   LANDSCAPE MOBILE/TABLET — tutto visibile senza scorrere
+   Attivo quando altezza < 650px (telefono landscape o tablet
+   orizzontale con barra browser)
+══════════════════════════════════════════════════════════ */
+@media(orientation:landscape) and (max-height:650px){
+  /* Corpo pagina: fixed, no scroll */
+  html,body{height:100%;overflow:hidden}
+  #app,body{height:100%;display:flex;flex-direction:column}
+
+  /* Header ultra-compatto: 36px */
+  #hdr{padding:3px 12px;min-height:0}
+  #hdr-sub{display:none}
+  #hdr-title{font-size:14px}
+  #wake-ind{width:7px;height:7px}
+
+  /* Layout 2 colonne rigido, occupa tutto lo spazio */
+  #main{
+    flex:1;overflow:hidden;
+    display:grid;
+    grid-template-columns:1fr 240px;
+    gap:5px;padding:4px;
+    height:calc(100vh - 44px);
+  }
+
+  /* Colonna sinistra: fissa, no overflow */
+  #col-left{
+    display:flex;flex-direction:column;
+    gap:4px;overflow:hidden;height:100%;
+  }
+
+  /* Grafico compresso */
+  #chart-canvas{height:70px!important}
+  #chart-wrap{padding:4px 6px 3px;flex-shrink:0}
+  #zone-leg{display:none}
+
+  /* Now playing: flex:1 per riempire lo spazio restante */
+  #now{
+    flex:1;overflow:hidden;
+    padding:5px 10px;gap:3px;
+    min-height:0;
+  }
+
+  /* Titolo più piccolo */
+  #np-title{font-size:18px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #np-artist{font-size:10px;margin-top:0}
+  #np-badge{font-size:10px;padding-top:0}
+  #np-row{margin-bottom:0}
+
+  /* ── METRICHE: grandi e leggibili da lontano ─────────────────
+     Zona, RPM, BPM, Resistenza, Manubrio sono il cruscotto
+     principale — devono essere visibili dalla bici (>2m)       */
+  #metrics{
+    gap:4px;
+    /* Altezza fissa: usa il 35% dello spazio del pannello now */
+    flex-shrink:0;
+  }
+  .metric{
+    padding:6px 4px!important;
+    border-radius:10px;
+    /* Bordo colorato più spesso per distinguere le zone */
+    border-width:2px!important;
+  }
+  /* Barra colore in cima più alta */
+  .metric::after{height:5px!important}
+  /* Valore: grande, leggibile da lontano */
+  .mv{
+    font-size:26px!important;
+    font-weight:900!important;
+    letter-spacing:-.5px;
+    line-height:1;
+  }
+  /* Label: piccola ma presente */
+  .ml{
+    font-size:8px!important;
+    margin-top:3px;
+    letter-spacing:.5px;
+  }
+
+  /* Info row: fase nascosta, tec compatta */
+  #info-row{grid-template-columns:1fr!important;gap:3px}
+  #fase-box{display:none}
+  #tec-box{max-height:64px;padding:4px 8px}
+  #tec-segs-wrap{max-height:56px}
+  /* Segmento attivo: ben leggibile, quelli futuri solo accennati */
+  .tec-seg-item{font-size:11px;padding:3px 7px}
+  .tec-seg-item.active{
+    font-size:15px!important;
+    font-weight:800;
+    letter-spacing:-.2px;
+  }
+  .tec-seg-mani{font-size:10px;padding:1px 5px}
+  .tec-seg-time{display:none}
+
+  /* Focus coaching: testo più grande rispetto al resto */
+  #focus-box{padding:4px 10px;flex-shrink:0}
+  #focus-lbl{display:none}
+  #focus-val{
+    font-size:13px!important;
+    line-height:1.3;
+    font-weight:700;
+  }
+
+  /* SJ tracker ridotto */
+  #sj-label{font-size:18px}
+  #sj-countdown{font-size:24px}
+  #sj-phase{font-size:10px;padding:2px 6px}
+  #sj-tracker{padding:5px 10px}
+
+  /* Progress bar minima */
+  #prog-bg{height:5px;margin-bottom:3px}
+  #time-row{font-size:11px}
+  #prog-wrap{flex-shrink:0}
+
+  /* Controlli: tutto in 1 riga, niente bordo separato */
+  #ctrl-section{
+    flex-shrink:0;padding:4px 8px;gap:4px;
+    border-radius:8px;
+  }
+  #sp-status-row{padding:3px 8px}
+  #sp-status-txt{font-size:10px}
+  #sp-dot{width:7px;height:7px}
+  #big-play{font-size:14px;padding:7px 8px}
+  .btn-sm{padding:7px 12px;font-size:16px}
+  #sync-badge{font-size:10px;padding:2px 6px}
+  #status-txt{font-size:9px}
+
+  /* Colonna destra: metronomo + tracklist compatti */
+  #col-right{
+    display:flex!important;flex-direction:column;
+    gap:4px;overflow:hidden;height:100%;width:240px;
+  }
+  #metro-wrap{flex-shrink:0;padding:6px 10px}
+  #metro-top{margin-bottom:4px}
+  #metro-lbl{font-size:9px}
+  #metro-bpm-val{font-size:20px}
+  #metro-bpm-lbl{font-size:9px}
+  .beat-dot.b1{width:36px;height:36px}
+  .beat-dot.b234{width:28px;height:28px}
+  #metro-beats{gap:8px}
+  #metro-sound-btn{padding:4px 8px;font-size:14px}
+
+  /* Tracklist: compattissima, scorribile */
+  #tl-wrap{flex:1;min-height:0}
+  /* Tracklist 240px landscape: solo #, Titolo, RPM, RES */
+  #tl-head,
+  .tr{grid-template-columns:20px 1fr 50px 40px!important;gap:2px}
+  #tl-head{padding:3px 6px;font-size:8px}
+  .tr{padding:4px 6px}
+  .tf{display:none!important}   /* nasconde Fase */
+  .tb{display:none!important}   /* nasconde BPM */
+  /* Mostra solo: #, Titolo, RPM, RES */
+  .ti{font-size:9px}
+  .tt{font-size:10px}
+  .tr2{font-size:11px;font-weight:800;color:var(--green)}
+  .tres{font-size:11px;font-weight:800;color:var(--red)}
+
+  /* sprint/jump banner: gestito nel blocco CSS dedicato */
+
+  /* Countdown overlay */
+  #tco-num{font-size:40px}
+  #tco-next{font-size:26px}
+  #tco-mani{font-size:16px;padding:4px 14px}
+}
+
+/* Landscape su schermi più alti (tablet 768px+): solo tweaks minori */
+@media(orientation:landscape) and (min-height:651px) and (max-height:900px){
+  #chart-canvas{height:90px!important}
+  #zone-leg{display:none}
+
+  /* ── TITOLO BRANO: leggibile dalla spinbike (2m+) ── */
+  #np-title{font-size:28px!important;font-weight:900!important}
+  #np-artist{font-size:13px}
+
+  /* ── BADGE BRANO (es. 2/16): grande e visibile ── */
+  #np-badge{font-size:18px!important;color:#fff;font-weight:800}
+
+  /* ── METRICHE: cruscotto principale dalla bike ─────────────
+     Zona FC, RPM, BPM, Resistenza, Manubrio
+     Font grande + box più alto + barra colore spessa           */
+  #metrics{gap:5px;flex-shrink:0}
+  .metric{
+    padding:10px 4px!important;
+    border-radius:11px;
+    border-width:2px!important;
+  }
+  .metric::after{height:6px!important}
+  .mv{
+    font-size:34px!important;
+    font-weight:900!important;
+    line-height:1;
+    letter-spacing:-.5px;
+  }
+  .ml{
+    font-size:9px!important;
+    margin-top:4px;
+    letter-spacing:.6px;
+  }
+
+  /* ── FASE: visibile senza ingrandire troppo ── */
+  #fase-box{display:flex!important}
+  #fase-val{font-size:18px!important}
+  #info-row{grid-template-columns:120px 1fr;gap:5px}
+
+  /* ── SEGMENTO ATTIVO: leggibile a colpo d'occhio ── */
+  .tec-seg-item{font-size:12px}
+  .tec-seg-item.active{
+    font-size:17px!important;
+    font-weight:800;
+  }
+  #tec-box{max-height:110px;padding:6px 10px}
+  #tec-segs-wrap{max-height:102px}
+
+  /* ── FOCUS COACHING ── */
+  #focus-val{font-size:14px!important;font-weight:700}
+
+  /* ── SJ TRACKER (JUMP/SPRINT nella barra sinistra) ── */
+  #sj-label{font-size:22px!important}
+  #sj-countdown{font-size:28px!important}
+
+  /* Tracklist: togli Fase, griglia 5 col */
+  #tl-head,
+  .tr{grid-template-columns:22px 1fr 44px 52px 42px!important}
+  .tf{display:none}
+  #tl-head span:nth-child(3){display:none}
+  .tb{font-size:16px}
+  .tr2{font-size:15px;font-weight:800}
+  .tres{font-size:15px;font-weight:800}
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT COACH LEGGIBILE (tablet/desktop in orizzontale)
+   Tecnica a sinistra, Focus coach a destra, occupano tutto
+   lo spazio libero sotto le metriche. Font scalati sull'altezza.
+══════════════════════════════════════════════════════════ */
+@media(orientation:landscape) and (min-width:900px){
+  #now{
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:auto auto minmax(0,1fr) auto auto;
+    grid-template-areas:"title title" "metrics metrics" "tec focus" "sj sj" "prog prog";
+    gap:6px 8px!important;
+    min-height:0;overflow:hidden;
+  }
+  #np-row{grid-area:title}
+  #metrics{grid-area:metrics}
+  #info-row{grid-area:tec;display:flex!important;min-height:0;min-width:0}
+  #focus-box{grid-area:focus}
+  #sj-tracker{grid-area:sj}
+  #prog-wrap{grid-area:prog}
+  #fase-box{display:none!important}
+
+  /* ── TECNICA ── */
+  #tec-box{
+    flex:1;max-height:none!important;min-height:0;min-width:0;
+    padding:10px 14px!important;
+    display:flex;flex-direction:column;overflow:hidden;
+    border-left:4px solid var(--zc,var(--cyan));
+  }
+  #tec-box::after{display:none!important}
+  #tec-box .lbl{
+    font-size:clamp(11px,1.8vh,15px);letter-spacing:1.2px;
+    margin-bottom:6px;flex-shrink:0;
+  }
+  #tec-segs-wrap{
+    flex:1;min-height:0;max-height:none!important;
+    gap:6px;overflow-y:auto;
+  }
+  .tec-seg-item{
+    font-size:clamp(16px,2.8vh,24px)!important;font-weight:700;
+    opacity:.5;padding:6px 10px;gap:10px;
+  }
+  .tec-seg-item>span:nth-child(2){flex:1;min-width:0;line-height:1.15}
+  .tec-seg-item.active{
+    font-size:clamp(22px,5vh,38px)!important;font-weight:900;
+    opacity:1;background:rgba(255,255,255,.12);
+    padding:8px 10px 8px 8px;
+  }
+  .tec-seg-item.done{display:none!important}
+  .tec-seg-dot{width:14px;height:14px}
+  .tec-seg-mani{
+    display:inline-block!important;
+    font-size:clamp(13px,2.4vh,20px)!important;padding:2px 9px;
+  }
+  .tec-seg-time{
+    display:inline!important;font-size:clamp(12px,2vh,16px)!important;
+  }
+
+  /* ── FOCUS COACH ── */
+  #focus-box{
+    display:flex;flex-direction:column;min-height:0;min-width:0;
+    padding:10px 16px!important;overflow:auto;
+    border-left-width:6px;
+  }
+  #focus-lbl{
+    display:block!important;flex-shrink:0;
+    font-size:clamp(11px,1.8vh,15px)!important;color:#c58cff!important;
+    letter-spacing:1.2px;margin-bottom:6px;
+  }
+  #focus-val{
+    font-size:clamp(18px,3.9vh,32px)!important;
+    font-weight:700;font-style:normal!important;line-height:1.3;color:#fff;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <div>
+    <div id="hdr-title">🚴 Fondo Variato</div>
+    <div id="hdr-sub">Giuseppe Primavera · 18 BRANI · 60:28</div>
+  </div>
+  <div id="hdr-r">
+    <span id="wake-ind"></span>
+    <button id="proj-btn" onclick="openProjection()" title="Proietta su schermo esterno" style="background:var(--s3);border:1px solid var(--border2);border-radius:8px;color:var(--muted);padding:6px 12px;cursor:pointer;font-size:16px;margin-right:4px">📺</button>
+    <button id="fs-btn" onclick="toggleFS()">⛶</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- COL LEFT -->
+  <div id="col-left">
+
+    <!-- CHART -->
+    <div id="chart-wrap">
+      <canvas id="chart-canvas"></canvas>
+      <div id="zone-leg">
+        <span class="zl"><span class="zd" style="background:var(--Z1)"></span>Z1 Recovery</span>
+        <span class="zl"><span class="zd" style="background:var(--Z2)"></span>Z2 Easy</span>
+        <span class="zl"><span class="zd" style="background:var(--Z3)"></span>Z3 Moderate</span>
+        <span class="zl"><span class="zd" style="background:var(--Z4)"></span>Z4 Hard</span>
+        <span class="zl"><span class="zd" style="background:var(--Z5)"></span>Z5 Max</span>
+      </div>
+    </div>
+
+    <!-- NOW PLAYING -->
+    <div id="now">
+      <div id="np-row">
+        <div style="min-width:0;flex:1">
+          <div id="np-title">—</div>
+          <div id="np-artist"></div>
+        </div>
+        <div id="np-badge">1/18</div>
+      </div>
+
+      <div id="metrics">
+        <div class="metric" style="--mc:var(--cyan)">
+          <div class="mv" id="m-zone" style="color:var(--cyan)">—</div>
+          <div class="ml">Zona FC</div>
+        </div>
+        <div class="metric" style="--mc:var(--green)">
+          <div class="mv" id="m-rpm" style="color:var(--green)">—</div>
+          <div class="ml" id="m-rpm-l">RPM</div>
+        </div>
+        <div class="metric" style="--mc:var(--amber)">
+          <div class="mv" id="m-bpm" style="color:var(--amber)">—</div>
+          <div class="ml">BPM</div>
+        </div>
+        <div class="metric" style="--mc:var(--red)">
+          <div class="mv" id="m-res" style="color:var(--red)">—</div>
+          <div class="ml">Resist.</div>
+        </div>
+        <div class="metric" style="--mc:var(--blue)">
+          <div class="mv" id="m-mani" style="color:var(--blue)">—</div>
+          <div class="ml">Man.</div>
+        </div>
+      </div>
+
+      <div id="info-row">
+        <div id="fase-box">
+          <div class="lbl">Fase</div>
+          <div id="fase-val">—</div>
+        </div>
+        <div id="tec-box">
+          <div class="lbl">Tecnica · segmento attivo</div>
+          <div id="tec-segs-wrap"></div>
+        </div>
+      </div>
+
+      <div id="focus-box">
+        <div id="focus-lbl">🎯 FOCUS COACHING</div>
+        <div id="focus-val">—</div>
+      </div>
+
+      <div id="sj-tracker">
+        <div id="sj-top">
+          <div id="sj-label">SPRINT</div>
+          <div id="sj-phase">ON</div>
+          <div id="sj-countdown">0:20</div>
+        </div>
+        <div id="sj-bar-wrap"><div id="sj-bar-fill"></div></div>
+        <div id="sj-info">
+          <span id="sj-start">Inizio: 0:00</span>
+          <span id="sj-end">Fine: 0:00</span>
+        </div>
+      </div>
+
+      <div id="prog-wrap">
+        <div id="prog-bg">
+          <div id="prog-fill"></div>
+          <div id="prog-markers"></div>
+        </div>
+        <div id="time-row">
+          <span id="t-cur">0:00:00</span>
+          <span id="t-rem">−0:00</span>
+          <span id="t-end">0:58:15</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div id="ctrl-section">
+      <div id="login-screen">
+        <div id="login-title">
+          <strong>🎵 Connetti Spotify</strong>
+          Accedi una sola volta — poi funziona sempre
+        </div>
+        <button id="login-btn" onclick="spotifyLogin()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#000"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Accedi a Spotify
+        </button>
+      </div>
+      <div id="session-controls">
+        <div id="sp-status-row">
+          <span id="sp-dot" class="wait"></span>
+          <span id="sp-status-txt">Connessione in corso…</span>
+        </div>
+        <button id="big-play" class="off" onclick="togglePlayback()">
+          <span id="bp-icon">▶</span>
+          <span id="bp-label">PLAY — Musica + Timer</span>
+        </button>
+        <div id="nav-row">
+          <button class="btn-sm" onclick="prevTrack()">⏮</button>
+          <button class="btn-sm" onclick="nextTrack()">⏭</button>
+          <span id="sync-badge">sync —</span>
+          <span id="status-txt">In attesa</span>
+          <span id="logout-btn" onclick="logout()">esci</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /col-left -->
+
+  <!-- COL RIGHT -->
+  <div id="col-right">
+
+    <!-- METRONOMO -->
+    <div id="metro-wrap">
+      <div id="metro-top">
+        <span id="metro-lbl">Metronomo</span>
+        <span id="metro-bpm-val">—</span>
+        <span id="metro-bpm-lbl">BPM</span>
+        <button id="metro-sound-btn" onclick="toggleMetroSound()">🔇</button>
+      </div>
+      <div id="metro-beats">
+        <div class="beat-dot b1"   id="bd1"></div>
+        <div class="beat-dot b234" id="bd2"></div>
+        <div class="beat-dot b234" id="bd3"></div>
+        <div class="beat-dot b234" id="bd4"></div>
+      </div>
+    </div>
+
+    <!-- TRACK LIST -->
+    <div id="tl-wrap">
+      <div id="tl-head">
+        <span>#</span><span>Brano</span>
+        <span style="text-align:center">Fase</span>
+        <span style="text-align:center">BPM</span>
+        <span style="text-align:center">RPM</span>
+        <span style="text-align:center">Res</span>
+      </div>
+      <div id="tl-body"></div>
+    </div>
+
+  </div><!-- /col-right -->
+
+</div><!-- /main -->
+
+<!-- CAMBIO TECNICA OVERLAY -->
+<div id="tec-change-overlay">
+  <div id="tco-label">⚡ CAMBIO TECNICA TRA</div>
+  <div id="tco-ring">
+    <svg id="tco-svg" viewBox="0 0 220 220">
+      <circle id="tco-circle" cx="110" cy="110" r="95"/>
+    </svg>
+    <div id="tco-num">10</div>
+  </div>
+  <div id="tco-arrow">▼</div>
+  <div id="tco-next">—</div>
+  <div id="tco-mani">—</div>
+</div>
+
+<!-- ALERT BANNER -->
+<div id="alert-box">
+  <div id="alert-icon">▶</div>
+  <div id="alert-texts">
+    <div id="alert-title"></div>
+    <div id="alert-sub"></div>
+  </div>
+  <div id="alert-zone"></div>
+</div>
+
+<!-- SPRINT/JUMP FULLSCREEN -->
+<div id="sj-fullscreen">
+  <div id="sj-fs-bg"></div>
+  <div id="sj-fs-label">SPRINT</div>
+  <div id="sj-fs-phase">ON</div>
+  <div id="sj-fs-time">0:20</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+const CLIENT_ID = 'fec34f5ffb9a46ca912190a6557e637c';
+const REDIRECT = 'https://giusprim.github.io/Indoor/';
+const PLAYLIST = 'spotify:playlist:7C8f3OvcSetywCKfgP5iZV';
+const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
+
+// ═══════════════════════════════════════════════════════
+//  DATI LEZIONE
+// ═══════════════════════════════════════════════════════
+const T = [
+ {
+  "i": 1,
+  "title": "Always Remember Us This Way",
+  "ar": "Federico Riva",
+  "bpm": "115",
+  "d": 246,
+  "z": "Z1",
+  "rpm": "75-85",
+  "res": "25%",
+  "rn": 0.25,
+  "tec": "Seduto leggero",
+  "mani": "P1",
+  "fase": "Warm-up",
+  "focus": "Riscaldamento dolce. Leggera pedala per svegliare le gambe.",
+  "s": 0
+ },
+ {
+  "i": 2,
+  "title": "PARTENOPE (feat. Serena Brancale)",
+  "ar": "Merk & Kremont, Serena Brancale",
+  "bpm": "122",
+  "d": 150,
+  "z": "Z2",
+  "rpm": "80-90",
+  "res": "30%",
+  "rn": 0.3,
+  "tec": "Seduto veloce → In piedi leggero",
+  "mani": "P1↔P2",
+  "fase": "Attivazione",
+  "focus": "Alterna seduto e in piedi; prepara il corpo per il fondo.",
+  "s": 246
+ },
+ {
+  "i": 3,
+  "title": "Asereje - Remix",
+  "ar": "MESTIZA, Las Ketchup",
+  "bpm": "125",
+  "d": 157,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "35%",
+  "rn": 0.35,
+  "tec": "In piedi leggero → Seduto veloce",
+  "mani": "P1↔P2",
+  "fase": "Attivazione",
+  "focus": "Dinamica; cambia posizione ogni frase.",
+  "s": 396
+ },
+ {
+  "i": 4,
+  "title": "Buona Sera - Ciao Ciao (feat. G-Clark)",
+  "ar": "House of Glass, G-Clark",
+  "bpm": "124",
+  "d": 207,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "30%",
+  "rn": 0.3,
+  "tec": "Seduto veloce",
+  "mani": "P1↔P2",
+  "fase": "Attivazione",
+  "focus": "Pedalata costante, respira ogni 4 battiti.",
+  "s": 553
+ },
+ {
+  "i": 5,
+  "title": "Tu",
+  "ar": "Ben DJ",
+  "bpm": "123",
+  "d": 127,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "35%",
+  "rn": 0.35,
+  "tec": "Seduto veloce",
+  "mani": "P1",
+  "fase": "Fondo",
+  "focus": "Mantieni cadenza alta, leggera resistenza.",
+  "s": 760
+ },
+ {
+  "i": 6,
+  "title": "Yaloma 2",
+  "ar": "DJ VAMUZZE",
+  "bpm": "125",
+  "d": 207,
+  "z": "Z3",
+  "rpm": "60-70",
+  "sy": "½ tempo",
+  "res": "40%",
+  "rn": 0.4,
+  "tec": "Seduto carico → In piedi leggero",
+  "mani": "P1↔P2",
+  "fase": "Fondo variato",
+  "focus": "Salita soft; aumenta resistenza gradualmente.",
+  "s": 887
+ },
+ {
+  "i": 7,
+  "title": "Volare - Afro House",
+  "ar": "Afrøtelize",
+  "bpm": "121",
+  "d": 283,
+  "z": "Z2",
+  "rpm": "85-95",
+  "res": "35%",
+  "rn": 0.35,
+  "tec": "Seduto veloce",
+  "mani": "P1",
+  "fase": "Fondo",
+  "focus": "Ritmo africano, pedalata fluida e rilassata.",
+  "s": 1094
+ },
+ {
+  "i": 8,
+  "title": "Gli anni",
+  "ar": "Federico Riva",
+  "bpm": "128",
+  "d": 187,
+  "z": "Z3",
+  "rpm": "90-100",
+  "res": "40%",
+  "rn": 0.4,
+  "tec": "In piedi leggero → Seduto veloce",
+  "mani": "P1↔P2",
+  "fase": "Fondo variato",
+  "focus": "Dinamica; alterna posizioni per muscoli diversi.",
+  "s": 1377
+ },
+ {
+  "i": 9,
+  "title": "Pedro - W&W Remix",
+  "ar": "Jaxomy, Agatino Romero, Raffaella Carrà, W&W",
+  "bpm": "155",
+  "d": 159,
+  "z": "Z4",
+  "rpm": "70-80",
+  "sy": "½ tempo",
+  "res": "55%",
+  "rn": 0.55,
+  "tec": "In piedi → Seduto carico",
+  "mani": "P3",
+  "fase": "Picco esplosivo",
+  "focus": "Elettro aggressivo! Piccola montagna Z4. Spinta massima a mezzo tempo (70-80 RPM), attacca la salita.",
+  "s": 1564
+ },
+ {
+  "i": 10,
+  "title": "Tu Vera - FNX OMAR Remix",
+  "ar": "Simone Glad, Bondar, BAQABO, FNX OMAR",
+  "bpm": "121",
+  "d": 254,
+  "z": "Z2",
+  "rpm": "80-90",
+  "res": "35%",
+  "rn": 0.35,
+  "tec": "Seduto veloce",
+  "mani": "P1",
+  "fase": "Active recovery",
+  "focus": "Recovery attiva in Z2; respira bene, prepara per salita.",
+  "s": 1723
+ },
+ {
+  "i": 11,
+  "title": "CARUSO",
+  "ar": "Giuseppe Roccasalvo, JOE ROK, BENZATO",
+  "bpm": "122",
+  "d": 147,
+  "z": "Z2",
+  "rpm": "60-70",
+  "sy": "½ tempo",
+  "res": "40%",
+  "rn": 0.4,
+  "tec": "Seduto carico",
+  "mani": "P1↔P2",
+  "fase": "Salita soft",
+  "focus": "Respiro profondo; preparazione al picco.",
+  "s": 1977
+ },
+ {
+  "i": 12,
+  "title": "Maracaibo - Tech house radio",
+  "ar": "Lu Colombo, Gian Maria Bragantini",
+  "bpm": "127",
+  "d": 170,
+  "z": "Z3",
+  "rpm": "60-70",
+  "sy": "½ tempo",
+  "res": "45%",
+  "rn": 0.45,
+  "tec": "In piedi leggero",
+  "mani": "P2",
+  "fase": "Salita",
+  "focus": "Inizio salita; mantieni ritmo, core attivo.",
+  "s": 2124
+ },
+ {
+  "i": 13,
+  "title": "Scatman (ski-ba-bop-ba-dop-bop)",
+  "ar": "Scatman John",
+  "bpm": "136",
+  "d": 215,
+  "z": "Z4",
+  "rpm": "65-75",
+  "sy": "½ tempo",
+  "res": "55%",
+  "rn": 0.55,
+  "tec": "In piedi → Seduto carico",
+  "mani": "P2↔P3",
+  "fase": "Salita push",
+  "focus": "House energetica percussiva; pedala a mezzo tempo (65-75 RPM), forza sulla pedivella.",
+  "s": 2294
+ },
+ {
+  "i": 14,
+  "title": "Played-A-Live (The Bongo Song) - Radio",
+  "ar": "Safri Duo",
+  "bpm": "138",
+  "d": 200,
+  "z": "Z4",
+  "rpm": "65-75",
+  "sy": "½ tempo",
+  "res": "58%",
+  "rn": 0.58,
+  "tec": "In piedi massimo",
+  "mani": "P3",
+  "fase": "Salita top",
+  "focus": "Africano energico; push finale prima del climax.",
+  "s": 2509
+ },
+ {
+  "i": 15,
+  "title": "AL MIO PAESE",
+  "ar": "Serena Brancale, Levante",
+  "bpm": "139",
+  "d": 197,
+  "z": "Z4",
+  "rpm": "65-75",
+  "sy": "½ tempo",
+  "res": "60%",
+  "rn": 0.6,
+  "tec": "In piedi massimo",
+  "mani": "P3",
+  "fase": "Climax",
+  "focus": "PICCO: massima resistenza, RPM obiettivo 65-75 a mezzo tempo. Tutto quello che hai!",
+  "s": 2709
+ },
+ {
+  "i": 16,
+  "title": "I know I want You - I'm so excited Remix",
+  "ar": "Federico Riva",
+  "bpm": "125",
+  "d": 229,
+  "z": "Z2",
+  "rpm": "75-85",
+  "res": "25%",
+  "rn": 0.25,
+  "tec": "Seduto leggero → In piedi leggero",
+  "mani": "P1↔P2",
+  "fase": "Defaticamento",
+  "focus": "Recovery attiva; prepara il corpo per stretching.",
+  "s": 2906
+ },
+ {
+  "i": 17,
+  "title": "Aicha",
+  "ar": "Revive26",
+  "bpm": "123",
+  "d": 263,
+  "z": "Z2",
+  "rpm": "75-85",
+  "res": "30%",
+  "rn": 0.3,
+  "tec": "Seduto veloce",
+  "mani": "P1",
+  "fase": "Defaticamento",
+  "focus": "Scendi gradualmente dalla salita; cuore che torna a Z2.",
+  "s": 3135
+ },
+ {
+  "i": 18,
+  "title": "Torna a casa",
+  "ar": "Måneskin",
+  "bpm": "78",
+  "d": 230,
+  "z": "Z1",
+  "rpm": "60-70",
+  "res": "15%",
+  "rn": 0.15,
+  "tec": "Seduto leggero",
+  "mani": "P1",
+  "fase": "Stretching",
+  "focus": "Respirazione profonda; scendi dalla bici e stretcha tutto.",
+  "s": 3398
+ }
+];
+
+const CROSSFADE=4;
+const TOTAL=3628;
+const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
+
+// ═══════════════════════════════════════════════════════
+//  ★ TECNICA PARSER — il cuore del sistema
+//
+//  Divide ogni brano in segmenti basati su:
+//  1. Se ha "→" → N segmenti di durata uguale
+//  2. Se ha sprint/jump con secondi espliciti → slot ON/OFF precisi
+//  3. Calcola il timing di ogni segmento su base 32 battiti
+// ═══════════════════════════════════════════════════════
+function parseTecSegments(t){
+  const tec=t.tec, bpm=parseInt(t.bpm)||120, dur=t.d;
+  const beatLen=60/bpm;
+
+  // ── Inferisce tipo e mani da una label testuale ──
+  function inferSeg(label, trackMani, trackZ){
+    const ll=label.toLowerCase();
+    let type='steady', mani=trackMani;
+    if(ll.includes('sprint')&&(ll.includes(' on')||ll.includes('piedi')||ll.includes('breve'))){
+      type='sprint_on';
+      mani=(trackZ==='Z5')?'P4Atk':'P3';
+    } else if(ll.includes('sprint')&&(ll.includes(' off')||ll.includes('recupero'))){
+      type='sprint_off';
+      mani=(trackZ==='Z5')?'P1':'P2';
+    } else if(ll.includes('jump')){
+      type='jump';
+      // mani invariato dal track
+    } else if(ll.includes('in piedi')&&(ll.includes('carico')||ll.includes('veloce')||ll.includes('leggero'))){
+      type='standing';
+      if(ll.includes('carico')) mani='P3';
+      else if(ll.includes('veloce')) mani=trackZ==='Z4'?'P4Atk':'P3';
+      else mani='P2';
+    } else if(ll.includes('seduto')||ll.includes('recupero')||ll.includes('defaticamento')||ll.includes('stretching')){
+      type='seated';
+      if(ll.includes('carico')) mani='P2';
+      else if(ll.includes('aero')) mani='P4';
+      else if(ll.includes('veloce')) mani='P2';
+      else mani=trackZ==='Z1'?'P1':'P2';
+    } else if(ll.includes('running')){
+      type='steady'; mani='P1';
+    } else if(ll.includes('crono')&&ll.includes('in piedi')){
+      type='standing'; mani='P4Atk';
+    } else if(ll.includes('crono')){
+      type='seated'; mani='P4';
+    } else if(ll.includes('vetta')||ll.includes('salita')){
+      type='standing'; mani='P3';
+    }
+    return {type, mani};
+  }
+
+  // ── 1. SPRINT: pattern "Xs ON ... Xs OFF" ──
+  const sprintRx=/(\d+)[''s]+\s*on[^→]*(→|$).*?(\d+)[''s]+\s*off/i;
+  const sprintM=tec.match(sprintRx);
+  if(sprintM){
+    const on=parseInt(sprintM[1]), off=parseInt(sprintM[3]||on);
+    const maniOn=(t.z==='Z5')?'P4Atk':'P3';
+    const maniOff=(t.z==='Z5')?'P1':'P2';
+    // Allinea inizio a multiplo del beat (evita anticipo percepito)
+    // Arrotonda ON e OFF al multiplo di 8 battiti più vicino
+    // Sprint che inizia e finisce SEMPRE su una frase musicale completa (8 beat)
+    // Arrotonda a multiplo di 8 beat, minimo 32 beat (= 1 frase musicale standard)
+    // 32 beat @ 132 BPM = 14.5s, @ 150 BPM = 12.8s, @ 160 BPM = 12s
+    const onBeats =Math.max(32,Math.round(on /beatLen/8)*8);
+    const offBeats=Math.max(32,Math.round(off/beatLen/8)*8);
+    const onSec=onBeats*beatLen, offSec=offBeats*beatLen;
+    // ── Buffer iniziale: copre solo il crossfade (≈4s allineato a 8 battiti) ──
+    // NON usiamo 15s perché metterebbe il primo sprint nel punto sbagliato della canzone.
+    // Vogliamo che lo sprint parta il prima possibile dopo il crossfade (4s),
+    // allineato alla frase musicale più vicina di 8 battiti.
+    const XFADE=typeof CROSSFADE!=='undefined'?CROSSFADE:4;
+    const stabBeats=Math.max(8,Math.ceil(XFADE/beatLen/8)*8);
+    const stabSec=stabBeats*beatLen; // tipicamente 7-9s (1-2 frasi da 8 beat)
+    const segs=[];
+    // Inserisci intro seduto se c'è spazio sufficiente per almeno 1 ciclo ON+OFF dopo
+    let startOffset=0;
+    if(dur>stabSec+onSec+offSec){
+      segs.push({label:'Seduto — Stabilizzazione ritmo',mani:maniOff,from:0,to:parseFloat(stabSec.toFixed(2)),type:'sprint_off'});
+      startOffset=stabSec;
+    }
+    let cur=startOffset;
+    while(cur<dur-1){
+      const segOn=Math.min(onSec,dur-cur);
+      segs.push({label:'In piedi — SPRINT ON',mani:maniOn,from:parseFloat(cur.toFixed(2)),to:parseFloat((cur+segOn).toFixed(2)),type:'sprint_on'});
+      cur+=segOn;
+      if(cur>=dur-0.1) break;
+      const segOff=Math.min(offSec,dur-cur);
+      segs.push({label:'Seduto — Recupero OFF',mani:maniOff,from:parseFloat(cur.toFixed(2)),to:parseFloat((cur+segOff).toFixed(2)),type:'sprint_off'});
+      cur+=segOff;
+    }
+    if(segs.length>0) segs[segs.length-1].to=dur;
+    return segs;
+  }
+
+  // ── 2. JUMP: almeno un "jump in N" nella tec ──
+  const jumpRx=/jump\s+in\s+(\d+)/gi;
+  const jumpMatches=[...tec.matchAll(jumpRx)];
+  if(jumpMatches.length>0){
+    const labels=tec.split('→').map(s=>s.trim()).filter(Boolean);
+
+    // ── Stab crossfade-aligned (stessa logica sprint) ─────────────────────
+    const XFADE=typeof CROSSFADE!=='undefined'?CROSSFADE:4;
+    const stabBeatsJ=Math.max(8,Math.ceil(XFADE/beatLen/8)*8);
+    const stabSecJ=stabBeatsJ*beatLen;
+
+    const segs=[];
+    let cur=0;
+
+    // Buffer iniziale seduto se il brano lo permette
+    if(dur>stabSecJ+16*beatLen){
+      segs.push({label:'Seduto — Trova il ritmo',mani:'P2',
+        from:0,to:parseFloat(stabSecJ.toFixed(2)),type:'seated'});
+      cur=stabSecJ;
+    }
+
+    // ── Distribuzione tempo: non-jump = 16 beat fissi; jump = tempo restante ──
+    const nTrans=Math.max(0,labels.length-1);
+    const transSec=8*beatLen;
+    const nonJumpLabels=labels.filter(l=>!/jump/i.test(l));
+    const jumpLabels   =labels.filter(l=>/jump/i.test(l));
+    const nonJumpSec=nonJumpLabels.length * 16*beatLen; // 16 beat per frase non-jump
+    const availForJumps=dur-cur-nonJumpSec-nTrans*transSec;
+    const timePerJump=Math.max(16*beatLen, availForJumps/Math.max(1,jumpLabels.length));
+
+    labels.forEach((label,i)=>{
+      const jMatch=label.match(/jump\s+in\s+(\d+)/i);
+
+      if(jMatch){
+        // ── Fase JUMP: genera cicli ON/OFF espliciti ───────────────────
+        const n=parseInt(jMatch[1]);
+        const onSec =n*beatLen;  // N beat in piedi
+        const offSec=n*beatLen;  // N beat seduto
+        const cycleLen=onSec+offSec;
+
+        const phaseEnd=parseFloat(Math.min(cur+timePerJump,
+          dur-(i<labels.length-1?transSec+16*beatLen:0)).toFixed(2));
+        const avail=phaseEnd-cur;
+        const nCycles=Math.max(1,Math.floor(avail/cycleLen));
+
+        for(let c=0;c<nCycles;c++){
+          const onFrom=parseFloat(cur.toFixed(2));
+          const onTo  =parseFloat((cur+onSec).toFixed(2));
+          segs.push({
+            label:`In piedi — JUMP (${n})`,
+            mani:t.z==='Z5'?'P3':'P2',
+            from:onFrom,to:onTo,type:'jump'
+          });
+          cur+=onSec;
+          if(cur>=phaseEnd-0.1) break;
+
+          const offFrom=parseFloat(cur.toFixed(2));
+          const offTo  =parseFloat(Math.min(cur+offSec,phaseEnd).toFixed(2));
+          segs.push({
+            label:'Seduto — JUMP OFF',
+            mani:'P2',
+            from:offFrom,to:offTo,type:'jump_off'
+          });
+          cur+=offSec;
+          if(cur>=phaseEnd-0.1){cur=phaseEnd;break;}
+        }
+        cur=phaseEnd; // snap al confine fase
+
+      } else {
+        // Segmento non-jump: 16 beat fissi
+        const nonJumpDur=16*beatLen;
+        const segEnd=parseFloat(Math.min(cur+nonJumpDur,dur).toFixed(2));
+        const {type,mani}=inferSeg(label,t.mani,t.z);
+        segs.push({label,mani,from:parseFloat(cur.toFixed(2)),to:segEnd,type});
+        cur=segEnd;
+      }
+
+      // Transizione "Cambia ritmo" tra fasi diverse (non dopo l'ultima)
+      if(i<labels.length-1 && cur+transSec<dur-4*beatLen){
+        segs.push({label:'Seduto — Cambia ritmo',mani:'P2',
+          from:parseFloat(cur.toFixed(2)),
+          to:parseFloat((cur+transSec).toFixed(2)),
+          type:'seated'});
+        cur+=transSec;
+      }
+    });
+
+    if(segs.length>0) segs[segs.length-1].to=dur;
+    return segs;
+  }
+
+  // ── 3. GENERICO: segmenti separati da → ──
+  const parts=tec.split('→').map(s=>s.trim()).filter(Boolean);
+  if(parts.length===1){
+    const {type,mani}=inferSeg(parts[0],t.mani,t.z);
+    return [{label:parts[0],mani,from:0,to:dur,type}];
+  }
+  // Distribuisci equamente a multipli di 32 battiti
+  const block32=32*beatLen;
+  const totalBlocks=Math.round(dur/block32);
+  const bPerSeg=Math.max(1,Math.floor(totalBlocks/parts.length));
+  const segs=[];
+  let cur=0;
+  parts.forEach((label,i)=>{
+    const blocks=i===parts.length-1?Math.round((dur-cur)/block32)||1:bPerSeg;
+    const segDur=Math.round(blocks*block32*100)/100;
+    const from=parseFloat(cur.toFixed(2));
+    const to=parseFloat(Math.min(cur+segDur,dur).toFixed(2));
+    const {type,mani}=inferSeg(label,t.mani,t.z);
+    segs.push({label,mani,from,to,type});
+    cur+=segDur;
+    if(cur>=dur) return;
+  });
+  if(segs.length>0) segs[segs.length-1].to=dur;
+  return segs;
+}
+
+// Pre-calcola segmenti per tutti i brani
+T.forEach(t=>{ t._segs=parseTecSegments(t); });
+
+// Trova il segmento attivo
+function getActiveSegIdx(t, posInTrack){
+  if(!t._segs||!t._segs.length) return 0;
+  for(let i=t._segs.length-1;i>=0;i--){
+    if(posInTrack>=t._segs[i].from) return i;
+  }
+  return 0;
+}
+
+// Trova il prossimo cambio tecnica dentro il brano corrente
+function getNextTecChange(el){
+  const t=T[ci];
+  const posInTrack=el-t.s;
+  const si=getActiveSegIdx(t,posInTrack);
+  const curSeg=t._segs&&t._segs[si];
+
+  // Non attivare se sprint o jump attivi (sj-tracker gestisce già)
+  if(curSeg&&(curSeg.type==='sprint_on'||curSeg.type==='sprint_off'||curSeg.type==='jump'||curSeg.type==='jump_off')){
+    return null;
+  }
+
+  // ── Cambio tecnica DENTRO il brano corrente ──
+  if(t._segs&&t._segs.length>1){
+    if(si<t._segs.length-1){
+      const nextSeg=t._segs[si+1];
+      // Salta cambi verso altri sprint/jump (gestiti dal tracker)
+      if(nextSeg.type==='sprint_on'||nextSeg.type==='sprint_off'||nextSeg.type==='jump'||nextSeg.type==='jump_off'){
+        return null;
+      }
+      const secToChange=(t.s+nextSeg.from)-el;
+      if(secToChange>0&&secToChange<=_CD_WINDOW+1) return {secToChange,nextSeg};
+      if(secToChange>0) return {secToChange,nextSeg}; // per scheduling futuro
+    }
+  }
+
+  // ── Look-ahead inter-brano (compensa crossfade 4s) ──
+  if(ci<T.length-1){
+    const nextTrack=T[ci+1];
+    const CF=typeof CROSSFADE!=='undefined'?CROSSFADE:0;
+    const secToNextTrack=(t.s+t.d)-el-CF;
+    if(secToNextTrack>0&&nextTrack._segs&&nextTrack._segs.length>0){
+      const nextFirstSeg=nextTrack._segs[0];
+      // Non segnalare se il prossimo brano inizia con sprint/jump
+      if(nextFirstSeg.type==='sprint_on'||nextFirstSeg.type==='jump') return null;
+      const curLastSeg=t._segs&&t._segs.length>0?t._segs[t._segs.length-1]:null;
+      const tecCambia=!curLastSeg||curLastSeg.type!==nextFirstSeg.type||curLastSeg.label!==nextFirstSeg.label;
+      if(tecCambia){
+        return {
+          secToChange:secToNextTrack,
+          nextSeg:{label:nextFirstSeg.label,mani:nextTrack.mani,from:0,to:nextFirstSeg.to,type:nextFirstSeg.type}
+        };
+      }
+    }
+  }
+  return null;
+}
+
+// ── FUZZY MATCH ──────────────────────────────────────
+function norm(s){return s.toLowerCase().replace(/[''`]/g,"'").replace(/[-–—]/g,' ').replace(/\(.*?\)/g,'').replace(/[^a-z0-9\s'àáèéìíòóùú]/g,'').replace(/\s+/g,' ').trim();}
+function findTrackBySpotifyTitle(spTitle){
+  const spN=norm(spTitle);
+  let idx=T.findIndex(t=>norm(t.title)===spN); if(idx>=0)return idx;
+  idx=T.findIndex(t=>spN.includes(norm(t.title))); if(idx>=0)return idx;
+  return T.findIndex(t=>norm(t.title).split(' ').every(w=>w.length>2&&spN.includes(w)));
+}
+
+// ── AUTH PKCE ─────────────────────────────────────────
+let accessToken=null,tokenExpiry=0;
+function rnd(n){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',a=new Uint8Array(n);crypto.getRandomValues(a);return Array.from(a,b=>c[b%c.length]).join('');}
+async function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));}
+function b64url(b){return btoa(String.fromCharCode(...new Uint8Array(b))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');}
+async function spotifyLogin(){const ver=rnd(128),st=rnd(16),ch=b64url(await sha256(ver));localStorage.setItem('sp_ver',ver);localStorage.setItem('sp_st',st);window.location.assign('https://accounts.spotify.com/authorize?'+new URLSearchParams({response_type:'code',client_id:CLIENT_ID,scope:SCOPES,redirect_uri:REDIRECT,state:st,code_challenge_method:'S256',code_challenge:ch}).toString());}
+async function exchangeCode(code){const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:REDIRECT,client_id:CLIENT_ID,code_verifier:localStorage.getItem('sp_ver')}).toString()});if(!r.ok)return false;saveTokens(await r.json());return true;}
+async function doRefresh(){const rt=localStorage.getItem('sp_rt');if(!rt)return false;const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:rt,client_id:CLIENT_ID}).toString()});if(!r.ok)return false;saveTokens(await r.json());return true;}
+function saveTokens(d){accessToken=d.access_token;tokenExpiry=Date.now()+(d.expires_in-60)*1000;if(d.refresh_token)localStorage.setItem('sp_rt',d.refresh_token);localStorage.setItem('sp_at',accessToken);localStorage.setItem('sp_exp',String(tokenExpiry));}
+async function getToken(){if(accessToken&&Date.now()<tokenExpiry)return accessToken;const at=localStorage.getItem('sp_at'),exp=+localStorage.getItem('sp_exp')||0;if(at&&Date.now()<exp){accessToken=at;tokenExpiry=exp;return at;}return await doRefresh()?accessToken:null;}
+
+// ── SPOTIFY API ───────────────────────────────────────
+async function api(method,path,body){const tok=await getToken();if(!tok)return null;const opt={method,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'}};if(body)opt.body=JSON.stringify(body);const r=await fetch('https://api.spotify.com/v1'+path,opt);if(r.status===204||r.status===202)return{};if(r.status===200){try{return await r.json();}catch{return{};}}if(r.status===401){await doRefresh();return null;}if(r.status===404||r.status===403){setStatus('Apri Spotify sul dispositivo!','err');return null;}return null;}
+async function spStartPlaylist(){return api('PUT','/me/player/play',{context_uri:PLAYLIST,offset:{position:0},position_ms:0});}
+async function spPause(){return api('PUT','/me/player/pause');}
+async function spResume(){return api('PUT','/me/player/play');}
+// Salta a un brano specifico della playlist (0-based index) e a una posizione in ms
+async function spPlayTrack(trackIndex,positionMs){
+  return api('PUT','/me/player/play',{context_uri:PLAYLIST,offset:{position:trackIndex},position_ms:positionMs||0});
+}
+// Seek dentro il brano corrente
+async function spSeekMs(posMs){
+  return api('PUT',`/me/player/seek?position_ms=${Math.round(posMs)}`);
+}
+async function spGetAbsolutePosition(){const d=await api('GET','/me/player/currently-playing');if(!d||!d.item)return null;const ti=findTrackBySpotifyTitle(d.item.name);if(ti<0)return{absSec:d.progress_ms/1000,trackIdx:-1,isPlaying:d.is_playing};return{absSec:T[ti].s+d.progress_ms/1000,trackIdx:ti,isPlaying:d.is_playing};}
+async function spGetDevices(){const d=await api('GET','/me/player/devices');return d?.devices||[];}
+
+// ── TIMER ─────────────────────────────────────────────
+let ci=0,lastCi=-1,lastSegIdx=-1,isPlaying=false,wallStart=null,pausedAt=0;
+let rafId=null,alertTO=null,warnTO=null,wakeLock=null,syncInt=null;
+let tecCdTO=null,tecCdInterval=null,sjFsTO=null;
+let _warned30=false; // tick-based warning flag, reset on track change or seek
+
+function getElapsed(){const raw=isPlaying&&wallStart?pausedAt+(Date.now()-wallStart):pausedAt;return Math.max(0,Math.min(raw/1000,TOTAL));}
+
+async function autoSync(){
+  const sp=await spGetAbsolutePosition();if(!sp)return;
+  const badge=document.getElementById('sync-badge');
+  // ── GUARD crossfade lookahead ──────────────────────────────────
+  // tick() avanza ci 4s prima (CROSSFADE). Spotify è ancora sul brano N-1.
+  // Se Spotify riporta esattamente ci-1, è il gap di crossfade: NON fare reset.
+  const isCrossfadeGap=(sp.trackIdx>=0 && sp.trackIdx===ci-1);
+  if(isCrossfadeGap) return; // posizione già corretta dal timer
+  // ── Cambio traccia reale da Spotify (seek, skip) ───────────────
+  if(sp.trackIdx>=0 && sp.trackIdx!==ci){
+    ci=sp.trackIdx;lastCi=ci;lastSegIdx=-1;_warned30=false;scheduleTecCountdown();
+  }
+  // ── Correzione posizione temporale ────────────────────────────
+  const diff=Math.abs(sp.absSec-getElapsed());
+  if(diff<1){badge.textContent='✓ sync';badge.className='good';}
+  else if(diff<4){badge.textContent='Δ '+diff.toFixed(1)+'s';badge.className='warn';}
+  else{badge.textContent='Δ '+diff.toFixed(1)+'s';badge.className='bad';}
+  if(diff>0.3){pausedAt=sp.absSec*1000;if(isPlaying)wallStart=Date.now();}
+}
+
+async function togglePlayback(){
+  const btn=document.getElementById('big-play');
+  if(btn.classList.contains('off'))return;
+  if(!isPlaying){
+    if(pausedAt===0){await spStartPlaylist();await new Promise(r=>setTimeout(r,800));}
+    else{await spResume();await new Promise(r=>setTimeout(r,400));}
+    isPlaying=true;wallStart=Date.now();
+    rafId=requestAnimationFrame(tick);
+    requestWakeLock();_warned30=false;scheduleTecCountdown();
+    startMetro(); // ← auto-start
+    await autoSync();
+    syncInt=setInterval(autoSync,3000);
+    btn.className='pause';
+    document.getElementById('bp-icon').textContent='⏸';
+    document.getElementById('bp-label').textContent='PAUSA';
+    document.getElementById('sp-dot').className='ok';
+    document.getElementById('sp-status-txt').textContent='▶ Spotify in riproduzione';
+  } else {
+    pausedAt=getElapsed()*1000;isPlaying=false;
+    clearInterval(syncInt);syncInt=null;
+    cancelAnimationFrame(rafId);releaseWakeLock();
+    clearTecCountdown();hideSjFullscreen();
+    stopMetro(); // ← auto-stop
+    await spPause();
+    btn.className='play';
+    document.getElementById('bp-icon').textContent='▶';
+    document.getElementById('bp-label').textContent='PLAY';
+    document.getElementById('status-txt').textContent='In pausa';
+    document.getElementById('sp-dot').className='wait';
+    document.getElementById('sp-status-txt').textContent='In pausa';
+  }
+}
+
+function tick(){
+  const el=getElapsed();
+  const elAdj=el+(CROSSFADE||0);
+  const ni=trackAt(Math.min(elAdj,TOTAL-0.1));
+  if(ni!==lastCi){
+    ci=ni;lastCi=ni;lastSegIdx=-1;_warned30=false;
+    const t=T[ci];
+    showAlert('▶',`${t.i}/${T.length}  ${t.title}`,`${t.fase} · ${t.rpm} RPM · Res ${t.res}`,ZC[t.z]);
+    scheduleTecCountdown();
+    if(isPlaying) setTimeout(()=>autoSync(),700);
+  }
+  renderUI(el);
+  if(el<TOTAL&&isPlaying)rafId=requestAnimationFrame(tick);
+  else if(el>=TOTAL){
+    isPlaying=false;spPause();
+    document.getElementById('big-play').className='off';
+    document.getElementById('bp-label').textContent='🎉 Sessione completata!';
+    releaseWakeLock();
+  }
+}
+
+async function seekTo(sec){
+  const newCi=trackAt(sec);
+  const posInTrack=sec-T[newCi].s;
+  pausedAt=sec*1000;if(isPlaying)wallStart=Date.now();
+  ci=newCi;lastCi=ci;lastSegIdx=-1;_warned30=false;
+  clearTecCountdown();hideSjFullscreen();
+  scheduleTecCountdown();updateUI();
+  if(isPlaying){
+    await spPlayTrack(ci, Math.round(posInTrack*1000));
+    setTimeout(()=>autoSync(),1200);
+  }
+}
+async function nextTrack(){
+  if(ci<T.length-1){
+    ci++;lastCi=ci;lastSegIdx=-1;_warned30=false;
+    pausedAt=T[ci].s*1000;if(isPlaying)wallStart=Date.now();
+    clearTecCountdown();hideSjFullscreen();
+    scheduleTecCountdown();updateUI();
+    if(isPlaying){
+      await spPlayTrack(ci,0);
+      setTimeout(()=>autoSync(),1200);
+    }
+  }
+}
+async function prevTrack(){
+  if(ci>0){
+    ci--;lastCi=ci;lastSegIdx=-1;_warned30=false;
+    pausedAt=T[ci].s*1000;if(isPlaying)wallStart=Date.now();
+    clearTecCountdown();hideSjFullscreen();
+    scheduleTecCountdown();updateUI();
+    if(isPlaying){
+      await spPlayTrack(ci,0);
+      setTimeout(()=>autoSync(),1200);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  ★ TECNICA COUNTDOWN — scatta 10s prima di OGNI
+//    cambio di segmento DENTRO il brano corrente
+// ═══════════════════════════════════════════════════════
+// ── COUNTDOWN TECNICA ─ gestito frame-by-frame in renderUI ─────────
+// Nessun setTimeout: la logica è tutta in renderCountdown(el)
+// chiamata da renderUI() ad ogni frame → sincronizzazione perfetta
+let _cdLastShown = false; // traccia se overlay era visibile
+let _cdLastLabel = '';    // evita re-render inutili
+const _CD_WINDOW = 10;    // secondi prima del cambio
+
+function renderCountdown(el, curSeg){
+  const overlay = document.getElementById('tec-change-overlay');
+  if(!overlay) return;
+
+  // Non mostrare se siamo in sprint_on o jump (sj-tracker gestisce già)
+  if(curSeg && (curSeg.type==='sprint_on' || curSeg.type==='jump' || curSeg.type==='jump_off')){
+    if(_cdLastShown){ overlay.classList.remove('show'); _cdLastShown=false; }
+    return;
+  }
+
+  const change = getNextTecChange(el);
+  if(!change || change.secToChange <= 0 || change.secToChange > _CD_WINDOW){
+    if(_cdLastShown){ overlay.classList.remove('show'); _cdLastShown=false; _cdLastLabel=''; }
+    return;
+  }
+
+  const {secToChange, nextSeg} = change;
+  const rem = Math.max(0, secToChange);
+
+  // Aggiorna testo solo se cambiato (riduce reflow)
+  if(nextSeg.label !== _cdLastLabel){
+    _cdLastLabel = nextSeg.label;
+    document.getElementById('tco-next').textContent = nextSeg.label;
+    document.getElementById('tco-mani').textContent = 'Manubrio: '+(nextSeg.mani||'—');
+  }
+  document.getElementById('tco-num').textContent = Math.ceil(rem);
+  // Ring SVG progress
+  const C = 2*Math.PI*95;
+  const progress = Math.min(1, (_CD_WINDOW-rem)/_CD_WINDOW);
+  document.getElementById('tco-circle').style.strokeDasharray = C;
+  document.getElementById('tco-circle').style.strokeDashoffset = C*progress;
+
+  if(!_cdLastShown){ overlay.classList.add('show'); _cdLastShown=true; }
+}
+
+// Stub vuoti — la logica è in renderCountdown
+function scheduleTecCountdown(){}
+function startTecCountdown(){}
+function clearTecCountdown(){
+  const overlay=document.getElementById('tec-change-overlay');
+  if(overlay) overlay.classList.remove('show');
+  _cdLastShown=false; _cdLastLabel='';
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  SPRINT/JUMP FULLSCREEN — per sprint show for 2s
+// ═══════════════════════════════════════════════════════
+let _lastSjType='';
+function maybeShowSjFullscreen(slot){
+  const key=slot.type+slot.phase+slot.start;
+  if(key===_lastSjType) return;
+  _lastSjType=key;
+  const isOn=slot.phase==='ON'||slot.type==='JUMP';
+  // Flash ON: rosso (sprint) o ambra (jump)
+  // Flash OFF: cyan — "RECUPERO" visibile solo all'istruttore
+  let bgColor, fsc, labelText, phaseText;
+  if(isOn){
+    bgColor=slot.type==='SPRINT'?'rgba(255,31,66,.22)':'rgba(255,191,0,.18)';
+    fsc=slot.type==='SPRINT'?'var(--red)':'var(--amber)';
+    labelText=slot.type==='SPRINT'?'SPRINT':'JUMP';
+    phaseText='ON';
+  } else {
+    bgColor='rgba(0,223,192,.15)';
+    fsc='var(--cyan)';
+    labelText='RECUPERO';
+    phaseText='OFF';
+  }
+  document.getElementById('sj-fs-bg').style.background=bgColor;
+  // Bordo del banner nel colore zona
+  const el=document.getElementById('sj-fullscreen');
+  el.style.borderRightColor=fsc;
+  el.style.borderBottomColor=fsc;
+  document.getElementById('sj-fs-label').textContent=labelText;
+  document.getElementById('sj-fs-label').style.color=fsc;
+  document.getElementById('sj-fs-phase').textContent=phaseText;
+  document.getElementById('sj-fs-phase').style.color=fsc;
+  document.getElementById('sj-fs-time').textContent=fmt(slot.dur);
+  document.getElementById('sj-fs-time').style.color='#fff';
+  document.getElementById('sj-fullscreen').classList.add('show');
+  clearTimeout(sjFsTO);
+  // ON dura più a lungo sullo schermo (1800ms), OFF è più breve (1200ms — solo segnale)
+  sjFsTO=setTimeout(hideSjFullscreen,isOn?1800:1200);
+}
+function hideSjFullscreen(){document.getElementById('sj-fullscreen').classList.remove('show');}
+
+// ═══════════════════════════════════════════════════════
+//  UI RENDER
+// ═══════════════════════════════════════════════════════
+const pad=n=>String(n).padStart(2,'0');
+function fmt(s){s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;return h?`${h}:${pad(m)}:${pad(sc)}`:`${m}:${pad(sc)}`;}
+function fmt3(s){s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;return `${h}:${pad(m)}:${pad(sc)}`;}
+function trackAt(s){for(let i=T.length-1;i>=0;i--)if(s>=T[i].s)return i;return 0;}
+
+function renderUI(el){
+  if(el===undefined)el=getElapsed();
+  const t=T[ci];
+  const zc=ZC[t.z];
+  // posInTrack: mai negativo (crossfade anticipa ci di 4s ma el è reale)
+  const posInTrack=Math.max(0,el-t.s);
+
+  // Basic info
+  document.getElementById('np-title').textContent=t.title;
+  document.getElementById('np-artist').textContent=t.ar;
+  document.getElementById('np-badge').textContent=`${t.i}/${T.length}`;
+  document.getElementById('m-zone').textContent=t.z;
+  document.getElementById('m-zone').style.color=zc;
+  document.getElementById('m-rpm').textContent=t.rpm;
+  document.getElementById('m-rpm-l').textContent=t.sy?('RPM · '+t.sy.toUpperCase()):'RPM';
+  document.getElementById('m-bpm').textContent=t.bpm;
+  document.getElementById('m-res').textContent=t.res;
+  document.getElementById('m-mani').textContent=t.mani;
+  document.getElementById('fase-val').textContent=t.fase;
+  document.getElementById('focus-val').textContent=t.focus;
+  document.getElementById('focus-lbl').textContent='🎯 FOCUS COACH · '+(t.fase||'').toUpperCase();
+
+  // Zone color theming
+  document.getElementById('now').style.setProperty('--zc',zc);
+  document.getElementById('fase-val').style.color=zc;
+  document.getElementById('alert-box').style.borderBottomColor=zc;
+
+  // ── Segmenti Tecnica ──
+  const si=getActiveSegIdx(t,posInTrack);
+  if(si!==lastSegIdx){
+    lastSegIdx=si;
+    renderTecSegs(t,si,zc);
+    // Schedula prossimo countdown quando cambia segmento
+  }
+
+  // ── Sprint/Jump tracker ──
+  renderSjTracker(t,posInTrack,el);
+
+  // Progress
+  const pct=Math.min((el/TOTAL)*100,100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('t-cur').textContent=fmt3(el);
+  document.getElementById('t-rem').textContent='−'+fmt(Math.max(t.s+t.d-el,0));
+
+  // ── Warning 30s prima del prossimo brano (tick-based, seek-safe) ──
+  if(!_warned30 && ci<T.length-1){
+    const timeToNext=T[ci].s+T[ci].d-el;
+    if(timeToNext>0 && timeToNext<=30){
+      _warned30=true;
+      const nt=T[ci+1];
+      showAlert('⚡',`Prossimo: ${nt.title}`,`${nt.fase} · ${nt.rpm} RPM · Res ${nt.res}`,ZC[nt.z]);
+    }
+  }
+
+  // List highlight
+  document.querySelectorAll('.tr').forEach((r,i)=>r.classList.toggle('active',i===ci));
+  document.querySelector(`.tr[data-i="${ci}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'});
+
+  drawChart(el);
+}
+function updateUI(){renderUI(getElapsed());}
+
+// ── Renderizza segmenti tecnica come lista visuale ──
+function renderTecSegs(t,activeSi,zc){
+  const wrap=document.getElementById('tec-segs-wrap');
+  wrap.innerHTML='';
+  if(!t._segs||!t._segs.length){
+    wrap.innerHTML=`<div class="tec-seg-item active"><span class="tec-seg-dot"></span>${t.tec}</div>`;
+    return;
+  }
+  let activeEl=null;
+  t._segs.forEach((seg,i)=>{
+    const el=document.createElement('div');
+    el.className='tec-seg-item'+(i===activeSi?' active':i<activeSi?' done':'');
+    const segDurSec=seg.to-seg.from;
+    el.innerHTML=`
+      <span class="tec-seg-dot"></span>
+      <span>${seg.label}</span>
+      <span class="tec-seg-mani">${seg.mani}</span>
+      <span class="tec-seg-time">${fmt(seg.from)}–${fmt(seg.to)}</span>`;
+    if(i===activeSi) activeEl=el;
+    wrap.appendChild(el);
+  });
+  // Auto-scroll: porta il segmento attivo sempre visibile
+  if(activeEl){
+    requestAnimationFrame(()=>{
+      activeEl.scrollIntoView({block:'nearest',behavior:'smooth'});
+    });
+  }
+}
+
+// ── Sprint/Jump tracker ──
+function renderSjTracker(t,posInTrack,el){
+  const segs=t._segs||[];
+  const tracker=document.getElementById('sj-tracker');
+
+  if(!segs.length){tracker.classList.remove('active');return;}
+
+  const si=getActiveSegIdx(t,posInTrack);
+  const seg=segs[si];
+
+  // Mostra il tracker SOLO se il segmento corrente è sprint o jump
+  const isSprint=seg.type==='sprint_on'||seg.type==='sprint_off';
+  const isJump=seg.type==='jump'||seg.type==='jump_off';
+  if(!isSprint&&!isJump){
+    tracker.classList.remove('active');
+    hideSjFullscreen();
+    return;
+  }
+
+  tracker.classList.add('active');
+
+  const isOn=seg.type==='sprint_on'||seg.type==='jump';
+  // jump_off = ON visivamente spento, come sprint_off
+  const color=isOn?(isSprint?'var(--red)':'var(--amber)'):'var(--cyan)';
+  tracker.style.setProperty('--sjc',color);
+
+  const elapsed=posInTrack-seg.from;
+  const dur=seg.to-seg.from;
+  const remaining=Math.max(dur-elapsed,0);
+
+  document.getElementById('sj-label').textContent=isSprint?'SPRINT':'JUMP';
+  document.getElementById('sj-phase').textContent=isOn?'ON':'OFF';
+  document.getElementById('sj-countdown').textContent=fmt(remaining);
+  document.getElementById('sj-countdown').style.color=color;
+
+  const pct=Math.min((elapsed/Math.max(dur,1))*100,100);
+  document.getElementById('sj-bar-fill').style.width=pct+'%';
+  document.getElementById('sj-bar-fill').style.background=color;
+
+  document.getElementById('sj-start').textContent='Inizio: '+fmt3(t.s+seg.from);
+  document.getElementById('sj-end').textContent='Fine: '+fmt3(t.s+seg.to);
+
+  // Flash fullscreen: ON e OFF (con colori distinti per dare segnale all'istruttore)
+  maybeShowSjFullscreen({...seg,start:t.s+seg.from,dur,type:isSprint?'SPRINT':'JUMP',phase:isOn?'ON':'OFF'});
+}
+
+// ── Alert ──────────────────────────────────────────────
+function showAlert(icon,title,sub,zc){
+  document.getElementById('alert-icon').textContent=icon;
+  document.getElementById('alert-title').textContent=title;
+  document.getElementById('alert-sub').textContent=sub;
+  const az=document.getElementById('alert-zone');az.textContent=T[ci].z;az.style.color=zc;
+  document.getElementById('alert-box').style.borderBottomColor=zc;
+  document.getElementById('alert-box').classList.add('show');
+  clearTimeout(alertTO);alertTO=setTimeout(()=>document.getElementById('alert-box').classList.remove('show'),4000);
+}
+
+// ── Warn 30s before next track ─────────────────────────
+// Warning 30s: logica spostata in renderUI (tick-based, seek-safe)
+// La funzione rimane come stub per compatibilità con chiamate esistenti
+function scheduleWarning(){ /* no-op — gestito in renderUI() */ }
+
+// ═══════════════════════════════════════════════════════
+//  CHART — grande, leggibile, con etichette brani
+// ═══════════════════════════════════════════════════════
+const cvEl=document.getElementById('chart-canvas');
+function doSeek(cx){const r=cvEl.getBoundingClientRect();seekTo(Math.max(0,Math.round(((cx-r.left)/r.width)*TOTAL)));}
+cvEl.addEventListener('click',e=>doSeek(e.clientX));
+cvEl.addEventListener('touchend',e=>{e.preventDefault();doSeek(e.changedTouches[0].clientX);},{passive:false});
+document.getElementById('prog-bg').addEventListener('click',function(e){const r=this.getBoundingClientRect();seekTo(Math.max(0,Math.round(((e.clientX-r.left)/r.width)*TOTAL)));});
+
+function drawChart(el){
+  if(el===undefined)el=getElapsed();
+  const cv=document.getElementById('chart-canvas');
+  const W=cv.offsetWidth;if(!W)return;
+  const H=cv.offsetHeight||150;
+  cv.width=W*devicePixelRatio||W;
+  cv.height=H*devicePixelRatio||H;
+  const ctx=cv.getContext('2d');
+  ctx.scale(devicePixelRatio||1,devicePixelRatio||1);
+
+  // Colori zona canonica — identici in tutto il sistema
+  const ZCOL={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
+  const MAXBH=H*.88;
+  const elX=(el/TOTAL)*W;
+
+  // ── helper: disegna bande di zona su un rect (x0,x1) con opacità op ──────
+  function drawBands(x0,x1,op){
+    if(x1<=x0) return;
+    const bands=[
+      {zn:5,c:ZCOL.Z5},{zn:4,c:ZCOL.Z4},{zn:3,c:ZCOL.Z3},
+      {zn:2,c:ZCOL.Z2},{zn:1,c:ZCOL.Z1},
+    ];
+    bands.forEach(({zn,c})=>{
+      const y0=H-Math.round((zn/5)*MAXBH)-1;
+      const y1=zn<5?H-Math.round(((zn-1)/5)*MAXBH)-1:H;
+      // Converti colore hex in rgb con opacità corretta
+      const r=parseInt(c.slice(1,3),16),g=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16);
+      ctx.fillStyle=`rgba(${r},${g},${b},${op})`;
+      ctx.fillRect(x0,y0,x1-x0,y1-y0);
+    });
+  }
+
+  // ── 1. Sfondo nero ────────────────────────────────────────────────────────
+  ctx.fillStyle='#080810';ctx.fillRect(0,0,W,H);
+
+  // ── 2. Bande zona futura (dim) ────────────────────────────────────────────
+  drawBands(0,W,0.16);
+
+  // ── 3. Linee griglia zona ────────────────────────────────────────────────
+  [1,2,3,4,5].forEach(z=>{
+    const y=H-Math.round((z/5)*MAXBH)-1;
+    ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.setLineDash([3,5]);
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();ctx.setLineDash([]);
+    // Label zona con colore proprio
+    const c=ZCOL['Z'+z];
+    ctx.fillStyle=c+'99';
+    ctx.font='bold 9px monospace';ctx.textAlign='right';
+    ctx.fillText('Z'+z,W-3,y-2);
+  });
+
+  // ── Calcola intensità per tipo segmento ───────────────────────────────────
+  function segZnFloat(seg,trackZn){
+    switch(seg.type){
+      case 'sprint_on':  return trackZn;
+      case 'sprint_off': return 0.8;
+      case 'jump':       return trackZn-0.3;   // in piedi leggero
+      case 'jump_off':   return Math.max(0.8,trackZn-1.2); // seduto recupero
+      case 'standing':   return Math.min(5,trackZn+0.25);
+      case 'seated':     return Math.max(0.8,trackZn-0.8);
+      default:           return trackZn;
+    }
+  }
+
+  // ── Costruisci array punti curva dai segmenti ─────────────────────────────
+  const pts=[];
+  T.forEach(t=>{
+    const trackZn=parseFloat(t.z[1]);
+    const segs=t._segs&&t._segs.length?t._segs:[{from:0,to:t.d,type:'steady'}];
+    segs.forEach(seg=>{
+      const znF=segZnFloat(seg,trackZn);
+      const y=H-(znF/5)*MAXBH-1;
+      const xL=((t.s+seg.from)/TOTAL)*W;
+      const xR=((t.s+seg.to)/TOTAL)*W;
+      const segW=xR-xL;
+      if((seg.type==='jump'||seg.type==='jump_off')&&segW>6){
+        const znLo=Math.max(0.5,znF-1.2);
+        const yHi=H-(znF/5)*MAXBH-1;
+        const yLo=H-(znLo/5)*MAXBH-1;
+        const nC=Math.max(2,Math.round(segW/22));
+        const step=segW/nC;
+        pts.push({x:xL,y:yHi,type:'jump',trackZ:t.z,znF});
+        for(let c=0;c<nC;c++){
+          pts.push({x:xL+step*(c+.5),y:yLo,type:'jump',trackZ:t.z,znF});
+          pts.push({x:xL+step*(c+1),y:yHi,type:'jump',trackZ:t.z,znF});
+        }
+      } else {
+        pts.push({x:xL,y,type:seg.type,trackZ:t.z,znF});
+        pts.push({x:xR,y,type:seg.type,trackZ:t.z,znF});
+      }
+    });
+  });
+
+  // ── helper: traccia il path della curva (step o smooth per jump) ──────────
+  function tracePath(){
+    pts.forEach((p,i)=>{
+      if(i===0){ctx.moveTo(p.x,p.y);return;}
+      const prev=pts[i-1];
+      if(p.type==='jump'||prev.type==='jump'){ctx.lineTo(p.x,p.y);}
+      else{ctx.lineTo(p.x,prev.y);ctx.lineTo(p.x,p.y);}
+    });
+  }
+
+  if(pts.length){
+    // ── 4. Fill sotto curva — area FUTURA (sfumatura scura) ───────────────
+    ctx.save();
+    ctx.beginPath();tracePath();
+    ctx.lineTo(pts[pts.length-1].x,H);ctx.lineTo(0,H);ctx.closePath();
+    const fgFut=ctx.createLinearGradient(0,0,0,H);
+    fgFut.addColorStop(0,'rgba(255,255,255,.10)');
+    fgFut.addColorStop(1,'rgba(255,255,255,.01)');
+    ctx.fillStyle=fgFut;ctx.fill();
+    ctx.restore();
+
+    // ── 5. Bande zona percorsa (bright) + fill colorato sotto curva ──────
+    ctx.save();
+    ctx.beginPath();ctx.rect(0,0,elX,H);ctx.clip();
+
+    // Bande zona nella parte percorsa — colori pieni e chiari
+    drawBands(0,elX,0.52);
+
+    // Fill per-segmento sotto la curva con il colore zona specifico
+    T.forEach(t=>{
+      const trackZn=parseFloat(t.z[1]);
+      const segs=t._segs&&t._segs.length?t._segs:[{from:0,to:t.d,type:'steady'}];
+      segs.forEach(seg=>{
+        const xL=((t.s+seg.from)/TOTAL)*W;
+        const xR=Math.min(((t.s+seg.to)/TOTAL)*W,elX);
+        if(xR<=xL) return;
+        const znF=segZnFloat(seg,trackZn);
+        const segY=H-(znF/5)*MAXBH-1;
+        const zKey='Z'+Math.round(Math.max(1,Math.min(5,znF)));
+        const c=ZCOL[zKey]||ZCOL[t.z];
+        const r=parseInt(c.slice(1,3),16),g2=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16);
+        const sg=ctx.createLinearGradient(0,segY,0,H);
+        sg.addColorStop(0,`rgba(${r},${g2},${b},.70)`);
+        sg.addColorStop(0.5,`rgba(${r},${g2},${b},.30)`);
+        sg.addColorStop(1,`rgba(${r},${g2},${b},.05)`);
+        ctx.fillStyle=sg;
+        ctx.fillRect(xL,segY,xR-xL,H-segY);
+      });
+    });
+    ctx.restore();
+
+    // ── 6. Linea curva bianca (su tutto, percorso + futuro) ───────────────
+    ctx.save();
+    ctx.beginPath();tracePath();
+    ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=2;
+    ctx.lineJoin='miter';ctx.shadowColor='rgba(255,255,255,.4)';ctx.shadowBlur=3;
+    ctx.stroke();ctx.shadowBlur=0;ctx.restore();
+
+    // ── 7. Linea colorata zona sopra la curva bianca (solo percorso) ──────
+    ctx.save();
+    ctx.beginPath();ctx.rect(0,0,elX,H);ctx.clip();
+    // Ritraccio la curva col colore zona di ogni segmento
+    let curPts=pts.filter(p=>p.x<=elX+2);
+    if(curPts.length>1){
+      // Disegna segmento per segmento con il colore giusto
+      let i=0;
+      while(i<curPts.length-1){
+        const p=curPts[i],n=curPts[i+1];
+        const c=ZCOL[p.trackZ]||'#fff';
+        ctx.beginPath();
+        if(p.type==='jump'||n.type==='jump'){
+          ctx.moveTo(p.x,p.y);ctx.lineTo(n.x,n.y);
+        } else {
+          ctx.moveTo(p.x,p.y);ctx.lineTo(n.x,p.y);ctx.lineTo(n.x,n.y);
+        }
+        ctx.strokeStyle=c;ctx.lineWidth=2.5;ctx.globalAlpha=.75;ctx.stroke();
+        i++;
+      }
+    }
+    ctx.restore();
+
+    // ── 8. Highlight brano attivo ─────────────────────────────────────────
+    const actT=T[ci];
+    const posInT=el-actT.s;
+    const si2=getActiveSegIdx(actT,posInT);
+    const actSeg=actT._segs&&actT._segs[si2];
+    if(actSeg){
+      const ax=((actT.s+actSeg.from)/TOTAL)*W;
+      const bx=((actT.s+actSeg.to)/TOTAL)*W;
+      const ay=H-(segZnFloat(actSeg,parseFloat(actT.z[1]))/5)*MAXBH-1;
+      ctx.save();
+      ctx.strokeStyle=ZCOL[actT.z]||'#fff';ctx.lineWidth=4;ctx.globalAlpha=.9;
+      ctx.shadowColor=ZCOL[actT.z];ctx.shadowBlur=12;
+      ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,ay);ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // ── 9. Etichette numero brano ─────────────────────────────────────────────
+  T.forEach((t,idx)=>{
+    const x=(t.s/TOTAL)*W,w=Math.max((t.d/TOTAL)*W-1,2);
+    if(w>14){
+      ctx.fillStyle=idx===ci?'rgba(255,255,255,.95)':'rgba(255,255,255,.28)';
+      ctx.font=`bold ${Math.min(10,w/2.5)}px monospace`;
+      ctx.textAlign='center';ctx.fillText(t.i,x+w/2,H-3);
+    }
+  });
+
+  // ── 10. Cursore posizione corrente ────────────────────────────────────────
+  ctx.strokeStyle='#fff';ctx.lineWidth=1.5;
+  ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(elX,0);ctx.lineTo(elX,H);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#ff1f42';
+  ctx.shadowColor='#ff1f42';ctx.shadowBlur=10;
+  ctx.beginPath();ctx.moveTo(elX,0);ctx.lineTo(elX-5,9);ctx.lineTo(elX+5,9);ctx.closePath();ctx.fill();
+  ctx.shadowBlur=0;
+
+  // ── 11. Tick temporali ogni 5 min ─────────────────────────────────────────
+  ctx.font='bold 9px monospace';ctx.textAlign='left';
+  for(let s=300;s<TOTAL;s+=300){
+    const tx=(s/TOTAL)*W;
+    ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(tx,0);ctx.lineTo(tx,H);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.40)';
+    ctx.fillText(fmt(s),tx+2,10);
+  }
+
+  buildProgMarkers();
+}
+
+function buildProgMarkers(){
+  const wrap=document.getElementById('prog-markers');
+  wrap.innerHTML='';
+  const t=T[ci];
+  if(!t._segs||t._segs.length<=1)return;
+  t._segs.slice(1).forEach(seg=>{
+    const pct=((t.s+seg.from)/TOTAL)*100;
+    const m=document.createElement('div');
+    m.className='prog-marker';
+    m.style.left=pct+'%';
+    wrap.appendChild(m);
+  });
+}
+
+// ── Wake lock + FS ─────────────────────────────────────
+async function requestWakeLock(){if('wakeLock' in navigator){try{wakeLock=await navigator.wakeLock.request('screen');document.getElementById('wake-ind').classList.add('on');wakeLock.addEventListener('release',()=>document.getElementById('wake-ind').classList.remove('on'));}catch(e){}}}
+async function releaseWakeLock(){if(wakeLock){await wakeLock.release();wakeLock=null;}document.getElementById('wake-ind').classList.remove('on');}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&isPlaying)requestWakeLock();});
+function toggleFS(){if(!document.fullscreenElement){document.documentElement.requestFullscreen?.();screen.orientation?.lock?.('landscape').catch(()=>{});}else document.exitFullscreen?.();}
+function logout(){['sp_at','sp_rt','sp_exp','sp_ver','sp_st'].forEach(k=>localStorage.removeItem(k));accessToken=null;document.getElementById('login-screen').classList.remove('hidden');document.getElementById('session-controls').classList.remove('visible');}
+function setStatus(msg,type){document.getElementById('sp-status-txt').textContent=msg;document.getElementById('sp-dot').className=type==='err'?'err':'wait';}
+
+// ── METRONOMO — auto-start/stop con Play/Pausa ────────
+let metroRunning=false,metroSoundOn=false,metroBeat=0,metroScheduler=null,audioCtx=null;
+
+function startMetro(){
+  if(metroRunning) stopMetro(); // reset se già attivo (cambio BPM)
+  metroRunning=true;metroBeat=0;
+  if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  scheduleMetro();
+}
+function stopMetro(){
+  metroRunning=false;clearTimeout(metroScheduler);
+  [1,2,3,4].forEach(n=>{
+    const d=document.getElementById('bd'+n);
+    d.style.background='';d.style.borderColor='';d.style.boxShadow='';
+    d.classList.remove('active-1','active-234');
+  });
+}
+function scheduleMetro(){
+  if(!metroRunning)return;
+  const bpm=parseInt(document.getElementById('metro-bpm-val').textContent)||120;
+  const interval=60000/bpm;
+  fireBeat(metroBeat);metroBeat=(metroBeat+1)%4;
+  metroScheduler=setTimeout(scheduleMetro,interval);
+}
+function fireBeat(beat){
+  const zc=ZC[T[ci].z]||'#00cc70';
+  const dots=[null,...[1,2,3,4].map(n=>document.getElementById('bd'+n))];
+  dots.slice(1).forEach(d=>{d.style.background='';d.style.borderColor='';d.style.boxShadow='';d.classList.remove('active-1','active-234');});
+  const dot=dots[beat+1];
+  if(beat===0){dot.style.background=zc;dot.style.borderColor=zc;dot.style.boxShadow=`0 0 14px ${zc}90`;dot.classList.add('active-1');playClick(true);}
+  else{dot.style.background='#555';dot.style.borderColor='#777';dot.classList.add('active-234');playClick(false);}
+  setTimeout(()=>{dot.style.background='';dot.style.borderColor='';dot.style.boxShadow='';dot.classList.remove('active-1','active-234');},110);
+}
+function toggleMetroSound(){
+  metroSoundOn=!metroSoundOn;
+  const btn=document.getElementById('metro-sound-btn');
+  btn.textContent=metroSoundOn?'🔊':'🔇';
+  btn.classList.toggle('on',metroSoundOn);
+  if(metroSoundOn&&!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+}
+function playClick(accent){
+  if(!metroSoundOn||!audioCtx)return;
+  try{
+    const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.frequency.value=accent?1200:800;
+    gain.gain.setValueAtTime(accent?.45:.22,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+.07);
+    osc.start(audioCtx.currentTime);osc.stop(audioCtx.currentTime+.07);
+  }catch(e){}
+}
+function updateMetroBpm(bpm){
+  document.getElementById('metro-bpm-val').textContent=bpm;
+  // Riavvia il metro con il nuovo BPM se è in corso
+  if(metroRunning) startMetro();
+}
+let _lastMetroCi=-1;
+setInterval(()=>{
+  if(ci!==_lastMetroCi){_lastMetroCi=ci;updateMetroBpm(T[ci].bpm);}
+},500);
+
+// ── BUILD TRACK LIST ───────────────────────────────────
+(function(){
+  const body=document.getElementById('tl-body');
+  T.forEach((t,i)=>{
+    const row=document.createElement('div');
+    row.className='tr';row.setAttribute('data-i',i);
+    const hasSJ=t._segs&&t._segs.some(s=>s.type==='sprint_on'||s.type==='jump');
+    row.innerHTML=`<span class="ti">${t.i}</span>
+      <span class="tt">${t.title}${hasSJ?'<span style="color:var(--red);font-size:9px;margin-left:3px">⚡</span>':''}</span>
+      <span class="tf">${t.fase}</span>
+      <span class="tb">${t.bpm}</span>
+      <span class="tr2">${t.rpm}</span>
+      <span class="tres">${t.res}</span>`;
+    row.addEventListener('click',()=>{ci=i;lastCi=i;lastSegIdx=-1;seekTo(t.s);});
+    body.appendChild(row);
+  });
+})();
+
+function ensureChartDraw(){
+  const cv=document.getElementById('chart-canvas');
+  if(!cv||cv.offsetWidth===0){setTimeout(ensureChartDraw,300);}
+  else{drawChart();}
+}
+// ── INIT ──────────────────────────────────────────────
+(async function(){
+  const params=new URLSearchParams(location.search);
+  const code=params.get('code'),state=params.get('state');
+  if(code&&state===localStorage.getItem('sp_st')){
+    history.replaceState({},document.title,location.pathname);
+    if(await exchangeCode(code)){await showSession();return;}
+  }
+  const at=localStorage.getItem('sp_at'),exp=+localStorage.getItem('sp_exp')||0;
+  if(at){
+    if(Date.now()<exp){accessToken=at;tokenExpiry=exp;await showSession();return;}
+    if(await doRefresh()){await showSession();return;}
+  }
+  document.getElementById('login-screen').classList.remove('hidden');
+  updateUI();
+})();
+
+async function showSession(){
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('session-controls').classList.add('visible');
+  setStatus('Cerco dispositivi Spotify…','wait');
+  const devs=await spGetDevices();
+  if(devs.length){
+    const d=devs.find(x=>x.is_active)||devs[0];
+    document.getElementById('sp-dot').className='ok';
+    document.getElementById('sp-status-txt').textContent='Connesso — '+d.name.substring(0,24);
+    document.getElementById('big-play').className='play';
+  } else {
+    document.getElementById('sp-dot').className='err';
+    document.getElementById('sp-status-txt').textContent='Apri Spotify sul tablet/telefono!';
+    document.getElementById('big-play').className='play';
+  }
+  updateUI();
+}
+
+updateUI();
+window.addEventListener('resize',()=>{drawChart();updateUI();});
+setTimeout(()=>ensureChartDraw(),200);
+setTimeout(()=>ensureChartDraw(),800);
+setTimeout(()=>drawChart(),2500);
+setTimeout(()=>updateMetroBpm(T[0].bpm),300);
+
+// ═══════════════════════════════════════════════════════
+//  📺 PROIEZIONE SU SCHERMO ESTERNO
+//  Usa BroadcastChannel per sincronizzare in tempo reale
+//  La finestra di proiezione si auto-adatta alla risoluzione
+// ═══════════════════════════════════════════════════════
+let projWin = null;
+
+function buildProjHTML() {
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>📺 Indoor Cycling — Proiezione</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--zc:#00cc70}
+html,body{width:100%;height:100%;background:#000;color:#fff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background .6s}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#zone-bar{position:absolute;top:0;left:0;right:0;height:14px;background:var(--zc);transition:background .6s;box-shadow:0 0 40px var(--zc)}
+#pj-tracknum{position:absolute;top:22px;right:3vw;font-size:clamp(14px,1.8vw,24px);color:rgba(255,255,255,.25);font-family:monospace;font-weight:700}
+#pj-title{font-size:clamp(52px,9vw,130px);font-weight:900;letter-spacing:-1px;line-height:1;text-align:center;padding:0 4vw;max-width:95vw;word-break:break-word;color:#fff;text-shadow:0 2px 40px rgba(255,255,255,.12)}
+#pj-artist{font-size:clamp(18px,2.8vw,44px);color:rgba(255,255,255,.45);margin-top:1.5vh;text-align:center;font-weight:400}
+#pj-context{display:flex;align-items:center;gap:2.5vw;margin-top:3.5vh;justify-content:center}
+#pj-zone{font-size:clamp(36px,6.5vw,100px);font-weight:900;font-family:monospace;padding:.4vh 2vw;border-radius:10px;color:var(--zc);background:rgba(255,255,255,.06);border:2px solid var(--zc);transition:color .5s,border-color .5s;line-height:1}
+#pj-fase{font-size:clamp(14px,2vw,30px);color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:3px;font-weight:700}
+#pj-metrics{display:flex;gap:2.5vw;margin-top:4vh;justify-content:center;flex-wrap:wrap}
+.pjm{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:2vh 2.5vw;text-align:center;min-width:14vw}
+.pjm .val{font-size:clamp(30px,5vw,80px);font-weight:900;font-family:monospace;line-height:1}
+.pjm .lbl{font-size:clamp(10px,1.3vw,18px);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-top:.6vh;font-weight:700}
+#pj-tec{font-size:clamp(20px,3.2vw,50px);font-weight:700;color:rgba(255,255,255,.9);margin-top:4vh;text-align:center;padding:1.5vh 5vw;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.1);max-width:90vw;min-height:4vw}
+#pj-prog{position:absolute;bottom:0;left:0;height:10px;background:var(--zc);transition:width .5s linear,background .6s;box-shadow:0 0 20px var(--zc)}
+#pj-standby{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3vh;z-index:50}
+#pj-standby p{font-size:clamp(18px,2.5vw,36px);color:#333;text-align:center}
+/* ══════════════════════════════════════════════════════════
+   LANDSCAPE MOBILE/TABLET — tutto visibile senza scorrere
+   Attivo quando altezza < 650px (telefono landscape o tablet
+   orizzontale con barra browser)
+══════════════════════════════════════════════════════════ */
+@media(orientation:landscape) and (max-height:650px){
+  /* Corpo pagina: fixed, no scroll */
+  html,body{height:100%;overflow:hidden}
+  #app,body{height:100%;display:flex;flex-direction:column}
+
+  /* Header ultra-compatto: 36px */
+  #hdr{padding:3px 12px;min-height:0}
+  #hdr-sub{display:none}
+  #hdr-title{font-size:14px}
+  #wake-ind{width:7px;height:7px}
+
+  /* Layout 2 colonne rigido, occupa tutto lo spazio */
+  #main{
+    flex:1;overflow:hidden;
+    display:grid;
+    grid-template-columns:1fr 240px;
+    gap:5px;padding:4px;
+    height:calc(100vh - 44px);
+  }
+
+  /* Colonna sinistra: fissa, no overflow */
+  #col-left{
+    display:flex;flex-direction:column;
+    gap:4px;overflow:hidden;height:100%;
+  }
+
+  /* Grafico compresso */
+  #chart-canvas{height:70px!important}
+  #chart-wrap{padding:4px 6px 3px;flex-shrink:0}
+  #zone-leg{display:none}
+
+  /* Now playing: flex:1 per riempire lo spazio restante */
+  #now{
+    flex:1;overflow:hidden;
+    padding:5px 10px;gap:3px;
+    min-height:0;
+  }
+
+  /* Titolo più piccolo */
+  #np-title{font-size:18px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #np-artist{font-size:10px;margin-top:0}
+  #np-badge{font-size:10px;padding-top:0}
+  #np-row{margin-bottom:0}
+
+  /* Metriche: 1 riga ultrac ompatta */
+  #metrics{gap:3px}
+  .mv{font-size:16px!important}
+  .ml{font-size:7px!important}
+  .metric{padding:4px 2px!important}
+
+  /* Info row: fase nascosta, tec compatta */
+  #info-row{grid-template-columns:1fr!important;gap:3px}
+  #fase-box{display:none}
+  #tec-box{max-height:72px;padding:4px 8px}
+  #tec-segs-wrap{max-height:64px}
+  .tec-seg-item{font-size:12px;padding:3px 7px}
+  .tec-seg-item.active{font-size:14px}
+  .tec-seg-mani{font-size:10px;padding:1px 5px}
+  .tec-seg-time{display:none}
+
+  /* Focus coaching compattissimo */
+  #focus-box{padding:4px 8px}
+  #focus-lbl{display:none}
+  #focus-val{font-size:12px;line-height:1.25}
+
+  /* SJ tracker ridotto */
+  #sj-label{font-size:18px}
+  #sj-countdown{font-size:24px}
+  #sj-phase{font-size:10px;padding:2px 6px}
+  #sj-tracker{padding:5px 10px}
+
+  /* Progress bar minima */
+  #prog-bg{height:5px;margin-bottom:3px}
+  #time-row{font-size:11px}
+  #prog-wrap{flex-shrink:0}
+
+  /* Controlli: tutto in 1 riga, niente bordo separato */
+  #ctrl-section{
+    flex-shrink:0;padding:4px 8px;gap:4px;
+    border-radius:8px;
+  }
+  #sp-status-row{padding:3px 8px}
+  #sp-status-txt{font-size:10px}
+  #sp-dot{width:7px;height:7px}
+  #big-play{font-size:14px;padding:7px 8px}
+  .btn-sm{padding:7px 12px;font-size:16px}
+  #sync-badge{font-size:10px;padding:2px 6px}
+  #status-txt{font-size:9px}
+
+  /* Colonna destra: metronomo + tracklist compatti */
+  #col-right{
+    display:flex!important;flex-direction:column;
+    gap:4px;overflow:hidden;height:100%;width:240px;
+  }
+  #metro-wrap{flex-shrink:0;padding:6px 10px}
+  #metro-top{margin-bottom:4px}
+  #metro-lbl{font-size:9px}
+  #metro-bpm-val{font-size:20px}
+  #metro-bpm-lbl{font-size:9px}
+  .beat-dot.b1{width:36px;height:36px}
+  .beat-dot.b234{width:28px;height:28px}
+  #metro-beats{gap:8px}
+  #metro-sound-btn{padding:4px 8px;font-size:14px}
+
+  /* Tracklist: compattissima, scorribile */
+  #tl-wrap{flex:1;min-height:0}
+  #tl-head{padding:4px 8px;font-size:9px}
+  .tr{padding:5px 8px}
+  .ti{font-size:9px}
+  .tt{font-size:10px}
+  .tf{font-size:8px}
+  .tb,.tr2,.tres{font-size:9px}
+
+  /* Overlay fullscreen sprint/jump: testo compatto */
+  #sj-fs-label{font-size:60px}
+  #sj-fs-phase{font-size:32px}
+  #sj-fs-time{font-size:44px}
+
+  /* Countdown overlay */
+  #tco-num{font-size:40px}
+  #tco-next{font-size:26px}
+  #tco-mani{font-size:16px;padding:4px 14px}
+}
+
+/* Landscape su schermi più alti (tablet 768px+): solo tweaks minori */
+@media(orientation:landscape) and (min-height:651px) and (max-height:900px){
+  #chart-canvas{height:90px!important}
+  #zone-leg{display:none}
+  #np-title{font-size:22px!important}
+  .mv{font-size:17px!important}
+  #tec-box{max-height:100px}
+  #tec-segs-wrap{max-height:92px}
+  #focus-val{font-size:12px}
+}
+
+</style>
+</head>
+<body>
+<div id="zone-bar"></div>
+<div id="pj-standby">
+  <div style="font-size:clamp(60px,10vw,100px)">📺</div>
+  <p>In attesa del player…<br><small style="font-size:.6em;color:#222">giusprim.github.io/Indoor/</small></p>
+</div>
+<div id="pj-tracknum">— / —</div>
+<div id="pj-title">—</div>
+<div id="pj-artist"></div>
+<div id="pj-context">
+  <div id="pj-zone">Z—</div>
+  <div id="pj-fase">—</div>
+</div>
+<div id="pj-metrics">
+  <div class="pjm"><div class="val" id="pj-rpm" style="color:#00cc70">—</div><div class="lbl" id="pj-rpm-l">RPM</div></div>
+  <div class="pjm"><div class="val" id="pj-res" style="color:#ff1f42">—</div><div class="lbl">Resist.</div></div>
+  <div class="pjm"><div class="val" id="pj-bpm" style="color:#ffbf00">—</div><div class="lbl">BPM</div></div>
+  <div class="pjm"><div class="val" id="pj-mani" style="color:#4488ff">—</div><div class="lbl">Manubrio</div></div>
+</div>
+<div id="pj-tec">—</div>
+<div id="pj-prog" style="width:0%"></div>
+` + '<scr' + 'ipt>' + `
+const ZC={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
+const ch = new BroadcastChannel('cycling_coach_proj');
+let lastRx=0;
+ch.onmessage = function(e){ applyState(e.data); };
+window.addEventListener('message', function(e){ applyState(e.data); });
+function askState(){
+  try{ ch.postMessage({_hello:true}); }catch(x){}
+  try{ if(window.opener) window.opener.postMessage({_hello:true},'*'); }catch(x){}
+}
+askState();
+document.addEventListener('visibilitychange', askState);
+window.addEventListener('focus', askState);
+setInterval(function(){ if(Date.now()-lastRx>2500) askState(); }, 1500);
+function applyState(d){
+  if(!d || d._hello || !d.title) return;
+  lastRx=Date.now();
+  document.getElementById('pj-standby').style.display='none';
+  const zc=ZC[d.zone]||'#00cc70';
+  document.body.style.setProperty('--zc',zc);
+  const zoneBg={Z5:'#0a0003',Z4:'#080400',Z3:'#080600'};
+  document.body.style.background=zoneBg[d.zone]||'#000';
+  document.getElementById('zone-bar').style.background=zc;
+  document.getElementById('zone-bar').style.boxShadow='0 0 40px '+zc;
+  document.getElementById('pj-title').textContent=d.title||'—';
+  document.getElementById('pj-artist').textContent=d.artist||'';
+  document.getElementById('pj-zone').textContent=d.zone||'—';
+  document.getElementById('pj-zone').style.color=zc;
+  document.getElementById('pj-zone').style.borderColor=zc;
+  document.getElementById('pj-fase').textContent=d.fase||'—';
+  document.getElementById('pj-rpm').textContent=d.rpm||'—';
+  document.getElementById('pj-rpm-l').textContent=d.sy?('RPM · '+d.sy.toUpperCase()):'RPM';
+  document.getElementById('pj-res').textContent=d.res||'—';
+  document.getElementById('pj-bpm').textContent=d.bpm||'—';
+  document.getElementById('pj-mani').textContent=d.mani||'—';
+  document.getElementById('pj-tec').textContent=d.tec||'—';
+  document.getElementById('pj-prog').style.width=(d.pct||0)+'%';
+  document.getElementById('pj-prog').style.background=zc;
+  document.getElementById('pj-tracknum').textContent=(d.trackNum||'—')+' / '+(d.trackTotal||'—');
+}
+` + '<\/scr' + 'ipt>' + `
+</body>
+</html>`;
+}
+
+function openProjection() {
+  // Usa window.screen per identificare dimensioni schermo esterno
+  const w = window.screen.width  || 1920;
+  const h = window.screen.height || 1080;
+
+  if (projWin && !projWin.closed) {
+    projWin.focus();
+    return;
+  }
+
+  const html = buildProjHTML();
+  projWin = window.open('', 'IndoorCyclingProjection',
+    `width=${w},height=${h},left=0,top=0,menubar=no,toolbar=no,location=no,status=no,scrollbars=no`
+  );
+
+  if (!projWin) {
+    alert('Il browser ha bloccato il popup.\nConsenti i popup per questo sito nelle impostazioni del browser, poi riprova.');
+    return;
+  }
+
+  projWin.document.open();
+  projWin.document.write(html);
+  projWin.document.close();
+
+  // Attiva indicatore sul pulsante
+  document.getElementById('proj-btn').style.color = 'var(--cyan)';
+  document.getElementById('proj-btn').style.borderColor = 'var(--cyan)';
+
+  // Polling per rilevare chiusura
+  const checkClosed = setInterval(()=>{
+    if(projWin && projWin.closed){
+      clearInterval(checkClosed);
+      projWin = null;
+      document.getElementById('proj-btn').style.color = '';
+      document.getElementById('proj-btn').style.borderColor = '';
+    }
+  }, 1500);
+}
+
+// ── BroadcastChannel verso la finestra di proiezione ──
+// Il canale è unidirezionale: player → proiezione.
+// I countdown e gli alert rimangono SOLO sul tablet del coach.
+let _projCh = null;
+try { _projCh = new BroadcastChannel('cycling_coach_proj'); } catch(e){}
+
+function broadcastProjState() {
+  const el = getElapsed();
+  const _ti = trackAt(Math.min(el+(CROSSFADE||0), TOTAL-0.1));
+  const t = T[_ti>=0?_ti:ci];
+  const pct = Math.min((el/TOTAL)*100,100);
+  const posInTrack = el - t.s;
+  const si = getActiveSegIdx(t, posInTrack);
+  const activeSeg = t._segs && t._segs[si] ? t._segs[si].label : t.tec;
+  const msg = {
+    _proj:  true, // marker per postMessage
+    title:  t.title,
+    artist: t.ar,
+    zone:   t.z,
+    rpm:    t.rpm,
+    sy:     t.sy||'',
+    res:    t.res,
+    bpm:    t.bpm,
+    mani:   t._segs && t._segs[si] ? t._segs[si].mani : t.mani,
+    tec:    activeSeg,
+    fase:   t.fase,
+    pct:    pct,
+    trackNum: t.i,
+    trackTotal: T.length,
+  };
+  // postMessage diretto sulla finestra di proiezione (funziona su about:blank)
+  if(projWin && !projWin.closed){
+    try{ projWin.postMessage(msg,'*'); }catch(e){}
+  }
+  // BroadcastChannel come canale secondario
+  if(_projCh){ try{ _projCh.postMessage(msg); }catch(e){} }
+}
+
+// Risposta alla richiesta di stato dalla proiezione (apertura, cambio scheda, riconnessione)
+window.addEventListener('message', function(e){ if(e.data && e.data._hello) broadcastProjState(); });
+if(_projCh){ _projCh.onmessage = function(e){ if(e.data && e.data._hello) broadcastProjState(); }; }
+// Heartbeat da Web Worker: non viene sospeso quando la scheda va in background
+(function(){
+  try{
+    const w=new Worker(URL.createObjectURL(new Blob(['setInterval(function(){postMessage(1)},1000)'],{type:'text/javascript'})));
+    w.onmessage=function(){ broadcastProjState(); };
+  }catch(e){ setInterval(broadcastProjState,1000); }
+})();
+
+// Hook updateUI per broadcast automatico ad ogni frame
+const _origUpdateUI = updateUI;
+updateUI = function(){
+  _origUpdateUI.apply(this, arguments);
+  broadcastProjState();
+};
+</script>
+</body>
+</html>
