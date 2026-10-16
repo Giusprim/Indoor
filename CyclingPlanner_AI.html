@@ -267,7 +267,7 @@ function importCSV(){
       const ta=c[0].trim(),bpm=parseInt(c[1])||0,dur=parseTime(c[2]);
       if(!bpm)return;
       let title=ta,artist="";
-      if(ta.includes("—")){const p=ta.split("—");title=p[0].trim();artist=p[1].trim();}
+      if(ta.includes("—")){const p=ta.split("—");title=p[0].trim();artist=p.slice(1).join("—").trim();}
       TRACKS.push({i:i++,title,ar:artist,bpm:String(bpm),d:dur,z:"—",rpm:"—",res:"—",rn:0,tec:"—",mani:"P2",fase:"—",focus:"—",s:0});
     });
     calcS();renderCards();
@@ -337,6 +337,23 @@ function renderCards(){
   });
 }
 
+function extractTracks(text){
+  const clean=String(text).replace(/```json/g,"").replace(/```/g,"").trim();
+  const pick=o=>Array.isArray(o)?o:(o&&typeof o==="object"?(o.brani||o.tracks||Object.values(o).find(Array.isArray)||null):null);
+  try{const r=pick(JSON.parse(clean));if(r)return r;}catch(e){}
+  const mo=clean.match(/\{[\s\S]*\}/),ma=clean.match(/\[[\s\S]*\]/);
+  const cands=[mo,ma].filter(Boolean).sort((x,y)=>x.index-y.index);
+  for(const m of cands){try{const r=pick(JSON.parse(m[0]));if(r)return r;}catch(e){}}
+  return null;
+}
+// Regole AIF applicate anche se l'AI le sbaglia: jump solo 80-115 BPM, sprint solo BPM > 110
+function sanitizeTec(t){
+  const bpm=parseInt(t.bpm)||0,tec=t.tec||"";
+  if(/jump/i.test(tec)&&(bpm<80||bpm>115))return{tec:"Seduto veloce → In piedi leggero → Seduto veloce",why:"jump fuori dall'intervallo 80-115 BPM"};
+  if(/sprint/i.test(tec)&&bpm<=110)return{tec:"Seduto veloce → In piedi leggero → Seduto veloce",why:"sprint con BPM ≤ 110"};
+  return null;
+}
+
 async function runAI(){
   document.getElementById("ai-warn").classList.remove("show");
   if(TRACKS.length===0){document.getElementById("ai-warn").classList.add("show");return;}
@@ -355,9 +372,9 @@ PROTOCOLLO: ${protocol}
 BRANI (${TRACKS.length}, durata ${totFmt}):
 ${list}
 
-Rispondi SOLO con array JSON valido, nessun testo, nessun markdown, nessun backtick.
-Un oggetto per brano nell'ORDINE ORIGINALE:
-[{"zona":"Z2","rpm_label":"80-90","res_label":"30%","res_num":0.30,"mani":"P1↔P2","fase":"Warm-up","tec":"Seduto leggero → In piedi leggero → Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]
+Rispondi SOLO con un oggetto JSON valido, nessun testo, nessun markdown, nessun backtick.
+L'oggetto ha una sola chiave "brani" che contiene un array con un elemento per brano nell'ORDINE ORIGINALE (${TRACKS.length} elementi):
+{"brani":[{"zona":"Z2","rpm_label":"80-90","res_label":"30%","res_num":0.30,"mani":"P1↔P2","fase":"Warm-up","tec":"Seduto leggero → In piedi leggero → Seduto leggero","focus":"Riscaldamento; prepara le gambe."}]}
 
 REGOLE ZONE: Z1=recovery Z2=aerobico Z3=soglia Z4=hard Z5=sprint
 RPM: Z1:60-70 Z2:80-95 Z3:85-100 Z4:50-105 (vedi zona) Z5:100-120
@@ -420,8 +437,9 @@ REGOLE AGGIUNTIVE:
   btn.disabled=true;btn.textContent="⏳ Analisi in corso...";
 
   try{
-    const r=await fetch(WORKER_URL+"/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
-    if(!r.ok){const err=await r.text();log("✗ Errore HTTP "+r.status+": "+err);btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
+    const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),90000);
+    let r;try{r=await fetch(WORKER_URL+"/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt}),signal:ctl.signal});}finally{clearTimeout(to);}
+    if(!r.ok){const err=(await r.text()).substring(0,800);log("✗ Errore HTTP "+r.status+": "+err);if(r.status===400)log("  Il Worker ha rifiutato la richiesta (400): di solito è il formato JSON richiesto o un modello Groq non più disponibile. Copia il testo qui sopra per la diagnosi.");btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
     const data=await r.json();
     let text="";
     if(typeof data.text==="string"){text=data.text;}
@@ -430,12 +448,16 @@ REGOLE AGGIUNTIVE:
     else if(data.error){log("✗ Errore: "+(data.error||JSON.stringify(data)));btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
     if(!text){log("✗ Risposta vuota. Raw: "+JSON.stringify(data).substring(0,150));btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
     log("✓ Risposta ricevuta. Parsing...");
-    const clean=text.replace(/```json/g,"").replace(/```/g,"").trim();
-    const jsonMatch=clean.match(/\[[\s\S]*\]/);
-    if(!jsonMatch){log("✗ JSON non trovato:\n"+text.substring(0,300));btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
-    const parsed=JSON.parse(jsonMatch[0]);
+    const parsed=extractTracks(text);
+    if(!parsed){log("✗ JSON non trovato:\n"+text.substring(0,300));btn.disabled=false;btn.textContent="🤖 Analizza con AI";return;}
+    if(parsed.length!==TRACKS.length)log("⚠ Attesi "+TRACKS.length+" brani, ricevuti "+parsed.length+". Controlla le schede.");
     log("✓ "+parsed.length+" brani elaborati con successo.");
-    TRACKS=TRACKS.map((t,i)=>{const ai=parsed[i];if(!ai)return t;return{...t,z:ai.zona||t.z,rpm:ai.rpm_label||t.rpm,res:ai.res_label||t.res,rn:ai.res_num||0,tec:ai.tec||t.tec,mani:ai.mani||t.mani,fase:ai.fase||t.fase,focus:ai.focus||t.focus};});
+    TRACKS=TRACKS.map((t,i)=>{const ai=parsed[i];if(!ai)return t;
+      const res=ai.res_label||t.res;
+      const rn=(typeof ai.res_num==="number")?ai.res_num:(parseFloat(res)/100||0);
+      const n={...t,z:ai.zona||t.z,rpm:ai.rpm_label||t.rpm,res,rn,tec:ai.tec||t.tec,mani:ai.mani||t.mani,fase:ai.fase||t.fase,focus:ai.focus||t.focus};
+      const fix=sanitizeTec(n);if(fix){log("⚠ Brano "+n.i+" ("+n.bpm+" BPM): "+fix.why+" → tecnica sostituita.");n.tec=fix.tec;}
+      return n;});
     renderCards();
     log("✓ Completato. Revisiona i brani e vai al Step 5.");
   }catch(err){log("✗ Errore: "+err.message);}
@@ -454,18 +476,23 @@ async function generatePlayer(){
   const totSec=TRACKS.reduce((a,b)=>a+b.d,0);
   const h=Math.floor(totSec/3600),m=Math.floor((totSec%3600)/60),s=totSec%60;
   const total=h+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  const totShort=Math.floor(totSec/60)+":"+String(s).padStart(2,"0");
+  const esc=x=>String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  if(TRACKS.length===0){alert("Nessun brano da inserire nel player.");return;}
+  if(TRACKS.some(t=>t.z==="—")&&!confirm("Alcuni brani non sono stati analizzati dall'AI. Genero comunque il player?"))return;
   try{
     let tpl="";
-    try{const res=await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html");if(res.ok)tpl=await res.text();}catch(e){}
+    try{const res=await fetch("https://giusprim.github.io/Indoor/index_template_placeholder.html?v="+Date.now(),{cache:"no-store"});if(res.ok)tpl=await res.text();}catch(e){}
     if(!tpl){alert("Template non trovato su GitHub. Assicurati che index_template_placeholder.html sia nel repo giusprim/Indoor.");return;}
     let filled=tpl
-      .replace(/\{\{TITLE\}\}/g,title).replace(/\{\{INSTRUCTOR\}\}/g,instr)
-      .replace(/\{\{TRACK_COUNT\}\}/g,String(TRACKS.length)).replace(/\{\{TOTAL_TIME\}\}/g,total)
-      .replace(/\{\{CLIENT_ID\}\}/g,client).replace(/\{\{REDIRECT_URI\}\}/g,redirect)
-      .replace(/\{\{PLAYLIST_URI\}\}/g,playlist)
-      .replace("const T = [];// Injected dynamically","const T = "+JSON.stringify(TRACKS,null,2)+";")
-      .replace(/const TOTAL=\d+;/,"const TOTAL="+totSec+";")
-      .replace(/\d+:\d{2}:\d{2}/g,total);
+      .replace(/\{\{TITLE\}\}/g,()=>esc(title)).replace(/\{\{INSTRUCTOR\}\}/g,()=>esc(instr))
+      .replace(/\{\{TRACK_COUNT\}\}/g,()=>String(TRACKS.length)).replace(/\{\{TOTAL_TIME\}\}/g,()=>totShort)
+      .replace(/\{\{TOTAL_HMS\}\}/g,()=>total)
+      .replace(/\{\{CLIENT_ID\}\}/g,()=>client).replace(/\{\{REDIRECT_URI\}\}/g,()=>redirect)
+      .replace(/\{\{PLAYLIST_URI\}\}/g,()=>playlist)
+      .replace("const T = [];// Injected dynamically",()=>"const T = "+JSON.stringify(TRACKS,null,2)+";")
+      .replace(/const TOTAL=\d+;/,()=>"const TOTAL="+totSec+";");
+    if(!filled.includes("const T = [\n")||/\{\{[A-Z_]+\}\}/.test(filled)){alert("Il template su GitHub non è quello aggiornato (mancano o restano dei segnaposto). Carica index_template_placeholder.html nel repo e riprova tra un minuto.");return;}
     const blob=new Blob([filled],{type:"text/html"});
     const url=URL.createObjectURL(blob);
     const a=document.getElementById("dl-link");

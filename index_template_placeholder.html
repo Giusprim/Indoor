@@ -905,6 +905,81 @@ body{display:flex;flex-direction:column}
   .tres{font-size:15px;font-weight:800}
 }
 
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT COACH LEGGIBILE (tablet/desktop in orizzontale)
+   Tecnica a sinistra, Focus coach a destra, occupano tutto
+   lo spazio libero sotto le metriche. Font scalati sull'altezza.
+══════════════════════════════════════════════════════════ */
+@media(orientation:landscape) and (min-width:900px){
+  #now{
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:auto auto minmax(0,1fr) auto auto;
+    grid-template-areas:"title title" "metrics metrics" "tec focus" "sj sj" "prog prog";
+    gap:6px 8px!important;
+    min-height:0;overflow:hidden;
+  }
+  #np-row{grid-area:title}
+  #metrics{grid-area:metrics}
+  #info-row{grid-area:tec;display:flex!important;min-height:0;min-width:0}
+  #focus-box{grid-area:focus}
+  #sj-tracker{grid-area:sj}
+  #prog-wrap{grid-area:prog}
+  #fase-box{display:none!important}
+
+  /* ── TECNICA ── */
+  #tec-box{
+    flex:1;max-height:none!important;min-height:0;min-width:0;
+    padding:10px 14px!important;
+    display:flex;flex-direction:column;overflow:hidden;
+    border-left:4px solid var(--zc,var(--cyan));
+  }
+  #tec-box::after{display:none!important}
+  #tec-box .lbl{
+    font-size:clamp(11px,1.8vh,15px);letter-spacing:1.2px;
+    margin-bottom:6px;flex-shrink:0;
+  }
+  #tec-segs-wrap{
+    flex:1;min-height:0;max-height:none!important;
+    gap:6px;overflow-y:auto;
+  }
+  .tec-seg-item{
+    font-size:clamp(16px,2.8vh,24px)!important;font-weight:700;
+    opacity:.5;padding:6px 10px;gap:10px;
+  }
+  .tec-seg-item>span:nth-child(2){flex:1;min-width:0;line-height:1.15}
+  .tec-seg-item.active{
+    font-size:clamp(22px,5vh,38px)!important;font-weight:900;
+    opacity:1;background:rgba(255,255,255,.12);
+    padding:8px 10px 8px 8px;
+  }
+  .tec-seg-item.done{display:none!important}
+  .tec-seg-dot{width:14px;height:14px}
+  .tec-seg-mani{
+    display:inline-block!important;
+    font-size:clamp(13px,2.4vh,20px)!important;padding:2px 9px;
+  }
+  .tec-seg-time{
+    display:inline!important;font-size:clamp(12px,2vh,16px)!important;
+  }
+
+  /* ── FOCUS COACH ── */
+  #focus-box{
+    display:flex;flex-direction:column;min-height:0;min-width:0;
+    padding:10px 16px!important;overflow:auto;
+    border-left-width:6px;
+  }
+  #focus-lbl{
+    display:block!important;flex-shrink:0;
+    font-size:clamp(11px,1.8vh,15px)!important;color:#c58cff!important;
+    letter-spacing:1.2px;margin-bottom:6px;
+  }
+  #focus-val{
+    font-size:clamp(18px,3.9vh,32px)!important;
+    font-weight:700;font-style:normal!important;line-height:1.3;color:#fff;
+  }
+}
 </style>
 </head>
 <body>
@@ -957,7 +1032,7 @@ body{display:flex;flex-direction:column}
         </div>
         <div class="metric" style="--mc:var(--green)">
           <div class="mv" id="m-rpm" style="color:var(--green)">—</div>
-          <div class="ml">RPM</div>
+          <div class="ml" id="m-rpm-l">RPM</div>
         </div>
         <div class="metric" style="--mc:var(--amber)">
           <div class="mv" id="m-bpm" style="color:var(--amber)">—</div>
@@ -1010,7 +1085,7 @@ body{display:flex;flex-direction:column}
         <div id="time-row">
           <span id="t-cur">0:00:00</span>
           <span id="t-rem">−0:00</span>
-          <span id="t-end">0:58:15</span>
+          <span id="t-end">{{TOTAL_HMS}}</span>
         </div>
       </div>
     </div>
@@ -1416,13 +1491,14 @@ function rnd(n){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012
 async function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));}
 function b64url(b){return btoa(String.fromCharCode(...new Uint8Array(b))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');}
 async function spotifyLogin(){const ver=rnd(128),st=rnd(16),ch=b64url(await sha256(ver));localStorage.setItem('sp_ver',ver);localStorage.setItem('sp_st',st);window.location.assign('https://accounts.spotify.com/authorize?'+new URLSearchParams({response_type:'code',client_id:CLIENT_ID,scope:SCOPES,redirect_uri:REDIRECT,state:st,code_challenge_method:'S256',code_challenge:ch}).toString());}
-async function exchangeCode(code){const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:REDIRECT,client_id:CLIENT_ID,code_verifier:localStorage.getItem('sp_ver')}).toString()});if(!r.ok)return false;saveTokens(await r.json());return true;}
+function showLoginError(msg){let e=document.getElementById('login-err');if(!e){e=document.createElement('div');e.id='login-err';e.style.cssText='margin-top:12px;color:#ff4466;font-size:13px;line-height:1.4;max-width:90%;word-break:break-word';document.getElementById('login-screen').appendChild(e);}e.textContent=msg;}
+async function exchangeCode(code){const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:REDIRECT,client_id:CLIENT_ID,code_verifier:localStorage.getItem('sp_ver')}).toString()});if(!r.ok){let b='';try{b=await r.text();}catch(e){}console.error('Spotify token',r.status,b);showLoginError('Login Spotify fallito (HTTP '+r.status+'): '+b.substring(0,160)+' · Verifica che il Redirect URI sia registrato identico nella dashboard Spotify.');return false;}saveTokens(await r.json());return true;}
 async function doRefresh(){const rt=localStorage.getItem('sp_rt');if(!rt)return false;const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:rt,client_id:CLIENT_ID}).toString()});if(!r.ok)return false;saveTokens(await r.json());return true;}
 function saveTokens(d){accessToken=d.access_token;tokenExpiry=Date.now()+(d.expires_in-60)*1000;if(d.refresh_token)localStorage.setItem('sp_rt',d.refresh_token);localStorage.setItem('sp_at',accessToken);localStorage.setItem('sp_exp',String(tokenExpiry));}
 async function getToken(){if(accessToken&&Date.now()<tokenExpiry)return accessToken;const at=localStorage.getItem('sp_at'),exp=+localStorage.getItem('sp_exp')||0;if(at&&Date.now()<exp){accessToken=at;tokenExpiry=exp;return at;}return await doRefresh()?accessToken:null;}
 
 // ── SPOTIFY API ───────────────────────────────────────
-async function api(method,path,body){const tok=await getToken();if(!tok)return null;const opt={method,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'}};if(body)opt.body=JSON.stringify(body);const r=await fetch('https://api.spotify.com/v1'+path,opt);if(r.status===204||r.status===202)return{};if(r.status===200){try{return await r.json();}catch{return{};}}if(r.status===401){await doRefresh();return null;}if(r.status===404||r.status===403){setStatus('Apri Spotify sul dispositivo!','err');return null;}return null;}
+async function api(method,path,body){const tok=await getToken();if(!tok)return null;const opt={method,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'}};if(body)opt.body=JSON.stringify(body);const r=await fetch('https://api.spotify.com/v1'+path,opt);if(r.status===204||r.status===202)return{};if(r.status===200){try{return await r.json();}catch{return{};}}if(r.status===400){let m='';try{m=(await r.json()).error?.message||'';}catch(e){}console.error('Spotify 400',path,m);setStatus('Spotify 400: '+(m||'richiesta non valida (controlla la playlist)'),'err');return null;}if(r.status===401){await doRefresh();return null;}if(r.status===404||r.status===403){setStatus('Apri Spotify sul dispositivo!','err');return null;}return null;}
 async function spStartPlaylist(){return api('PUT','/me/player/play',{context_uri:PLAYLIST,offset:{position:0},position_ms:0});}
 async function spPause(){return api('PUT','/me/player/pause');}
 async function spResume(){return api('PUT','/me/player/play');}
@@ -1675,11 +1751,13 @@ function renderUI(el){
   document.getElementById('m-zone').textContent=t.z;
   document.getElementById('m-zone').style.color=zc;
   document.getElementById('m-rpm').textContent=t.rpm;
+  document.getElementById('m-rpm-l').textContent=t.sy?('RPM · '+t.sy.toUpperCase()):'RPM';
   document.getElementById('m-bpm').textContent=t.bpm;
   document.getElementById('m-res').textContent=t.res;
   document.getElementById('m-mani').textContent=t.mani;
   document.getElementById('fase-val').textContent=t.fase;
   document.getElementById('focus-val').textContent=t.focus;
+  document.getElementById('focus-lbl').textContent='🎯 FOCUS COACH · '+(t.fase||'').toUpperCase();
 
   // Zone color theming
   document.getElementById('now').style.setProperty('--zc',zc);
@@ -2157,6 +2235,9 @@ function ensureChartDraw(){
   if(code&&state===localStorage.getItem('sp_st')){
     history.replaceState({},document.title,location.pathname);
     if(await exchangeCode(code)){await showSession();return;}
+  } else if(code){
+    history.replaceState({},document.title,location.pathname);
+    showLoginError('Login Spotify non valido (stato diverso): riprova dallo stesso indirizzo registrato come Redirect URI.');
   }
   const at=localStorage.getItem('sp_at'),exp=+localStorage.getItem('sp_exp')||0;
   if(at){
@@ -2382,7 +2463,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
   <div id="pj-fase">—</div>
 </div>
 <div id="pj-metrics">
-  <div class="pjm"><div class="val" id="pj-rpm" style="color:#00cc70">—</div><div class="lbl">RPM</div></div>
+  <div class="pjm"><div class="val" id="pj-rpm" style="color:#00cc70">—</div><div class="lbl" id="pj-rpm-l">RPM</div></div>
   <div class="pjm"><div class="val" id="pj-res" style="color:#ff1f42">—</div><div class="lbl">Resist.</div></div>
   <div class="pjm"><div class="val" id="pj-bpm" style="color:#ffbf00">—</div><div class="lbl">BPM</div></div>
   <div class="pjm"><div class="val" id="pj-mani" style="color:#4488ff">—</div><div class="lbl">Manubrio</div></div>
@@ -2392,9 +2473,20 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 ` + '<scr' + 'ipt>' + `
 const ZC={Z1:'#4477ff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 const ch = new BroadcastChannel('cycling_coach_proj');
+let lastRx=0;
 ch.onmessage = function(e){ applyState(e.data); };
+window.addEventListener('message', function(e){ applyState(e.data); });
+function askState(){
+  try{ ch.postMessage({_hello:true}); }catch(x){}
+  try{ if(window.opener) window.opener.postMessage({_hello:true},'*'); }catch(x){}
+}
+askState();
+document.addEventListener('visibilitychange', askState);
+window.addEventListener('focus', askState);
+setInterval(function(){ if(Date.now()-lastRx>2500) askState(); }, 1500);
 function applyState(d){
-  if(!d) return;
+  if(!d || d._hello || !d.title) return;
+  lastRx=Date.now();
   document.getElementById('pj-standby').style.display='none';
   const zc=ZC[d.zone]||'#00cc70';
   document.body.style.setProperty('--zc',zc);
@@ -2409,6 +2501,7 @@ function applyState(d){
   document.getElementById('pj-zone').style.borderColor=zc;
   document.getElementById('pj-fase').textContent=d.fase||'—';
   document.getElementById('pj-rpm').textContent=d.rpm||'—';
+  document.getElementById('pj-rpm-l').textContent=d.sy?('RPM · '+d.sy.toUpperCase()):'RPM';
   document.getElementById('pj-res').textContent=d.res||'—';
   document.getElementById('pj-bpm').textContent=d.bpm||'—';
   document.getElementById('pj-mani').textContent=d.mani||'—';
@@ -2468,8 +2561,9 @@ let _projCh = null;
 try { _projCh = new BroadcastChannel('cycling_coach_proj'); } catch(e){}
 
 function broadcastProjState() {
-  const t = T[ci];
   const el = getElapsed();
+  const _ti = trackAt(Math.min(el+(CROSSFADE||0), TOTAL-0.1));
+  const t = T[_ti>=0?_ti:ci];
   const pct = Math.min((el/TOTAL)*100,100);
   const posInTrack = el - t.s;
   const si = getActiveSegIdx(t, posInTrack);
@@ -2480,6 +2574,7 @@ function broadcastProjState() {
     artist: t.ar,
     zone:   t.z,
     rpm:    t.rpm,
+    sy:     t.sy||'',
     res:    t.res,
     bpm:    t.bpm,
     mani:   t._segs && t._segs[si] ? t._segs[si].mani : t.mani,
@@ -2496,6 +2591,17 @@ function broadcastProjState() {
   // BroadcastChannel come canale secondario
   if(_projCh){ try{ _projCh.postMessage(msg); }catch(e){} }
 }
+
+// Risposta alla richiesta di stato dalla proiezione (apertura, cambio scheda, riconnessione)
+window.addEventListener('message', function(e){ if(e.data && e.data._hello) broadcastProjState(); });
+if(_projCh){ _projCh.onmessage = function(e){ if(e.data && e.data._hello) broadcastProjState(); }; }
+// Heartbeat da Web Worker: non viene sospeso quando la scheda va in background
+(function(){
+  try{
+    const w=new Worker(URL.createObjectURL(new Blob(['setInterval(function(){postMessage(1)},1000)'],{type:'text/javascript'})));
+    w.onmessage=function(){ broadcastProjState(); };
+  }catch(e){ setInterval(broadcastProjState,1000); }
+})();
 
 // Hook updateUI per broadcast automatico ad ogni frame
 const _origUpdateUI = updateUI;
