@@ -1224,7 +1224,13 @@ function parseTecSegments(t){
   function inferSeg(label, trackMani, trackZ){
     const ll=label.toLowerCase();
     let type='steady', mani=trackMani;
-    if(ll.includes('sprint')&&(ll.includes(' on')||ll.includes('piedi')||ll.includes('breve'))){
+    if(ll.includes('hover')){ type='standing'; mani='P2'; }
+    else if(ll.includes('tap back')){ type='standing'; mani='P3'; }
+    else if(ll.includes('piano seduto')){ type='seated'; mani='P1'; }
+    else if(ll.includes('piano in piedi')){ type='standing'; mani='P2'; }
+    else if(ll.includes('salita seduta')){ type='seated'; mani='P2'; }
+    else if(ll.includes('salita in piedi')){ type='standing'; mani='P3'; }
+    else if(ll.includes('sprint')&&(ll.includes(' on')||ll.includes('piedi')||ll.includes('breve'))){
       type='sprint_on';
       mani=(trackZ==='Z5')?'P4Atk':'P3';
     } else if(ll.includes('sprint')&&(ll.includes(' off')||ll.includes('recupero'))){
