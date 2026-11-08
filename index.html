@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>🚴 Piramidale Mista</title>
+<title>🚴 House Classics Soglia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -987,8 +987,8 @@ body{display:flex;flex-direction:column}
 <!-- HEADER -->
 <div id="hdr">
   <div>
-    <div id="hdr-title">🚴 Piramidale Mista</div>
-    <div id="hdr-sub">Giuseppe Primavera · 17 BRANI · 55:11</div>
+    <div id="hdr-title">🚴 House Classics Soglia</div>
+    <div id="hdr-sub">Giuseppe Primavera · 14 BRANI · 0:59:34</div>
   </div>
   <div id="hdr-r">
     <span id="wake-ind"></span>
@@ -1022,7 +1022,7 @@ body{display:flex;flex-direction:column}
           <div id="np-title">—</div>
           <div id="np-artist"></div>
         </div>
-        <div id="np-badge">1/18</div>
+        <div id="np-badge">1/14</div>
       </div>
 
       <div id="metrics">
@@ -1085,7 +1085,7 @@ body{display:flex;flex-direction:column}
         <div id="time-row">
           <span id="t-cur">0:00:00</span>
           <span id="t-rem">−0:00</span>
-          <span id="t-end">0:55:11</span>
+          <span id="t-end">0:59:34</span>
         </div>
       </div>
     </div>
@@ -1196,294 +1196,31 @@ body{display:flex;flex-direction:column}
 // ═══════════════════════════════════════════════════════
 const CLIENT_ID = 'fec34f5ffb9a46ca912190a6557e637c';
 const REDIRECT = 'https://giusprim.github.io/Indoor/';
-const PLAYLIST = 'spotify:playlist:5Fv5CxpUuobCfWazfcDJmc';
+const PLAYLIST = 'spotify:playlist:4h8ZxUwHEZcR1qYIt16XQQ';
 const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
 // ═══════════════════════════════════════════════════════
 //  DATI LEZIONE
 // ═══════════════════════════════════════════════════════
 const T = [
- {
-  "i": 1,
-  "title": "Se Mi Lasci Non Vale",
-  "ar": "Ben DJ",
-  "bpm": "123",
-  "d": 206,
-  "z": "Z1",
-  "rpm": "75-85",
-  "res": "25%",
-  "rn": 0.25,
-  "tec": "Piano seduto",
-  "mani": "P1",
-  "fase": "Warm-up",
-  "focus": "Riscaldamento dolce. Tutti: gambe sciolte, respiro regolare, nessuna fretta.",
-  "s": 0
- },
- {
-  "i": 2,
-  "title": "Ti Sento",
-  "ar": "Bob Sinclar, Matia Bazar",
-  "bpm": "123",
-  "d": 180,
-  "z": "Z2",
-  "rpm": "80-90",
-  "res": "30%",
-  "rn": 0.3,
-  "tec": "Piano seduto → Hover → Piano seduto",
-  "mani": "P1↔P2",
-  "fase": "Warm-up",
-  "focus": "Entriamo in Z2. I nuovi trovano la cadenza. Al centro Hover: sfioriamo la sella, peso sulle gambe, senza saltare.",
-  "s": 206
- },
- {
-  "i": 3,
-  "title": "Sarà perché ti amo",
-  "ar": "Edmea",
-  "bpm": "123",
-  "d": 146,
-  "z": "Z2",
-  "rpm": "85-95",
-  "res": "35%",
-  "rn": 0.35,
-  "tec": "Piano seduto",
-  "mani": "P1",
-  "fase": "Attivazione",
-  "focus": "Pedalata fluida e costante. Respira ogni 4 battiti.",
-  "s": 386
- },
- {
-  "i": 4,
-  "title": "Sant'allegria",
-  "ar": "Ornella Vanoni, Jovanotti",
-  "bpm": "122",
-  "d": 147,
-  "z": "Z2",
-  "rpm": "85-95",
-  "res": "35%",
-  "rn": 0.35,
-  "tec": "Hover → Piano seduto",
-  "mani": "P1↔P2",
-  "fase": "Attivazione",
-  "focus": "Brano breve e vivace. Hover: sfioriamo la sella. Base: solo se ti senti stabile. Avanzati: bacino fermo, core attivo.",
-  "s": 532
- },
- {
-  "i": 5,
-  "title": "Easy Lady",
-  "ar": "DJ Dilux",
-  "bpm": "126",
-  "d": 226,
-  "z": "Z3",
-  "rpm": "90-100",
-  "res": "40%",
-  "rn": 0.4,
-  "tec": "Piano seduto → Piano in piedi",
-  "mani": "P1↔P2",
-  "fase": "Fondo",
-  "focus": "Prima salita di intensità. Base: aggiungi un po' di resistenza. Avanzati: piano in piedi a 90-100 RPM con più carico.",
-  "s": 679
- },
- {
-  "i": 6,
-  "title": "A mano a mano",
-  "ar": "Rino Gaetano, Molinari",
-  "bpm": "126",
-  "d": 152,
-  "z": "Z3",
-  "rpm": "90-100",
-  "res": "40%",
-  "rn": 0.4,
-  "tec": "Piano in piedi → Piano seduto",
-  "mani": "P1↔P2",
-  "fase": "Fondo",
-  "focus": "Cadenza alta, respiro profondo. Base: piano in piedi solo se ti senti stabile. Avanzati: bacino fermo, core attivo.",
-  "s": 905
- },
- {
-  "i": 7,
-  "title": "Overdose D'Amore",
-  "ar": "Zucchero, Salmo",
-  "bpm": "125",
-  "d": 177,
-  "z": "Z3",
-  "rpm": "60-70",
-  "sy": "½ tempo",
-  "res": "45%",
-  "rn": 0.45,
-  "tec": "Salita seduta",
-  "mani": "P1↔P2",
-  "fase": "Fondo variato",
-  "focus": "Forza seduta a mezzo tempo. Schiena lunga, spingi con tutta la pedivella.",
-  "s": 1057
- },
- {
-  "i": 8,
-  "title": "Maledetta Primavera",
-  "ar": "Loretta Goggi",
-  "bpm": "125",
-  "d": 141,
-  "z": "Z3",
-  "rpm": "90-100",
-  "res": "40%",
-  "rn": 0.4,
-  "tec": "Piano in piedi → Recupero",
-  "mani": "P1↔P2",
-  "fase": "Fondo variato",
-  "focus": "Onda di scarico: piano in piedi leggero, poi Recupero seduto. Cadenza alta, carico ridotto, respira.",
-  "s": 1234
- },
- {
-  "i": 9,
-  "title": "Un'estate al mare",
-  "ar": "Timmity, Manu LJ",
-  "bpm": "132",
-  "d": 225,
-  "z": "Z3",
-  "rpm": "60-70",
-  "sy": "½ tempo",
-  "res": "45%",
-  "rn": 0.45,
-  "tec": "Salita seduta → Salita in piedi",
-  "mani": "P1↔P2",
-  "fase": "Fondo variato",
-  "focus": "Scalino di forza a mezzo tempo (60-70 RPM). Base: resta in salita seduta, resistenza media. Avanzati: carico alto, salita in piedi nella seconda metà.",
-  "s": 1375
- },
- {
-  "i": 10,
-  "title": "T'AMO T'AMO",
-  "ar": "Ivana Spagna, M2E",
-  "bpm": "130",
-  "d": 166,
-  "z": "Z3",
-  "rpm": "90-100",
-  "res": "40%",
-  "rn": 0.4,
-  "tec": "Piano seduto → Hover",
-  "mani": "P1↔P2",
-  "fase": "Fondo variato",
-  "focus": "Scarico prima della salita: cadenza alta. Nel finale Hover: sfioriamo la sella e prepariamo la salita.",
-  "s": 1600
- },
- {
-  "i": 11,
-  "title": "Con Il Nastro Rosa",
-  "ar": "Cristian Marchi",
-  "bpm": "128",
-  "d": 129,
-  "z": "Z3",
-  "rpm": "60-70",
-  "sy": "½ tempo",
-  "res": "50%",
-  "rn": 0.5,
-  "tec": "Salita in piedi → Tap back",
-  "mani": "P2",
-  "fase": "Salita",
-  "focus": "Inizia la salita. Tap back: avanti e indietro col bacino a tempo. Base: Tap back leggero, poche ripetizioni. Avanzati: più carico a ogni frase.",
-  "s": 1766
- },
- {
-  "i": 12,
-  "title": "C'è La Luna",
-  "ar": "Biagio, Giuseppe D.",
-  "bpm": "128",
-  "d": 253,
-  "z": "Z4",
-  "rpm": "90-100",
-  "res": "55%",
-  "rn": 0.55,
-  "tec": "Crono: Seduto aero → In piedi leggero → Seduto aero",
-  "mani": "P4↔P2",
-  "fase": "Crono",
-  "focus": "Blocco crono Z4 di 4 minuti, piano e costante. Base: seduto con presa normale, Z3 alto. Avanzati: posizione aero, bacino fermo, potenza stabile. Il cambio in piedi serve a sciogliere le gambe.",
-  "s": 1895
- },
- {
-  "i": 13,
-  "title": "Tu sei",
-  "ar": "Gabry Ponte, Danti",
-  "bpm": "128",
-  "d": 240,
-  "z": "Z4",
-  "rpm": "60-70",
-  "sy": "½ tempo",
-  "res": "58%",
-  "rn": 0.58,
-  "tec": "Salita in piedi → Tap back → Salita seduta",
-  "mani": "P2↔P3",
-  "fase": "Salita top",
-  "focus": "Secondo blocco Z4. Salita in piedi, poi Tap back avanti e indietro e rientra seduto. Base: usa la salita seduta per recuperare quando serve.",
-  "s": 2148
- },
- {
-  "i": 14,
-  "title": "O surdato 'nnammurato",
-  "ar": "Groove Soldiers",
-  "bpm": "128",
-  "d": 219,
-  "z": "Z4",
-  "rpm": "60-70",
-  "sy": "½ tempo",
-  "res": "60%",
-  "rn": 0.6,
-  "tec": "Salita in piedi",
-  "mani": "P3",
-  "fase": "Salita top",
-  "focus": "Ultimo sforzo prima del picco. Avanzati: massimo carico sostenibile. Base: tieni la tecnica, non il carico.",
-  "s": 2388
- },
- {
-  "i": 15,
-  "title": "Bellissima",
-  "ar": "Annalisa",
-  "bpm": "148",
-  "d": 201,
-  "z": "Z5",
-  "rpm": "100-120",
-  "res": "65%",
-  "rn": 0.65,
-  "tec": "Sprint 15'' ON (in piedi) → Recupero 15'' OFF",
-  "mani": "P4Atk↔P1",
-  "fase": "Picco esplosivo",
-  "focus": "PICCO della piramide. Sprint: accelerazione in piedi per 15'', poi Recupero seduto per 15''. Base: accelerazione al 70% e recupero completo. Avanzati: massimo.",
-  "s": 2607
- },
- {
-  "i": 16,
-  "title": "Black Nirvana",
-  "ar": "Elodie",
-  "bpm": "120",
-  "d": 184,
-  "z": "Z2",
-  "rpm": "80-90",
-  "res": "25%",
-  "rn": 0.25,
-  "tec": "Recupero",
-  "mani": "P1",
-  "fase": "Defaticamento",
-  "focus": "Scendi dal picco. Cadenza libera, non seguire il battito. Il cuore torna in Z2.",
-  "s": 2808
- },
- {
-  "i": 17,
-  "title": "Acqua e Sale",
-  "ar": "B-Groove",
-  "bpm": "120",
-  "d": 319,
-  "z": "Z1",
-  "rpm": "60-70",
-  "res": "15%",
-  "rn": 0.15,
-  "tec": "Seduto leggero",
-  "mani": "P1",
-  "fase": "Stretching",
-  "focus": "Respirazione profonda, pedala piano per il primo minuto. Poi scendi dalla bici e stretcha con calma.",
-  "s": 2992
- }
+  {"i": 1, "title": "Kalimba de Luna", "ar": "Tony Esposito", "s": 0, "d": 312, "z": "Z1", "rpm": "80–90", "bpm": "116", "res": "25%", "tec": "Seduto leggero → Seduto ritmo costante", "mani": "P1", "fase": "Warm-up", "focus": "Sella e respiro a posto, gambe sciolte. RPE 3. Base e avanzati insieme."},
+  {"i": 2, "title": "Moving on Up", "ar": "M People", "s": 312, "d": 216, "z": "Z2", "rpm": "85–95", "bpm": "121", "res": "35%", "tec": "Seduto ritmo costante → In piedi leggero → Seduto veloce", "mani": "P2", "fase": "Warm-up", "focus": "Base: resistenza bassa, RPE 4 · Avanzati: +1 tacca a ogni ritornello, RPE 5."},
+  {"i": 3, "title": "Space Cowboy", "ar": "Jamiroquai, David Morales", "s": 528, "d": 244, "z": "Z3", "rpm": "75–90", "bpm": "124", "res": "50%", "tec": "Seduto ritmo costante → Seduto carico", "mani": "P2", "fase": "Fondo", "focus": "Pianura libera, poi carico a mezzo tempo. Base RPE 5 · Avanzati RPE 6."},
+  {"i": 4, "title": "Mama, Don't Close Your Eyes", "ar": "Bjorn Bonebreaker", "s": 772, "d": 186, "z": "Z4", "rpm": "63–75", "bpm": "128", "res": "70%", "tec": "Seduto carico → In piedi carico → Seduto carico", "mani": "P2→P3", "fase": "Piccola montagna", "focus": "In piedi sul drop. Base: resta seduto se serve, RPE 6 · Avanzati: tutto il drop in piedi, RPE 7.", "sy": "½ tempo"},
+  {"i": 5, "title": "My Way", "ar": "Calvin Harris", "s": 958, "d": 219, "z": "Z2", "rpm": "85–95", "bpm": "120", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Recupero attivo, non passivo: gambe che girano, FC che scende. RPE 4."},
+  {"i": 6, "title": "Get Get Down", "ar": "Paul Johnson", "s": 1177, "d": 368, "z": "Z4", "rpm": "63–70", "bpm": "126", "res": "70%", "tec": "Seduto carico → Seduto carico → In piedi carico", "mani": "P2→P3", "fase": "Soglia 1", "focus": "Soglia 1: carico costante sul mezzo tempo. Base RPE 6-7 · Avanzati RPE 7-8, ultimo terzo in piedi.", "sy": "½ tempo"},
+  {"i": 7, "title": "In My Soul", "ar": "Bob Dominator", "s": 1545, "d": 158, "z": "Z2", "rpm": "85–95", "bpm": "128", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Scarica le spalle, respira profondo. Base: togli carico · Avanzati: non sotto il 35%."},
+  {"i": 8, "title": "Deep Inside", "ar": "Hardrive, Barbara Tucker", "s": 1703, "d": 392, "z": "Z4", "rpm": "62–70", "bpm": "124", "res": "75%", "tec": "Seduto carico → In piedi carico → Seduto carico → In piedi carico", "mani": "P2→P3", "fase": "Soglia 2", "focus": "Soglia 2, il blocco più lungo. Base RPE 6-7, in piedi solo se il ritmo regge · Avanzati RPE 7-8.", "sy": "½ tempo"},
+  {"i": 9, "title": "Dont Stop", "ar": "XVIN", "s": 2095, "d": 161, "z": "Z2", "rpm": "85–95", "bpm": "128", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Ultimo recupero prima del finale: idrata e preparati. RPE 4."},
+  {"i": 10, "title": "Move Your Body", "ar": "Marshall Jefferson, Curtis McClain", "s": 2256, "d": 292, "z": "Z4", "rpm": "61–70", "bpm": "122", "res": "75%", "tec": "Seduto carico → In piedi carico → Seduto carico", "mani": "P2→P3", "fase": "Soglia 3", "focus": "Soglia 3: stessa qualità dei primi due blocchi. Base RPE 7 · Avanzati RPE 8.", "sy": "½ tempo"},
+  {"i": 11, "title": "Burning Heart", "ar": "Survivor", "s": 2548, "d": 231, "z": "Z4", "rpm": "80–93", "bpm": "93", "res": "65%", "tec": "Jump in 8 → Jump in 4 → In piedi carico", "mani": "P2↔P3", "fase": "Picco finale", "focus": "Picco finale. Base: jump in 8, poi seduto carico · Avanzati: jump in 4 e chiusura in piedi, RPE 8."},
+  {"i": 12, "title": "Don't Stop Movin'", "ar": "Livin' Joy", "s": 2779, "d": 320, "z": "Z2", "rpm": "80–90", "bpm": "125", "res": "30%", "tec": "Seduto leggero (defaticamento)", "mani": "P1↔P2", "fase": "Defaticamento", "focus": "Defaticamento: togli carico progressivamente, FC giù. RPE 3."},
+  {"i": 13, "title": "Desert Rose", "ar": "Sting, Cheb Mami", "s": 3099, "d": 286, "z": "Z1", "rpm": "80–90", "bpm": "103", "res": "20%", "tec": "Seduto leggero (defaticamento)", "mani": "P1", "fase": "Defaticamento", "focus": "Ultimo defaticamento: carico quasi a zero, respiro lungo, FC che rientra. RPE 2-3."},
+  {"i": 14, "title": "Porcelain", "ar": "Moby", "s": 3385, "d": 241, "z": "Z1", "rpm": "55–65", "bpm": "95", "res": "15%", "tec": "Stretching in bici", "mani": "P1", "fase": "Stretching", "focus": "Stretching: polpacci, quadricipiti, schiena. Respiro lento."}
 ];
 
 const CROSSFADE=4;
-const TOTAL=3311;
+const TOTAL=3626;
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
 // ═══════════════════════════════════════════════════════
