@@ -988,7 +988,7 @@ body{display:flex;flex-direction:column}
 <div id="hdr">
   <div>
     <div id="hdr-title">🚴 House Classics Soglia</div>
-    <div id="hdr-sub">Giuseppe Primavera · 14 BRANI · 0:59:34</div>
+    <div id="hdr-sub">Giuseppe Primavera · 15 BRANI · 0:56:56</div>
   </div>
   <div id="hdr-r">
     <span id="wake-ind"></span>
@@ -1022,7 +1022,7 @@ body{display:flex;flex-direction:column}
           <div id="np-title">—</div>
           <div id="np-artist"></div>
         </div>
-        <div id="np-badge">1/14</div>
+        <div id="np-badge">1/15</div>
       </div>
 
       <div id="metrics">
@@ -1085,7 +1085,7 @@ body{display:flex;flex-direction:column}
         <div id="time-row">
           <span id="t-cur">0:00:00</span>
           <span id="t-rem">−0:00</span>
-          <span id="t-end">0:59:34</span>
+          <span id="t-end">0:56:56</span>
         </div>
       </div>
     </div>
@@ -1203,24 +1203,25 @@ const SCOPES    = 'user-read-playback-state user-modify-playback-state user-read
 //  DATI LEZIONE
 // ═══════════════════════════════════════════════════════
 const T = [
-  {"i": 1, "title": "Kalimba de Luna", "ar": "Tony Esposito", "s": 0, "d": 312, "z": "Z1", "rpm": "80–90", "bpm": "116", "res": "25%", "tec": "Seduto leggero → Seduto ritmo costante", "mani": "P1", "fase": "Warm-up", "focus": "Sella e respiro a posto, gambe sciolte. RPE 3. Base e avanzati insieme."},
-  {"i": 2, "title": "Moving on Up", "ar": "M People", "s": 312, "d": 216, "z": "Z2", "rpm": "85–95", "bpm": "121", "res": "35%", "tec": "Seduto ritmo costante → In piedi leggero → Seduto veloce", "mani": "P2", "fase": "Warm-up", "focus": "Base: resistenza bassa, RPE 4 · Avanzati: +1 tacca a ogni ritornello, RPE 5."},
-  {"i": 3, "title": "Space Cowboy", "ar": "Jamiroquai, David Morales", "s": 528, "d": 244, "z": "Z3", "rpm": "75–90", "bpm": "124", "res": "50%", "tec": "Seduto ritmo costante → Seduto carico", "mani": "P2", "fase": "Fondo", "focus": "Pianura libera, poi carico a mezzo tempo. Base RPE 5 · Avanzati RPE 6."},
-  {"i": 4, "title": "Mama, Don't Close Your Eyes", "ar": "Bjorn Bonebreaker", "s": 772, "d": 186, "z": "Z4", "rpm": "63–75", "bpm": "128", "res": "70%", "tec": "Seduto carico → In piedi carico → Seduto carico", "mani": "P2→P3", "fase": "Piccola montagna", "focus": "In piedi sul drop. Base: resta seduto se serve, RPE 6 · Avanzati: tutto il drop in piedi, RPE 7.", "sy": "½ tempo"},
-  {"i": 5, "title": "My Way", "ar": "Calvin Harris", "s": 958, "d": 219, "z": "Z2", "rpm": "85–95", "bpm": "120", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Recupero attivo, non passivo: gambe che girano, FC che scende. RPE 4."},
-  {"i": 6, "title": "Get Get Down", "ar": "Paul Johnson", "s": 1177, "d": 368, "z": "Z4", "rpm": "63–70", "bpm": "126", "res": "70%", "tec": "Seduto carico → Seduto carico → In piedi carico", "mani": "P2→P3", "fase": "Soglia 1", "focus": "Soglia 1: carico costante sul mezzo tempo. Base RPE 6-7 · Avanzati RPE 7-8, ultimo terzo in piedi.", "sy": "½ tempo"},
-  {"i": 7, "title": "In My Soul", "ar": "Bob Dominator", "s": 1545, "d": 158, "z": "Z2", "rpm": "85–95", "bpm": "128", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Scarica le spalle, respira profondo. Base: togli carico · Avanzati: non sotto il 35%."},
-  {"i": 8, "title": "Deep Inside", "ar": "Hardrive, Barbara Tucker", "s": 1703, "d": 392, "z": "Z4", "rpm": "62–70", "bpm": "124", "res": "75%", "tec": "Seduto carico → In piedi carico → Seduto carico → In piedi carico", "mani": "P2→P3", "fase": "Soglia 2", "focus": "Soglia 2, il blocco più lungo. Base RPE 6-7, in piedi solo se il ritmo regge · Avanzati RPE 7-8.", "sy": "½ tempo"},
-  {"i": 9, "title": "Dont Stop", "ar": "XVIN", "s": 2095, "d": 161, "z": "Z2", "rpm": "85–95", "bpm": "128", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Ultimo recupero prima del finale: idrata e preparati. RPE 4."},
-  {"i": 10, "title": "Move Your Body", "ar": "Marshall Jefferson, Curtis McClain", "s": 2256, "d": 292, "z": "Z4", "rpm": "61–70", "bpm": "122", "res": "75%", "tec": "Seduto carico → In piedi carico → Seduto carico", "mani": "P2→P3", "fase": "Soglia 3", "focus": "Soglia 3: stessa qualità dei primi due blocchi. Base RPE 7 · Avanzati RPE 8.", "sy": "½ tempo"},
-  {"i": 11, "title": "Burning Heart", "ar": "Survivor", "s": 2548, "d": 231, "z": "Z4", "rpm": "80–93", "bpm": "93", "res": "65%", "tec": "Jump in 8 → Jump in 4 → In piedi carico", "mani": "P2↔P3", "fase": "Picco finale", "focus": "Picco finale. Base: jump in 8, poi seduto carico · Avanzati: jump in 4 e chiusura in piedi, RPE 8."},
-  {"i": 12, "title": "Don't Stop Movin'", "ar": "Livin' Joy", "s": 2779, "d": 320, "z": "Z2", "rpm": "80–90", "bpm": "125", "res": "30%", "tec": "Seduto leggero (defaticamento)", "mani": "P1↔P2", "fase": "Defaticamento", "focus": "Defaticamento: togli carico progressivamente, FC giù. RPE 3."},
-  {"i": 13, "title": "Desert Rose", "ar": "Sting, Cheb Mami", "s": 3099, "d": 286, "z": "Z1", "rpm": "80–90", "bpm": "103", "res": "20%", "tec": "Seduto leggero (defaticamento)", "mani": "P1", "fase": "Defaticamento", "focus": "Ultimo defaticamento: carico quasi a zero, respiro lungo, FC che rientra. RPE 2-3."},
-  {"i": 14, "title": "Porcelain", "ar": "Moby", "s": 3385, "d": 241, "z": "Z1", "rpm": "55–65", "bpm": "95", "res": "15%", "tec": "Stretching in bici", "mani": "P1", "fase": "Stretching", "focus": "Stretching: polpacci, quadricipiti, schiena. Respiro lento."}
+  {"i": 1, "title": "Kalimba de Luna", "ar": "Tony Esposito", "s": 0, "d": 312, "z": "Z1", "rpm": "85–95", "bpm": "111", "res": "25%", "tec": "Seduto leggero → Seduto ritmo costante", "mani": "P1", "fase": "Warm-up", "focus": "Sella e respiro a posto, gambe sciolte. RPE 3. Base e avanzati insieme."},
+  {"i": 2, "title": "Moving on Up", "ar": "M People", "s": 312, "d": 215, "z": "Z2", "rpm": "85–95", "bpm": "125", "res": "35%", "tec": "Seduto ritmo costante → In piedi leggero → Seduto veloce", "mani": "P2", "fase": "Warm-up", "focus": "Base: resistenza bassa, RPE 4 · Avanzati: +1 tacca a ogni ritornello, RPE 5."},
+  {"i": 3, "title": "Space Cowboy", "ar": "Jamiroquai, David Morales", "s": 527, "d": 243, "z": "Z3", "rpm": "80–90", "bpm": "119", "res": "50%", "tec": "Seduto ritmo costante → Seduto carico", "mani": "P2", "fase": "Fondo", "focus": "Pianura libera, poi carico. Base RPE 5 · Avanzati RPE 6."},
+  {"i": 4, "title": "Mama, Don't Close Your Eyes", "ar": "Bjorn Bonebreaker", "s": 770, "d": 185, "z": "Z4", "rpm": "80–87", "bpm": "87", "res": "65%", "tec": "Seduto carico → Jump in 8 → In piedi carico", "mani": "P2↔P3", "fase": "Piccola montagna", "focus": "Pedalata sul beat (87). Base: jump in 8 o seduto carico, RPE 6 · Avanzati: jump e chiusura in piedi, RPE 7."},
+  {"i": 5, "title": "My Way", "ar": "Calvin Harris", "s": 955, "d": 219, "z": "Z2", "rpm": "85–95", "bpm": "120", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Recupero attivo, non passivo: gambe che girano, FC che scende. RPE 4."},
+  {"i": 6, "title": "Jamaican", "ar": "HUGEL, SOLTO", "s": 1174, "d": 156, "z": "Z3", "rpm": "80–90", "bpm": "122", "res": "45%", "tec": "Seduto ritmo costante → In piedi leggero → Seduto carico", "mani": "P2", "fase": "Rampa pre-soglia", "focus": "Rampa verso la Soglia 1: strofe seduti agili, ritornello in piedi leggero, chiudi aggiungendo carico. RPE 5-6."},
+  {"i": 7, "title": "Show Me Love", "ar": "Robin S", "s": 1330, "d": 252, "z": "Z4", "rpm": "60–66", "bpm": "120", "res": "70%", "tec": "Seduto carico → In piedi carico → Seduto carico", "mani": "P2→P3", "fase": "Soglia 1", "focus": "Soglia 1 a mezzo tempo: seduto carico sulle strofe. Base RPE 6-7 · Avanzati RPE 7-8, in piedi sui ritornelli.", "sy": "½ tempo"},
+  {"i": 8, "title": "In My Soul", "ar": "Bob Dominator", "s": 1582, "d": 157, "z": "Z2", "rpm": "85–93", "bpm": "93", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Pedalata sul beat (93), carico giù. Spalle basse, bevi. RPE 4."},
+  {"i": 9, "title": "Music Sounds Better With You", "ar": "Stardust", "s": 1739, "d": 260, "z": "Z4", "rpm": "62–68", "bpm": "124", "res": "75%", "tec": "Seduto carico → In piedi carico → Seduto carico → In piedi carico", "mani": "P2→P3", "fase": "Soglia 2", "focus": "Soglia 2: alternanza seduto/in piedi sul riff. Base RPE 6-7, in piedi solo se il ritmo regge · Avanzati RPE 7-8.", "sy": "½ tempo"},
+  {"i": 10, "title": "Dont Stop", "ar": "XVIN", "s": 1999, "d": 161, "z": "Z2", "rpm": "72–90", "bpm": "145", "res": "35%", "tec": "Seduto leggero (recupero attivo)", "mani": "P2", "fase": "Recupero attivo", "focus": "Brano veloce (145): non inseguirlo, cadenza libera o a mezzo tempo (72). Idrata, preparati al finale. RPE 4."},
+  {"i": 11, "title": "Move Your Body", "ar": "Marshall Jefferson, Curtis McClain", "s": 2160, "d": 292, "z": "Z4", "rpm": "61–68", "bpm": "122", "res": "75%", "tec": "Seduto carico → In piedi carico → Seduto carico", "mani": "P2→P3", "fase": "Soglia 3", "focus": "Soglia 3: stessa qualità dei primi due blocchi. Base RPE 7 · Avanzati RPE 8.", "sy": "½ tempo"},
+  {"i": 12, "title": "Burning Heart", "ar": "Survivor", "s": 2452, "d": 230, "z": "Z4", "rpm": "85–98", "bpm": "98", "res": "65%", "tec": "Jump in 8 → Jump in 4 → In piedi carico", "mani": "P2↔P3", "fase": "Picco finale", "focus": "Picco finale sul beat (98). Base: jump in 8, poi seduto carico · Avanzati: jump in 4 e chiusura in piedi, RPE 8."},
+  {"i": 13, "title": "The Rhythm of the Night", "ar": "Corona", "s": 2682, "d": 264, "z": "Z2", "rpm": "85–95", "bpm": "128", "res": "35%", "tec": "Seduto ritmo costante → Seduto leggero (defaticamento)", "mani": "P2", "fase": "Defaticamento", "focus": "Defaticamento allegro: primo minuto Z3, poi una tacca in meno a ogni ritornello fino al 25-30%. Cadenza libera."},
+  {"i": 14, "title": "Desert Rose", "ar": "Sting, Cheb Mami", "s": 2946, "d": 285, "z": "Z1", "rpm": "80–90", "bpm": "112", "res": "20%", "tec": "Seduto leggero (defaticamento)", "mani": "P1", "fase": "Defaticamento", "focus": "Ultimo defaticamento: carico quasi a zero, respiro lungo, FC che rientra. RPE 2-3."},
+  {"i": 15, "title": "Porcelain", "ar": "Moby", "s": 3231, "d": 241, "z": "Z1", "rpm": "55–65", "bpm": "95", "res": "15%", "tec": "Stretching in bici", "mani": "P1", "fase": "Stretching", "focus": "Stretching: polpacci, quadricipiti, schiena. Respiro lento."}
 ];
 
 const CROSSFADE=4;
-const TOTAL=3626;
+const TOTAL=3472;
 const ZC={Z1:'#3a6fff',Z2:'#00cc70',Z3:'#ffbf00',Z4:'#ff6d18',Z5:'#ff1f42'};
 
 // ═══════════════════════════════════════════════════════
